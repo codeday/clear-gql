@@ -12,6 +12,3 @@ export interface JwtToken {
     e: string[] // list of associated event ids
 
 }
-
-export type JwtToken =
-    {typ: AuthRole.ADMIN, u: string, i: undefined, e: undefined}

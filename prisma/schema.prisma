@@ -32,10 +32,10 @@ enum TicketType {
 
 model EventGroup {
   // Metadata
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-metadata Json?
+  id                 String   @id @default(cuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+  metadata           Json?
   // Data
   name               String
   startDate          DateTime
@@ -54,9 +54,9 @@ model Event {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-metadata Json?
+  metadata  Json?
   // Data
-  name String
+  name      String
 
 
   // Relations
@@ -73,12 +73,12 @@ model Venue {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-metadata Json?
+  metadata  Json?
   // Data
-  name     String
-  capacity Int
-  address  String
-  mapLink  String
+  name      String
+  capacity  Int
+  address   String
+  mapLink   String
 
   // Relations
   events  Event[]
@@ -91,10 +91,10 @@ metadata Json?
 
 model Sponsor {
   // Metadata
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-metadata Json?
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  metadata     Json?
   // Data
   name         String
   logoImageUri String
@@ -110,7 +110,7 @@ model Person {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-metadata Json?
+  metadata  Json?
   // Data
   firstName String
   lastName  String
@@ -128,10 +128,10 @@ metadata Json?
 
 model Ticket {
   // Metadata
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-metadata Json?
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+  metadata     Json?
   // Data
   waiverSigned Boolean    @default(false)
   couponCode   String?
@@ -151,7 +151,7 @@ model Payment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  metadata Json?
+  metadata  Json?
 
   // Data
   total  Float
