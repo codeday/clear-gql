@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+  output   = "../src/generated/typegraphql-prisma"
+}
+
+enum MetadataVisibility {
+  PUBLIC // Visible to everyone
+  INTERNAL // Visible to event volunteers
+  ADMIN // Visible only to regional manager (and employees)
+}
+
+enum TicketType {
+  STUDENT
+  TEACHER
+  VIP
+  MENTOR
+  JUDGE
+  STAFF
+}
+
+model EventGroup {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  name               String
+  startDate          DateTime
+  endDate            DateTime
+  ticketPrice        Float
+  earlyBirdPrice     Float
+  earlyBirdCutoff    DateTime
+  registrationCutoff DateTime
+
+  // Relations
+  events Event[]
+}
+
+model Event {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  name String
+
+
+  // Relations
+  eventGroup   EventGroup @relation(fields: [eventGroupId], references: [id])
+  eventGroupId String
+  venue        Venue?     @relation(fields: [venueId], references: [id])
+  venueId      String?
+  sponsors     Sponsor[]
+  Ticket       Ticket[]
+}
+
+model Venue {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  name     String
+  capacity Int
+  address  String
+  mapLink  String
+
+  // Relations
+  events  Event[]
+  contact Person? @relation(fields: [personId], references: [id])
+
+
+
+  personId String?
+}
+
+model Sponsor {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  name         String
+  logoImageUri String
+  amount       Int
+
+  // Relations
+  Event   Event?  @relation(fields: [eventId], references: [id])
+  eventId String?
+}
+
+model Person {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  age       Int?
+
+  // Relations
+  tickets  Ticket[]
+  guardian Person?  @relation("PersonToPerson", fields: [personId], references: [id])
+  Venue    Venue[]
+  Person   Person[] @relation("PersonToPerson")
+  personId String?
+}
+
+model Ticket {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+metadata Json?
+  // Data
+  waiverSigned Boolean    @default(false)
+  couponCode   String?
+  type         TicketType @default(STUDENT)
+
+  // Relations
+  person    Person   @relation(fields: [personId], references: [id])
+  personId  String
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   String
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+  paymentId String?
+}
+
+model Payment {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  metadata Json?
+
+  // Data
+  total  Float
+  Ticket Ticket[]
+}
