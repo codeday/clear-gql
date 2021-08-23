@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node dist",
-    "prisma": "prisma format && prisma generate",
+    "prisma": "prisma format && prisma db push",
     "dev": "ts-node-dev --no-notify --respawn --transpile-only src"
   },
   "dependencies": {

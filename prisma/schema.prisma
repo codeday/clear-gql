@@ -57,22 +57,22 @@ model Event {
   metadata  Json?
 
   // Data
-  name      String
-  startDate DateTime
-  endDate DateTime
-  ticketPrice Float
-  earlyBirdPrice Float
-  earlyBirdCutoff DateTime
+  name               String
+  startDate          DateTime
+  endDate            DateTime
+  ticketPrice        Float
+  earlyBirdPrice     Float
+  earlyBirdCutoff    DateTime
   registrationCutoff DateTime
-  managers String[] // codeday account usernames
+  managers           String[] // codeday account usernames
 
   // Relations
   eventGroup   EventGroup @relation(fields: [eventGroupId], references: [id])
   eventGroupId String
   venue        Venue?     @relation(fields: [venueId], references: [id])
   venueId      String?
-  sponsors      Sponsor[]
-  tickets       Ticket[]
+  sponsors     Sponsor[]
+  tickets      Ticket[]
 }
 
 model Venue {
@@ -121,7 +121,7 @@ model Person {
   // Data
   firstName String
   lastName  String
-  email     String
+  email     String   @unique
   phone     String?
   age       Int?
 
