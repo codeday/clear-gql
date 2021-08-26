@@ -121,36 +121,40 @@ model Person {
   // Data
   firstName String
   lastName  String
-  email     String   @unique
+  email     String?
   phone     String?
   age       Int?
 
   // Relations
-  tickets  Ticket[]
-  guardian Person?  @relation("PersonToPerson", fields: [personId], references: [id])
-  Venue    Venue[]
-  Person   Person[] @relation("PersonToPerson")
-  personId String?
+  Venue  Venue[]
+  Ticket Ticket[]
 }
 
 model Ticket {
   // Metadata
-  id           String     @id @default(cuid())
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  metadata     Json?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  metadata  Json?
   // Data
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  age       Int?
+
   waiverSigned Boolean    @default(false)
   couponCode   String?
   type         TicketType @default(STUDENT)
 
   // Relations
-  person    Person   @relation(fields: [personId], references: [id])
-  personId  String
+  guardian Person? @relation(fields: [personId], references: [id])
+
   event     Event    @relation(fields: [eventId], references: [id])
   eventId   String
   payment   Payment? @relation(fields: [paymentId], references: [id])
   paymentId String?
+  personId  String?
 }
 
 model Payment {
