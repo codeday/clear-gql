@@ -21,20 +21,11 @@ enum MetadataVisibility {
   ADMIN // Visible only to regional manager (and employees)
 }
 
-enum TicketType {
-  STUDENT
-  TEACHER
-  VIP
-  MENTOR
-  JUDGE
-  STAFF
-}
-
 model EventGroup {
   // Metadata
-  id                 String   @id @default(cuid())
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                 String         @id @default(cuid())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   metadata           Json?
   // Data
   name               String
@@ -44,9 +35,9 @@ model EventGroup {
   earlyBirdPrice     Float
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
-
   // Relations
-  events Event[]
+  events             Event[]
+  schedule           ScheduleItem[]
 }
 
 model Event {
@@ -67,12 +58,13 @@ model Event {
   managers           String[] // codeday account usernames
 
   // Relations
-  eventGroup   EventGroup @relation(fields: [eventGroupId], references: [id])
+  eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id])
   eventGroupId String
-  venue        Venue?     @relation(fields: [venueId], references: [id])
+  venue        Venue?         @relation(fields: [venueId], references: [id])
   venueId      String?
   sponsors     Sponsor[]
   tickets      Ticket[]
+  schedule     ScheduleItem[]
 }
 
 model Venue {
@@ -88,11 +80,8 @@ model Venue {
   mapLink   String
 
   // Relations
-  events  Event[]
-  contact Person? @relation(fields: [personId], references: [id])
-
-
-
+  events   Event[]
+  contact  Person? @relation(fields: [personId], references: [id])
   personId String?
 }
 
@@ -118,16 +107,30 @@ model Person {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   metadata  Json?
+
   // Data
   firstName String
   lastName  String
   email     String?
   phone     String?
   age       Int?
+  username  String?
+  pronouns  String?
 
   // Relations
-  Venue  Venue[]
-  Ticket Ticket[]
+  Venue                  Venue[]
+  Ticket                 Ticket[]
+  OrganizedScheduleItems ScheduleItem[] @relation("scheduleItemOrganizer")
+  HostingScheduleItems   ScheduleItem[] @relation("scheduleItemHost")
+}
+
+enum TicketType {
+  STUDENT
+  TEACHER
+  VIP
+  MENTOR
+  JUDGE
+  STAFF
 }
 
 model Ticket {
@@ -167,4 +170,32 @@ model Payment {
   // Data
   total  Float
   Ticket Ticket[]
+}
+
+model ScheduleItem {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  metadata  Json?
+
+  // Data
+  type        String?
+  name        String?
+  description String?
+  link        String?
+  hosts       Person[]  @relation("scheduleItemHost")
+  organizers  Person[]  @relation("scheduleItemOrganizer")
+  start       DateTime?
+  end         DateTime?
+  finalized   Boolean   @default(false)
+  internal    Boolean   @default(false)
+
+  // Relations
+  event        Event?      @relation(fields: [eventId], references: [id])
+  eventId      String?
+  eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroupId String?
+
+
 }
