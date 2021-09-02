@@ -56,7 +56,7 @@ model Event {
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
   managers           String[] // codeday account usernames
-  registrationsOpen Boolean @default(false)
+  registrationsOpen  Boolean  @default(false)
 
   // Relations
   eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id])
