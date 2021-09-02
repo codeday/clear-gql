@@ -15,5 +15,4 @@ export class CustomEventResolver {
             return `${startDate.format('MMM Do')}-${endDate.format('MMM Do YYYY')}`
         }
     }
-
 }
