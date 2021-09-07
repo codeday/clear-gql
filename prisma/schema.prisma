@@ -70,20 +70,21 @@ model Event {
 
 model Venue {
   // Metadata
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  metadata  Json?
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  metadata     Json?
   // Data
-  name      String
-  capacity  Int
-  address   String
-  mapLink   String
+  name         String?
+  capacity     Int?
+  address      String?
+  mapLink      String?
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
 
   // Relations
-  events   Event[]
-  contact  Person? @relation(fields: [personId], references: [id])
-  personId String?
+  events Event[]
 }
 
 model Sponsor {
@@ -119,7 +120,6 @@ model Person {
   pronouns  String?
 
   // Relations
-  Venue                  Venue[]
   Ticket                 Ticket[]
   OrganizedScheduleItems ScheduleItem[] @relation("scheduleItemOrganizer")
   HostingScheduleItems   ScheduleItem[] @relation("scheduleItemHost")
