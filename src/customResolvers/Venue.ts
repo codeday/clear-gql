@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client"
 import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
 import {FindUniqueVenueArgs, Venue, VenueWhereInput, VenueWhereUniqueInput} from "../generated/typegraphql-prisma";
 import {Context} from "../context";
+import dot from "dot-object";
 
 @Resolver(of => Venue)
 export class CustomVenueResolver {
@@ -9,11 +10,10 @@ export class CustomVenueResolver {
     getMetadata(
         @Root() venue: Venue,
         @Arg("key") key: string,
-        @Ctx() { prisma }: Context,
         ): String | null {
         if (!venue.metadata) return null;
         const metadataObject = venue.metadata as Prisma.JsonObject;
-        const value = metadataObject[key]
+        const value = dot.pick(key, metadataObject)
         if(value) return value.toString()
         return null
     }
@@ -25,11 +25,14 @@ export class CustomVenueResolver {
         @Ctx() { prisma }: Context,
     ): Promise<Venue | null> {
         const venue = await prisma.venue.findUnique({
-            ...args
+            ...args,
+            select: {
+                metadata: true
+            }
         });
         if (!venue) return null;
         const metadataObject = venue.metadata as Prisma.JsonObject || {}
-        metadataObject[key] = value
+        dot.str(key, value, metadataObject)
         return await prisma.venue.update({...args, data: {metadata: metadataObject}})
     }
 }

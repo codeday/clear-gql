@@ -6,8 +6,10 @@
   },
   "dependencies": {
     "@prisma/client": "2.29.1",
+    "@types/dot-object": "^2.1.2",
     "@types/ws": "^7.4.7",
     "apollo-server-express": "^3.1.2",
+    "dot-object": "^2.1.4",
     "express": "^4.17.1",
     "graphql": "^15.5.1",
     "graphql-fields": "^2.0.3",
