@@ -99,8 +99,8 @@ model Sponsor {
   metadata     Json?
   // Data
   name         String
-  logoImageUri String
-  amount       Int
+  logoImageUri String?
+  amount       Int?
 
   // Relations
   Event   Event?  @relation(fields: [eventId], references: [id])
