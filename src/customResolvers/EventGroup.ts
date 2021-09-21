@@ -11,8 +11,8 @@ export class CustomEventGroupResolver {
     displayDate(
         @Root() group: EventGroup,
     ): String {
-        const startDate = moment(group.startDate)
-        const endDate = moment(group.endDate)
+        const startDate = moment(group.startDate).utc()
+        const endDate = moment(group.endDate).utc()
         if (startDate.month() === endDate.month()) {
             return `${startDate.format('MMM Do')}-${endDate.format('Do YYYY')}`
         } else {

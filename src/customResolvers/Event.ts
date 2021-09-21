@@ -10,8 +10,8 @@ export class CustomEventResolver {
     displayDate(
         @Root() event: Event,
     ): String {
-        const startDate = moment(event.startDate)
-        const endDate = moment(event.endDate)
+        const startDate = moment(event.startDate).utc()
+        const endDate = moment(event.endDate).utc()
         if (startDate.month() === endDate.month()) {
             return `${startDate.format('MMM Do')}-${endDate.format('Do YYYY')}`
         } else {
