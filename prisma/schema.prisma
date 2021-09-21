@@ -101,6 +101,8 @@ model Sponsor {
   // Data
   name         String
   logoImageUri String?
+  description  String?
+  perks        String?
   amount       Int?
 
   // Relations
