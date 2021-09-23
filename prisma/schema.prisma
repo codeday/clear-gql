@@ -130,6 +130,7 @@ model Person {
   username  String?
   pronouns  String?
 
+  Ticket Ticket[]
 }
 
 enum TicketType {
@@ -191,20 +192,20 @@ model ScheduleItem {
   metadata  Json?
 
   // Data
-  type        String?
-  name        String?
-  description String?
-  link        String?
-  hostName String?
-  hostEmail String?
-  hostPronoun String?
-  organizerName String?
+  type           String?
+  name           String?
+  description    String?
+  link           String?
+  hostName       String?
+  hostEmail      String?
+  hostPronoun    String?
+  organizerName  String?
   organizerEmail String?
   organizerPhone String?
-  start       DateTime?
-  end         DateTime?
-  finalized   Boolean   @default(false)
-  internal    Boolean   @default(false)
+  start          DateTime?
+  end            DateTime?
+  finalized      Boolean   @default(false)
+  internal       Boolean   @default(false)
 
   // Relations
   event        Event?      @relation(fields: [eventId], references: [id])
