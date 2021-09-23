@@ -130,10 +130,6 @@ model Person {
   username  String?
   pronouns  String?
 
-  // Relations
-  Ticket                 Ticket[]
-  OrganizedScheduleItems ScheduleItem[] @relation("scheduleItemOrganizer")
-  HostingScheduleItems   ScheduleItem[] @relation("scheduleItemHost")
 }
 
 enum TicketType {
@@ -199,8 +195,12 @@ model ScheduleItem {
   name        String?
   description String?
   link        String?
-  hosts       Person[]  @relation("scheduleItemHost")
-  organizers  Person[]  @relation("scheduleItemOrganizer")
+  hostName String?
+  hostEmail String?
+  hostPronoun String?
+  organizerName String?
+  organizerEmail String?
+  organizerPhone String?
   start       DateTime?
   end         DateTime?
   finalized   Boolean   @default(false)
