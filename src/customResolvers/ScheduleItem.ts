@@ -3,9 +3,37 @@ import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-grap
 import {ScheduleItem, FindUniqueScheduleItemArgs} from "../generated/typegraphql-prisma";
 import {Context} from "../context";
 import dot from "dot-object";
+import moment from "moment";
 
 @Resolver(of => ScheduleItem)
 export class CustomScheduleItemResolver {
+    @FieldResolver(type => String)
+    displayTime(
+        @Root() scheduleItem: ScheduleItem,
+        ): String {
+        const start = moment(scheduleItem.start)
+        if (!scheduleItem.end) return start.format('h:mma')
+        const end = moment(scheduleItem.end)
+        if (start.format('a') === end.format('a')) return `${start.format('hh:mm')} - ${end.format('hh:mma')}`
+        return `${start.format('hh:mma')} - ${end.format('hh:mma')}`
+    }
+
+    @FieldResolver(type => String)
+    displayTimeWithDate(
+        @Root() scheduleItem: ScheduleItem,
+        ): String {
+        const start = moment(scheduleItem.start)
+        if (!scheduleItem.end) return start.format('MMM Do hh:mma')
+        const end = moment(scheduleItem.end)
+        if (start.month() !== end.month()) return `${start.format('MMM Do hh:mma')} - ${end.format('MMM Do hh:mma')}`
+        if (start.day() !== end.day()) return `${start.format('MMM Do hh:mma')} - ${end.format('Do hh:mma')}`
+        if (start.format('a') !== end.format('a')) return `${start.format('MMM Do hh:mma')} - ${end.format('hh:mma')}`
+        return `${start.format('MMM Do hh:mm')} - ${end.format('hh:mma')}`
+    }
+}
+
+@Resolver(of => ScheduleItem)
+export class ScheduleItemMetadataResolver {
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() scheduleItem: ScheduleItem,
