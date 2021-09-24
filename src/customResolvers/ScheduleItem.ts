@@ -14,8 +14,8 @@ export class CustomScheduleItemResolver {
         const start = moment(scheduleItem.start)
         if (!scheduleItem.end) return start.format('h:mma')
         const end = moment(scheduleItem.end)
-        if (start.format('a') === end.format('a')) return `${start.format('hh:mm')} - ${end.format('hh:mma')}`
-        return `${start.format('hh:mma')} - ${end.format('hh:mma')}`
+        if (start.format('a') === end.format('a')) return `${start.format('h:mm')} - ${end.format('h:mma')}`
+        return `${start.format('h:mma')} - ${end.format('h:mma')}`
     }
 
     @FieldResolver(type => String)
@@ -23,12 +23,12 @@ export class CustomScheduleItemResolver {
         @Root() scheduleItem: ScheduleItem,
         ): String {
         const start = moment(scheduleItem.start)
-        if (!scheduleItem.end) return start.format('MMM Do hh:mma')
+        if (!scheduleItem.end) return start.format('MMM Do h:mma')
         const end = moment(scheduleItem.end)
-        if (start.month() !== end.month()) return `${start.format('MMM Do hh:mma')} - ${end.format('MMM Do hh:mma')}`
-        if (start.day() !== end.day()) return `${start.format('MMM Do hh:mma')} - ${end.format('Do hh:mma')}`
-        if (start.format('a') !== end.format('a')) return `${start.format('MMM Do hh:mma')} - ${end.format('hh:mma')}`
-        return `${start.format('MMM Do hh:mm')} - ${end.format('hh:mma')}`
+        if (start.month() !== end.month()) return `${start.format('MMM Do h:mma')} - ${end.format('MMM Do h:mma')}`
+        if (start.day() !== end.day()) return `${start.format('MMM Do h:mma')} - ${end.format('Do h:mma')}`
+        if (start.format('a') !== end.format('a')) return `${start.format('MMM Do h:mma')} - ${end.format('h:mma')}`
+        return `${start.format('MMM Do hh:mm')} - ${end.format('h:mma')}`
     }
 }
 
