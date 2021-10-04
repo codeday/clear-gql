@@ -1,12 +1,27 @@
 import path from 'path';
-import { buildSchema } from 'type-graphql';
+import { buildSchema, Authorized } from 'type-graphql';
 import { GraphQLSchema } from 'graphql';
 import { Container } from 'typedi';
-import {resolvers} from './generated/typegraphql-prisma';
+import {
+    resolvers,
+    applyResolversEnhanceMap,
+    ModelsEnhanceMap,
+    applyModelsEnhanceMap,
+    crudResolvers,
+    EventCrudResolver,
+    ScheduleItemCrudResolver,
+    Venue,
+    Event,
+    EventScalarFieldEnum
+} from './generated/typegraphql-prisma';
 import customResolvers from './customResolvers'
-// import { authChecker } from './context';
+import { authChecker, AuthRole } from './context';
+import customResolversEnhanceMap from "./customResolversEnhanceMap";
+import customModelsEnhanceMap from "./customModelsEnhanceMap";
 
 export async function createSchema() : Promise<GraphQLSchema> {
+    applyResolversEnhanceMap(customResolversEnhanceMap)
+    applyModelsEnhanceMap(customModelsEnhanceMap)
     return buildSchema({
         resolvers: [
             ...resolvers,
@@ -18,6 +33,6 @@ export async function createSchema() : Promise<GraphQLSchema> {
             '../generated/generated-schema.graphql',
         ),
         validate: false,
-        // authChecker,
+        authChecker,
     });
 }

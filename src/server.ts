@@ -1,6 +1,7 @@
 import Express from 'express';
 import http from 'http';
 import { ApolloServer } from 'apollo-server-express';
+import { graphqlUploadExpress } from 'graphql-upload';
 import ws from 'ws';
 import { execute, subscribe } from 'graphql';
 import { useServer } from 'graphql-ws/lib/use/ws';
@@ -15,11 +16,12 @@ export default async function server(): Promise<void> {
         context,
         playground: config.debug,
         introspection: true,
+
     });
     await apollo.start()
     const app = Express();
+    app.use(graphqlUploadExpress({ maxFileSize: 100 * 1024 * 1024, maxFiles: 3 }));
     apollo.applyMiddleware({ app });
-
     const httpServer = http.createServer(app);
     const wsServer = new ws.Server({
         server: httpServer,
