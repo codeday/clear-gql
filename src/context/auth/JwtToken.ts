@@ -6,9 +6,6 @@ export enum AuthRole {
 }
 
 export interface JwtToken {
-    typ: AuthRole
+    t: AuthRole
     u?: string  // username
-    i?: string  // `Person` id
-    e: string[] // list of associated event ids
-
 }

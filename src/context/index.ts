@@ -12,7 +12,7 @@ export interface Context {
 }
 
 export async function createContext({ req }: ExpressContext): Promise<Context> {
-    const tokenHeader = (req.header('X-Labs-Authorization') || req.header('Authorization') || '').split(/\s+/);
+    const tokenHeader = (req.header('X-Clear-Authorization') || req.header('Authorization') || '').split(/\s+/);
     const token = tokenHeader[0] === 'Bearer' ? tokenHeader[1].trim() : undefined;
 
     return {
