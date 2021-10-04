@@ -1,9 +1,10 @@
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
 import {Event, FindUniqueEventArgs} from "../generated/typegraphql-prisma";
 import moment from 'moment'
 import {Prisma} from "@prisma/client";
 import dot from "dot-object";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
+
 @Resolver(of => Event)
 export class CustomEventResolver {
     @FieldResolver(type => String)
@@ -18,6 +19,18 @@ export class CustomEventResolver {
             return `${startDate.format('MMM Do')}-${endDate.format('MMM Do YYYY')}`
         }
     }
+    @Query(_returns => [Event])
+    async events(
+        @Ctx() {prisma, auth}: Context
+    ) : Promise<Event[]> {
+        if(auth.username) return await prisma.event.findMany({where: {managers: {has: auth.username || null}}})
+        return await prisma.event.findMany()
+    }
+}
+
+@Resolver(of => Event)
+export class EventMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() event: Event,
@@ -29,6 +42,8 @@ export class CustomEventResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Event, {nullable: true})
     async setEventMetadata(
         @Args() args: FindUniqueEventArgs,

@@ -1,9 +1,9 @@
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {EventGroup, FindUniqueEventGroupArgs} from "../generated/typegraphql-prisma";
 import moment from 'moment'
 import {Prisma} from "@prisma/client";
 import dot from "dot-object";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 
 @Resolver(of => EventGroup)
 export class CustomEventGroupResolver {
@@ -19,6 +19,10 @@ export class CustomEventGroupResolver {
             return `${startDate.format('MMM Do')}-${endDate.format('MMM Do YYYY')}`
         }
     }
+}
+@Resolver(of => EventGroup)
+export class EventGroupMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() eventGroup: EventGroup,
@@ -30,6 +34,8 @@ export class CustomEventGroupResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => EventGroup, {nullable: true})
     async setEventGroupMetadata(
         @Args() args: FindUniqueEventGroupArgs,

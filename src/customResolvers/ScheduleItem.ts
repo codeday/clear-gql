@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client"
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {ScheduleItem, FindUniqueScheduleItemArgs} from "../generated/typegraphql-prisma";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 import dot from "dot-object";
 import moment from "moment";
 
@@ -34,6 +34,7 @@ export class CustomScheduleItemResolver {
 
 @Resolver(of => ScheduleItem)
 export class ScheduleItemMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() scheduleItem: ScheduleItem,
@@ -45,6 +46,8 @@ export class ScheduleItemMetadataResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => ScheduleItem, {nullable: true})
     async setScheduleItemMetadata(
         @Args() args: FindUniqueScheduleItemArgs,

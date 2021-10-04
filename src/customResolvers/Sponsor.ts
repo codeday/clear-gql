@@ -1,11 +1,12 @@
-import { Prisma } from "@prisma/client"
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {Prisma} from "@prisma/client"
+import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Resolver, Root} from "type-graphql";
 import {FindUniqueSponsorArgs, Sponsor} from "../generated/typegraphql-prisma";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 import dot from "dot-object";
 
 @Resolver(of => Sponsor)
-export class CustomSponsorResolver {
+export class SponsorMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() sponsor: Sponsor,
@@ -17,6 +18,8 @@ export class CustomSponsorResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Sponsor, {nullable: true})
     async setSponsorMetadata(
         @Args() args: FindUniqueSponsorArgs,

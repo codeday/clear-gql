@@ -1,11 +1,12 @@
 import { Prisma } from "@prisma/client"
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {FindUniquePaymentArgs, Payment} from "../generated/typegraphql-prisma";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 import dot from "dot-object";
 
 @Resolver(of => Payment)
-export class CustomPaymentResolver {
+export class PaymentMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() payment: Payment,
@@ -17,6 +18,8 @@ export class CustomPaymentResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Payment, {nullable: true})
     async setPaymentMetadata(
         @Args() args: FindUniquePaymentArgs,

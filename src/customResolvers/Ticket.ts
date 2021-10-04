@@ -1,11 +1,12 @@
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {FindUniqueTicketArgs, Ticket} from "../generated/typegraphql-prisma";
 import { Prisma } from "@prisma/client"
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 
 
 @Resolver(of => Ticket)
 export class CustomTicketResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => Boolean)
     needsGuardian(
         @Root() ticket: Ticket,
@@ -14,6 +15,11 @@ export class CustomTicketResolver {
         if (ticket.guardian) return false;
         return true
     }
+}
+
+@Resolver(of => Ticket)
+export class TicketMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() ticket: Ticket ,
@@ -25,6 +31,8 @@ export class CustomTicketResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Ticket, {nullable: true})
     async setTicketMetadata(
         @Args() args: FindUniqueTicketArgs,

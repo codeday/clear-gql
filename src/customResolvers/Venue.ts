@@ -1,11 +1,12 @@
 import { Prisma } from "@prisma/client"
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {FindUniqueVenueArgs, Venue, VenueWhereInput, VenueWhereUniqueInput} from "../generated/typegraphql-prisma";
-import {Context} from "../context";
+import {AuthRole, Context} from "../context";
 import dot from "dot-object";
 
 @Resolver(of => Venue)
-export class CustomVenueResolver {
+export class VenueMetadataResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() venue: Venue,
@@ -17,6 +18,8 @@ export class CustomVenueResolver {
         if(value) return value.toString()
         return null
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Venue, {nullable: true})
     async setVenueMetadata(
         @Args() args: FindUniqueVenueArgs,
