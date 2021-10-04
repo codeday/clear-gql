@@ -14,6 +14,7 @@ export default async function server(): Promise<void> {
     const apollo = new ApolloServer({
         schema,
         context,
+        // @ts-ignore
         playground: config.debug,
         introspection: true,
 

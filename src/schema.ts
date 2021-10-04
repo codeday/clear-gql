@@ -1,21 +1,10 @@
 import path from 'path';
-import { buildSchema, Authorized } from 'type-graphql';
-import { GraphQLSchema } from 'graphql';
-import { Container } from 'typedi';
-import {
-    resolvers,
-    applyResolversEnhanceMap,
-    ModelsEnhanceMap,
-    applyModelsEnhanceMap,
-    crudResolvers,
-    EventCrudResolver,
-    ScheduleItemCrudResolver,
-    Venue,
-    Event,
-    EventScalarFieldEnum
-} from './generated/typegraphql-prisma';
+import {buildSchema} from 'type-graphql';
+import {GraphQLSchema} from 'graphql';
+import {Container} from 'typedi';
+import {applyModelsEnhanceMap, applyResolversEnhanceMap, resolvers} from './generated/typegraphql-prisma';
 import customResolvers from './customResolvers'
-import { authChecker, AuthRole } from './context';
+import {authChecker} from './context';
 import customResolversEnhanceMap from "./customResolversEnhanceMap";
 import customModelsEnhanceMap from "./customModelsEnhanceMap";
 
