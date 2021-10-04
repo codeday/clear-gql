@@ -79,7 +79,7 @@ model Venue {
   /// @TypeGraphQL.omit(output: true)
   metadata     Json?
   // Data
-  name         String?
+  name         String
   capacity     Int?
   address      String?
   mapLink      String?
@@ -192,8 +192,8 @@ model ScheduleItem {
   metadata  Json?
 
   // Data
-  type           String?
-  name           String?
+  type           String    @default("Event")
+  name           String
   description    String?
   link           String?
   hostName       String?
@@ -202,7 +202,7 @@ model ScheduleItem {
   organizerName  String?
   organizerEmail String?
   organizerPhone String?
-  start          DateTime?
+  start          DateTime
   end            DateTime?
   finalized      Boolean   @default(false)
   internal       Boolean   @default(false)
@@ -212,6 +212,4 @@ model ScheduleItem {
   eventId      String?
   eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?
-
-
 }
