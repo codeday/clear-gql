@@ -62,7 +62,7 @@ model Event {
   contentfulWebname  String?
 
   // Relations
-  eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id])
+  eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id], onDelete: Cascade)
   eventGroupId String
   venue        Venue?         @relation(fields: [venueId], references: [id])
   venueId      String?
@@ -109,7 +109,7 @@ model Sponsor {
   contactPhone String?
 
   // Relations
-  event   Event?  @relation(fields: [eventId], references: [id])
+  event   Event?  @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String?
 }
 
@@ -163,7 +163,7 @@ model Ticket {
   // Relations
   guardian Person? @relation(fields: [personId], references: [id])
 
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   String
   payment   Payment? @relation(fields: [paymentId], references: [id])
   paymentId String?
@@ -208,8 +208,8 @@ model ScheduleItem {
   internal       Boolean   @default(false)
 
   // Relations
-  event        Event?      @relation(fields: [eventId], references: [id])
+  event        Event?      @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId      String?
-  eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id], onDelete: Cascade)
   eventGroupId String?
 }
