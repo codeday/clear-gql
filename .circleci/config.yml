@@ -14,7 +14,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:14.18
     steps:
       - checkout
       - setup_remote_docker:
@@ -33,7 +33,7 @@ jobs:
 
   build_test:
     docker:
-      - image: cimg/node:latest
+      - image: cimg/node:14.18
     steps:
       - checkout
       - setup_remote_docker:
