@@ -9,4 +9,4 @@ WORKDIR /app
 RUN NODE_ENV=development yarn install
 COPY . /app
 RUN yarn run build
-RUN npm run start
+CMD npm run start
