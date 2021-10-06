@@ -21,9 +21,10 @@ export class CustomEventResolver {
     }
     @Query(_returns => [Event])
     async events(
-        @Ctx() {prisma, auth}: Context
+        @Ctx() {prisma, auth}: Context,
+        @Arg('editable', () => Boolean, {nullable: true}) editable?: Boolean,
     ) : Promise<Event[]> {
-        if(auth.username) return await prisma.event.findMany({where: {managers: {has: auth.username || null}}})
+        if(auth.username && editable) return await prisma.event.findMany({where: {managers: {has: auth.username || null}}})
         return await prisma.event.findMany()
     }
 }

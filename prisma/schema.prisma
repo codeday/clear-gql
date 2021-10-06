@@ -63,7 +63,7 @@ model Event {
 
   // Relations
   eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id], onDelete: Cascade)
-  eventGroupId String
+  eventGroupId String?
   venue        Venue?         @relation(fields: [venueId], references: [id])
   venueId      String?
   sponsors     Sponsor[]
@@ -164,7 +164,7 @@ model Ticket {
   guardian Person? @relation(fields: [personId], references: [id])
 
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId   String
+  eventId   String?
   payment   Payment? @relation(fields: [paymentId], references: [id])
   paymentId String?
   personId  String?
