@@ -19,6 +19,7 @@ export class CustomEventResolver {
             return `${startDate.format('MMM Do')}-${endDate.format('MMM Do YYYY')}`
         }
     }
+
     @Query(_returns => [Event])
     async events(
         @Ctx() {prisma, auth}: Context,
