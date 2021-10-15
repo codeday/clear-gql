@@ -1,5 +1,5 @@
 import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
-import {Event, FindUniqueEventArgs} from "../generated/typegraphql-prisma";
+import {Event, FindUniqueEventArgs, FindManyEventArgs} from "../generated/typegraphql-prisma";
 import moment from 'moment'
 import {Prisma} from "@prisma/client";
 import dot from "dot-object";
@@ -22,11 +22,12 @@ export class CustomEventResolver {
 
     @Query(_returns => [Event])
     async events(
+        @Args() args: FindManyEventArgs,
         @Ctx() {prisma, auth}: Context,
         @Arg('editable', () => Boolean, {nullable: true}) editable?: Boolean,
     ) : Promise<Event[]> {
         if(auth.username && editable) return await prisma.event.findMany({where: {managers: {has: auth.username || null}}})
-        return await prisma.event.findMany()
+        return await prisma.event.findMany({...args})
     }
 }
 
@@ -37,6 +38,7 @@ export class EventMetadataResolver {
     getMetadata(
         @Root() event: Event,
         @Arg("key") key: string,
+
     ): String | null {
         if (!event.metadata) return null;
         const metadataObject = event.metadata as Prisma.JsonObject;
