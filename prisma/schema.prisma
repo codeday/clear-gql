@@ -235,6 +235,7 @@ model PromoCode {
   code   String
   type   DiscountType
   amount Float
+  uses   Int?
 
   EventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?

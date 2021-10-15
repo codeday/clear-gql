@@ -5,6 +5,19 @@ import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 
 @Resolver(of => PromoCode)
+export class CustomPromoCodeResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @FieldResolver(type => Number, {nullable: true})
+    usesRemaining(
+        @Root() promoCode: PromoCode,
+    ): Number | null {
+        if(!promoCode.uses) return null
+        if(!promoCode.Ticket) return promoCode.uses
+        return promoCode.uses - promoCode.Ticket.length
+    }
+}
+
+@Resolver(of => PromoCode)
 export class PromoCodeMetadataResolver {
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
