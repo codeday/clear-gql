@@ -20,6 +20,33 @@ export class CustomEventResolver {
         }
     }
 
+    @FieldResolver(type => Boolean)
+    canRegister(
+        @Root() event: Event,
+    ): Boolean {
+        const closeDate = moment(event.registrationCutoff).utc()
+        const now = moment().utc()
+        return closeDate.isSameOrAfter(now) && event.registrationsOpen
+    }
+
+    @FieldResolver(type => Boolean)
+    canEarlyBirdRegister(
+        @Root() event: Event,
+    ): Boolean {
+        const earlyBirdCloseDate = moment(event.earlyBirdCutoff).utc()
+        const now = moment().utc()
+        return earlyBirdCloseDate.isSameOrAfter(now) && this.canRegister(event)
+    }
+
+    @FieldResolver(type => Number, {nullable: true})
+    activeTicketPrice(
+        @Root() event: Event,
+    ): Number | null {
+        if (this.canEarlyBirdRegister(event)) return event.earlyBirdPrice
+        if (this.canRegister(event)) return event.ticketPrice
+        return null
+    }
+
     @Query(_returns => [Event])
     async events(
         @Args() args: FindManyEventArgs,
