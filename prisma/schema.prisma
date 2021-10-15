@@ -232,6 +232,7 @@ model PromoCode {
   metadata  Json?
 
   // Data
+  code   String
   type   DiscountType
   amount Float
 
