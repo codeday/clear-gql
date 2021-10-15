@@ -39,6 +39,7 @@ model EventGroup {
   // Relations
   events             Event[]
   schedule           ScheduleItem[]
+  promoCodes         PromoCode[]
 }
 
 model Event {
@@ -69,6 +70,7 @@ model Event {
   sponsors     Sponsor[]
   tickets      Ticket[]
   schedule     ScheduleItem[]
+  promoCodes   PromoCode[]
 }
 
 model Venue {
@@ -159,15 +161,17 @@ model Ticket {
   waiverSigned Boolean    @default(false)
   couponCode   String?
   type         TicketType @default(STUDENT)
+  promoCode    PromoCode? @relation(fields: [promoCodeId], references: [id])
 
   // Relations
   guardian Person? @relation(fields: [personId], references: [id])
 
-  event     Event    @relation(fields: [eventId], references: [id])
-  eventId   String
-  payment   Payment? @relation(fields: [paymentId], references: [id])
-  paymentId String?
-  personId  String?
+  event       Event    @relation(fields: [eventId], references: [id])
+  eventId     String
+  payment     Payment? @relation(fields: [paymentId], references: [id])
+  paymentId   String?
+  personId    String?
+  promoCodeId String?
 }
 
 model Payment {
@@ -212,4 +216,28 @@ model ScheduleItem {
   eventId      String?
   eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?
+}
+
+enum DiscountType {
+  SUBTRACT
+  PERCENT
+}
+
+model PromoCode {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  type   DiscountType
+  amount Float
+
+  EventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroupId String?
+  Event        Event?      @relation(fields: [eventId], references: [id])
+  eventId      String?
+  Ticket       Ticket[]
 }
