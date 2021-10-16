@@ -13,7 +13,7 @@ export class CustomPromoCodeResolver {
     ): Number | null {
         if(!promoCode.uses) return null
         if(!promoCode.tickets) return promoCode.uses
-        return promoCode.uses - promoCode.ticket.length
+        return promoCode.uses - promoCode.tickets.length
     }
 }
 
