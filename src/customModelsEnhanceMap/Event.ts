@@ -10,5 +10,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         ...defaultPerms,
         id: [],
         name: [],
+        earlyBirdCutoff: [],
+        registrationCutoff: [],
     }
 }
