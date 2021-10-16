@@ -9,6 +9,9 @@ export const venueEnhanceConfig: ModelConfig<"Venue"> = {
     fields: {
         ...defaultPerms,
         id: [],
+        // TODO(@oohwooh) - only expose when registrations enabled
         name: [],
+        address: [],
+        mapLink: [],
     }
 }
