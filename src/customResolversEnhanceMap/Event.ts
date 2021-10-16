@@ -10,4 +10,5 @@ export const eventEnhanceConfig: ResolverActionsConfig<"Event"> = {
     events: [],
     event: [],
     updateEvent: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
+    findFirstEvent: [],
 }
