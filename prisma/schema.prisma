@@ -63,14 +63,15 @@ model Event {
   contentfulWebname  String?
 
   // Relations
-  eventGroup   EventGroup     @relation(fields: [eventGroupId], references: [id])
-  eventGroupId String
-  venue        Venue?         @relation(fields: [venueId], references: [id])
-  venueId      String?
-  sponsors     Sponsor[]
-  tickets      Ticket[]
-  schedule     ScheduleItem[]
-  promoCodes   PromoCode[]
+  eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
+  eventGroupId     String
+  venue            Venue?              @relation(fields: [venueId], references: [id])
+  venueId          String?
+  sponsors         Sponsor[]
+  tickets          Ticket[]
+  schedule         ScheduleItem[]
+  promoCodes       PromoCode[]
+  interestedEmails MailingListMember[]
 }
 
 model Venue {
@@ -242,4 +243,18 @@ model PromoCode {
   event        Event?      @relation(fields: [eventId], references: [id])
   eventId      String?
   tickets      Ticket[]
+}
+
+model MailingListMember {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  email              String    @unique
+  interestedInEvents Event[]
+  lastEmailed        DateTime?
 }

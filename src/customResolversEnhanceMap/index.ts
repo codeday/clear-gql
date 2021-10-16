@@ -8,6 +8,7 @@ import {eventEnhanceConfig} from "./Event";
 import {eventgroupEnhanceConfig} from "./EventGroup";
 import {venueEnhanceConfig} from "./Venue";
 import {promocodeEnhanceConfig} from "./PromoCode";
+import {mailinglistmemberEnhanceConfig} from "./MailingListMember";
 
 const customResolversEnhanceMap: ResolversEnhanceMap =
     {
@@ -19,7 +20,8 @@ const customResolversEnhanceMap: ResolversEnhanceMap =
             Event: eventEnhanceConfig,
             EventGroup: eventgroupEnhanceConfig,
             Venue: venueEnhanceConfig,
-            PromoCode: promocodeEnhanceConfig
+            PromoCode: promocodeEnhanceConfig,
+            MailingListMember: mailinglistmemberEnhanceConfig
     }
 
 export default customResolversEnhanceMap
