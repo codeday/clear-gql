@@ -12,8 +12,8 @@ export class CustomPromoCodeResolver {
         @Root() promoCode: PromoCode,
     ): Number | null {
         if(!promoCode.uses) return null
-        if(!promoCode.Ticket) return promoCode.uses
-        return promoCode.uses - promoCode.Ticket.length
+        if(!promoCode.tickets) return promoCode.uses
+        return promoCode.uses - promoCode.ticket.length
     }
 }
 

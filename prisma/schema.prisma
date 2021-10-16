@@ -237,9 +237,9 @@ model PromoCode {
   amount Float
   uses   Int?
 
-  EventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?
-  Event        Event?      @relation(fields: [eventId], references: [id])
+  event        Event?      @relation(fields: [eventId], references: [id])
   eventId      String?
-  Ticket       Ticket[]
+  tickets      Ticket[]
 }
