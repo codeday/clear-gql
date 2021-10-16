@@ -34,7 +34,7 @@ export class PromoCodeMetadataResolver {
 
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => PromoCode, {nullable: true})
-    async setEventMetadata(
+    async setPromoCodeMetadata(
         @Args() args: FindUniquePromoCodeArgs,
         @Arg("key") key: string,
         @Arg("value") value: string,
