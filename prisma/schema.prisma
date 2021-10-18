@@ -169,8 +169,7 @@ model Ticket {
 
   event       Event    @relation(fields: [eventId], references: [id])
   eventId     String
-  payment     Payment? @relation(fields: [paymentId], references: [id])
-  paymentId   String?
+  payment     Payment?
   personId    String?
   promoCodeId String?
 }
@@ -184,8 +183,10 @@ model Payment {
   metadata  Json?
 
   // Data
-  total  Float
-  Ticket Ticket[]
+  stripePaymentIntentId String
+  Ticket                Ticket @relation(fields: [ticketId], references: [id])
+  ticketId              String
+
 }
 
 model ScheduleItem {
