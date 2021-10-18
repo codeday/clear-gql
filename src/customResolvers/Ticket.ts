@@ -1,5 +1,5 @@
 import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
-import {FindUniqueTicketArgs, Ticket} from "../generated/typegraphql-prisma";
+import {FindUniqueTicketArgs, Person, Ticket} from "../generated/typegraphql-prisma";
 import { Prisma } from "@prisma/client"
 import {AuthRole, Context} from "../context";
 
@@ -12,7 +12,7 @@ export class CustomTicketResolver {
         @Root() ticket: Ticket,
     ): Boolean {
         if (ticket.age && ticket.age >= 18) return false;
-        if (ticket.guardian) return false;
+        if (ticket.guardian instanceof Person) return false;
         return true
     }
 }
