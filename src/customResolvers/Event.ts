@@ -157,7 +157,6 @@ export class CustomEventResolver {
         const event = await prisma.event.findUnique({where: args.eventWhere})
         if(!event) throw 'Event not found!'
         const activeTicketPrice = this.activeTicketPrice(event)
-        console.log(activeTicketPrice)
         if(!activeTicketPrice) throw 'No active ticket price!'
         const paymentIntent = await stripe.paymentIntents?.create({
             amount: activeTicketPrice * 100,
@@ -166,7 +165,7 @@ export class CustomEventResolver {
         if (!paymentIntent.client_secret) {
             throw 'Error retrieving stripe client secret'
         }
-        prisma.ticket.create({data: {
+        await prisma.ticket.create({data: {
                 ...args.ticketData,
                 event: {
                     connect: {
