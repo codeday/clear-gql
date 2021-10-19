@@ -12,5 +12,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         name: [],
         earlyBirdCutoff: [],
         registrationCutoff: [],
+        startDate: [],
+        endDate: [],
     }
 }
