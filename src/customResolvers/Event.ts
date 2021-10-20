@@ -262,7 +262,7 @@ export class CustomEventResolver {
             const isMinor = ticket.age! > this.majorityAge(event);
 
             return prisma.ticket.create({data: {
-                ...ticketData,
+                ...ticket,
                 event: { connect: { id: event.id } },
                 guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
                 payment: { create: { stripePaymentIntentId: paymentIntent.id } },
