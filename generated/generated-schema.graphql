@@ -2144,7 +2144,7 @@ type Mutation {
   deleteTicket(where: TicketWhereUniqueInput!): Ticket
   deleteVenue(where: VenueWhereUniqueInput!): Venue
   finalizePayment(paymentIntentId: String!): [String!]!
-  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String!
+  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String
   setEventGroupMetadata(key: String!, value: String!, where: EventGroupWhereUniqueInput!): EventGroup
   setEventMetadata(key: String!, value: String!, where: EventWhereUniqueInput!): Event
   setMailingListMemberMetadata(key: String!, value: String!, where: MailingListMemberWhereUniqueInput!): MailingListMember
@@ -2186,6 +2186,7 @@ type Mutation {
   upsertSponsor(create: SponsorCreateInput!, update: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor!
   upsertTicket(create: TicketCreateInput!, update: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket!
   upsertVenue(create: VenueCreateInput!, update: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue!
+  withdrawFailedPayment(paymentIntentId: String!): [String!]!
 }
 
 input NestedBoolFilter {
@@ -2461,14 +2462,18 @@ input NullableStringFieldUpdateOperationsInput {
 }
 
 type Payment {
-  Ticket: Ticket!
+  _count: PaymentCount
   complete: Boolean!
   createdAt: DateTime!
   getMetadata(key: String!): String
   id: String!
   stripePaymentIntentId: String!
-  ticketId: String!
+  tickets(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
   updatedAt: DateTime!
+}
+
+type PaymentCount {
+  tickets: Int!
 }
 
 type PaymentCountAggregate {
@@ -2478,7 +2483,6 @@ type PaymentCountAggregate {
   id: Int!
   metadata: Int!
   stripePaymentIntentId: Int!
-  ticketId: Int!
   updatedAt: Int!
 }
 
@@ -2488,17 +2492,16 @@ input PaymentCountOrderByAggregateInput {
   id: SortOrder
   metadata: SortOrder
   stripePaymentIntentId: SortOrder
-  ticketId: SortOrder
   updatedAt: SortOrder
 }
 
 input PaymentCreateInput {
-  Ticket: TicketCreateNestedOneWithoutPaymentInput!
   complete: Boolean
   createdAt: DateTime
   id: String
   metadata: JSON
   stripePaymentIntentId: String!
+  tickets: TicketCreateNestedManyWithoutPaymentInput
   updatedAt: DateTime
 }
 
@@ -2508,22 +2511,21 @@ input PaymentCreateManyInput {
   id: String
   metadata: JSON
   stripePaymentIntentId: String!
-  ticketId: String!
   updatedAt: DateTime
 }
 
-input PaymentCreateNestedOneWithoutTicketInput {
+input PaymentCreateNestedOneWithoutTicketsInput {
   connect: PaymentWhereUniqueInput
-  connectOrCreate: PaymentCreateOrConnectWithoutTicketInput
-  create: PaymentCreateWithoutTicketInput
+  connectOrCreate: PaymentCreateOrConnectWithoutTicketsInput
+  create: PaymentCreateWithoutTicketsInput
 }
 
-input PaymentCreateOrConnectWithoutTicketInput {
-  create: PaymentCreateWithoutTicketInput!
+input PaymentCreateOrConnectWithoutTicketsInput {
+  create: PaymentCreateWithoutTicketsInput!
   where: PaymentWhereUniqueInput!
 }
 
-input PaymentCreateWithoutTicketInput {
+input PaymentCreateWithoutTicketsInput {
   complete: Boolean
   createdAt: DateTime
   id: String
@@ -2541,7 +2543,6 @@ type PaymentGroupBy {
   id: String!
   metadata: JSON
   stripePaymentIntentId: String!
-  ticketId: String!
   updatedAt: DateTime!
 }
 
@@ -2550,7 +2551,6 @@ type PaymentMaxAggregate {
   createdAt: DateTime
   id: String
   stripePaymentIntentId: String
-  ticketId: String
   updatedAt: DateTime
 }
 
@@ -2559,7 +2559,6 @@ input PaymentMaxOrderByAggregateInput {
   createdAt: SortOrder
   id: SortOrder
   stripePaymentIntentId: SortOrder
-  ticketId: SortOrder
   updatedAt: SortOrder
 }
 
@@ -2568,7 +2567,6 @@ type PaymentMinAggregate {
   createdAt: DateTime
   id: String
   stripePaymentIntentId: String
-  ticketId: String
   updatedAt: DateTime
 }
 
@@ -2577,7 +2575,6 @@ input PaymentMinOrderByAggregateInput {
   createdAt: SortOrder
   id: SortOrder
   stripePaymentIntentId: SortOrder
-  ticketId: SortOrder
   updatedAt: SortOrder
 }
 
@@ -2590,18 +2587,16 @@ input PaymentOrderByWithAggregationInput {
   id: SortOrder
   metadata: SortOrder
   stripePaymentIntentId: SortOrder
-  ticketId: SortOrder
   updatedAt: SortOrder
 }
 
 input PaymentOrderByWithRelationInput {
-  Ticket: TicketOrderByWithRelationInput
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
   stripePaymentIntentId: SortOrder
-  ticketId: SortOrder
+  tickets: TicketOrderByRelationAggregateInput
   updatedAt: SortOrder
 }
 
@@ -2616,7 +2611,6 @@ enum PaymentScalarFieldEnum {
   id
   metadata
   stripePaymentIntentId
-  ticketId
   updatedAt
 }
 
@@ -2629,17 +2623,16 @@ input PaymentScalarWhereWithAggregatesInput {
   id: StringWithAggregatesFilter
   metadata: JsonNullableWithAggregatesFilter
   stripePaymentIntentId: StringWithAggregatesFilter
-  ticketId: StringWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
 }
 
 input PaymentUpdateInput {
-  Ticket: TicketUpdateOneRequiredWithoutPaymentInput
   complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
   stripePaymentIntentId: StringFieldUpdateOperationsInput
+  tickets: TicketUpdateManyWithoutPaymentInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -2652,17 +2645,17 @@ input PaymentUpdateManyMutationInput {
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
-input PaymentUpdateOneWithoutTicketInput {
+input PaymentUpdateOneWithoutTicketsInput {
   connect: PaymentWhereUniqueInput
-  connectOrCreate: PaymentCreateOrConnectWithoutTicketInput
-  create: PaymentCreateWithoutTicketInput
+  connectOrCreate: PaymentCreateOrConnectWithoutTicketsInput
+  create: PaymentCreateWithoutTicketsInput
   delete: Boolean
   disconnect: Boolean
-  update: PaymentUpdateWithoutTicketInput
-  upsert: PaymentUpsertWithoutTicketInput
+  update: PaymentUpdateWithoutTicketsInput
+  upsert: PaymentUpsertWithoutTicketsInput
 }
 
-input PaymentUpdateWithoutTicketInput {
+input PaymentUpdateWithoutTicketsInput {
   complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
@@ -2671,22 +2664,21 @@ input PaymentUpdateWithoutTicketInput {
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
-input PaymentUpsertWithoutTicketInput {
-  create: PaymentCreateWithoutTicketInput!
-  update: PaymentUpdateWithoutTicketInput!
+input PaymentUpsertWithoutTicketsInput {
+  create: PaymentCreateWithoutTicketsInput!
+  update: PaymentUpdateWithoutTicketsInput!
 }
 
 input PaymentWhereInput {
   AND: [PaymentWhereInput!]
   NOT: [PaymentWhereInput!]
   OR: [PaymentWhereInput!]
-  Ticket: TicketRelationFilter
   complete: BoolFilter
   createdAt: DateTimeFilter
   id: StringFilter
   metadata: JsonNullableFilter
   stripePaymentIntentId: StringFilter
-  ticketId: StringFilter
+  tickets: TicketListRelationFilter
   updatedAt: DateTimeFilter
 }
 
@@ -4815,6 +4807,7 @@ type Ticket {
   lastName: String!
   needsGuardian: Boolean!
   payment: Payment
+  paymentId: String
   personId: String
   phone: String
   promoCode: PromoCode
@@ -4843,6 +4836,7 @@ type TicketCountAggregate {
   id: Int!
   lastName: Int!
   metadata: Int!
+  paymentId: Int!
   personId: Int!
   phone: Int!
   promoCodeId: Int!
@@ -4861,6 +4855,7 @@ input TicketCountOrderByAggregateInput {
   id: SortOrder
   lastName: SortOrder
   metadata: SortOrder
+  paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
   promoCodeId: SortOrder
@@ -4880,7 +4875,7 @@ input TicketCreateInput {
   id: String
   lastName: String!
   metadata: JSON
-  payment: PaymentCreateNestedOneWithoutTicketInput
+  payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
   type: TicketType
@@ -4897,6 +4892,7 @@ input TicketCreateManyEventInput {
   id: String
   lastName: String!
   metadata: JSON
+  paymentId: String
   personId: String
   phone: String
   promoCodeId: String
@@ -4920,6 +4916,7 @@ input TicketCreateManyGuardianInput {
   id: String
   lastName: String!
   metadata: JSON
+  paymentId: String
   phone: String
   promoCodeId: String
   type: TicketType
@@ -4942,12 +4939,36 @@ input TicketCreateManyInput {
   id: String
   lastName: String!
   metadata: JSON
+  paymentId: String
   personId: String
   phone: String
   promoCodeId: String
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
+}
+
+input TicketCreateManyPaymentInput {
+  age: Int
+  couponCode: String
+  createdAt: DateTime
+  email: String
+  eventId: String!
+  firstName: String!
+  id: String
+  lastName: String!
+  metadata: JSON
+  personId: String
+  phone: String
+  promoCodeId: String
+  type: TicketType
+  updatedAt: DateTime
+  waiverSigned: Boolean
+}
+
+input TicketCreateManyPaymentInputEnvelope {
+  data: [TicketCreateManyPaymentInput!]!
+  skipDuplicates: Boolean
 }
 
 input TicketCreateManyPromoCodeInput {
@@ -4960,6 +4981,7 @@ input TicketCreateManyPromoCodeInput {
   id: String
   lastName: String!
   metadata: JSON
+  paymentId: String
   personId: String
   phone: String
   type: TicketType
@@ -4986,17 +5008,18 @@ input TicketCreateNestedManyWithoutGuardianInput {
   createMany: TicketCreateManyGuardianInputEnvelope
 }
 
+input TicketCreateNestedManyWithoutPaymentInput {
+  connect: [TicketWhereUniqueInput!]
+  connectOrCreate: [TicketCreateOrConnectWithoutPaymentInput!]
+  create: [TicketCreateWithoutPaymentInput!]
+  createMany: TicketCreateManyPaymentInputEnvelope
+}
+
 input TicketCreateNestedManyWithoutPromoCodeInput {
   connect: [TicketWhereUniqueInput!]
   connectOrCreate: [TicketCreateOrConnectWithoutPromoCodeInput!]
   create: [TicketCreateWithoutPromoCodeInput!]
   createMany: TicketCreateManyPromoCodeInputEnvelope
-}
-
-input TicketCreateNestedOneWithoutPaymentInput {
-  connect: TicketWhereUniqueInput
-  connectOrCreate: TicketCreateOrConnectWithoutPaymentInput
-  create: TicketCreateWithoutPaymentInput
 }
 
 input TicketCreateOrConnectWithoutEventInput {
@@ -5029,7 +5052,7 @@ input TicketCreateWithoutEventInput {
   id: String
   lastName: String!
   metadata: JSON
-  payment: PaymentCreateNestedOneWithoutTicketInput
+  payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
   type: TicketType
@@ -5047,7 +5070,7 @@ input TicketCreateWithoutGuardianInput {
   id: String
   lastName: String!
   metadata: JSON
-  payment: PaymentCreateNestedOneWithoutTicketInput
+  payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
   type: TicketType
@@ -5084,7 +5107,7 @@ input TicketCreateWithoutPromoCodeInput {
   id: String
   lastName: String!
   metadata: JSON
-  payment: PaymentCreateNestedOneWithoutTicketInput
+  payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   type: TicketType
   updatedAt: DateTime
@@ -5106,6 +5129,7 @@ type TicketGroupBy {
   id: String!
   lastName: String!
   metadata: JSON
+  paymentId: String
   personId: String
   phone: String
   promoCodeId: String
@@ -5129,6 +5153,7 @@ type TicketMaxAggregate {
   firstName: String
   id: String
   lastName: String
+  paymentId: String
   personId: String
   phone: String
   promoCodeId: String
@@ -5146,6 +5171,7 @@ input TicketMaxOrderByAggregateInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
+  paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
   promoCodeId: SortOrder
@@ -5163,6 +5189,7 @@ type TicketMinAggregate {
   firstName: String
   id: String
   lastName: String
+  paymentId: String
   personId: String
   phone: String
   promoCodeId: String
@@ -5180,6 +5207,7 @@ input TicketMinOrderByAggregateInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
+  paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
   promoCodeId: SortOrder
@@ -5207,6 +5235,7 @@ input TicketOrderByWithAggregationInput {
   id: SortOrder
   lastName: SortOrder
   metadata: SortOrder
+  paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
   promoCodeId: SortOrder
@@ -5228,6 +5257,7 @@ input TicketOrderByWithRelationInput {
   lastName: SortOrder
   metadata: SortOrder
   payment: PaymentOrderByWithRelationInput
+  paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
   promoCode: PromoCodeOrderByWithRelationInput
@@ -5235,11 +5265,6 @@ input TicketOrderByWithRelationInput {
   type: SortOrder
   updatedAt: SortOrder
   waiverSigned: SortOrder
-}
-
-input TicketRelationFilter {
-  is: TicketWhereInput
-  isNot: TicketWhereInput
 }
 
 enum TicketScalarFieldEnum {
@@ -5252,6 +5277,7 @@ enum TicketScalarFieldEnum {
   id
   lastName
   metadata
+  paymentId
   personId
   phone
   promoCodeId
@@ -5273,6 +5299,7 @@ input TicketScalarWhereInput {
   id: StringFilter
   lastName: StringFilter
   metadata: JsonNullableFilter
+  paymentId: StringNullableFilter
   personId: StringNullableFilter
   phone: StringNullableFilter
   promoCodeId: StringNullableFilter
@@ -5294,6 +5321,7 @@ input TicketScalarWhereWithAggregatesInput {
   id: StringWithAggregatesFilter
   lastName: StringWithAggregatesFilter
   metadata: JsonNullableWithAggregatesFilter
+  paymentId: StringNullableWithAggregatesFilter
   personId: StringNullableWithAggregatesFilter
   phone: StringNullableWithAggregatesFilter
   promoCodeId: StringNullableWithAggregatesFilter
@@ -5330,7 +5358,7 @@ input TicketUpdateInput {
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
   metadata: JSON
-  payment: PaymentUpdateOneWithoutTicketInput
+  payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
@@ -5359,6 +5387,11 @@ input TicketUpdateManyWithWhereWithoutEventInput {
 }
 
 input TicketUpdateManyWithWhereWithoutGuardianInput {
+  data: TicketUpdateManyMutationInput!
+  where: TicketScalarWhereInput!
+}
+
+input TicketUpdateManyWithWhereWithoutPaymentInput {
   data: TicketUpdateManyMutationInput!
   where: TicketScalarWhereInput!
 }
@@ -5396,6 +5429,20 @@ input TicketUpdateManyWithoutGuardianInput {
   upsert: [TicketUpsertWithWhereUniqueWithoutGuardianInput!]
 }
 
+input TicketUpdateManyWithoutPaymentInput {
+  connect: [TicketWhereUniqueInput!]
+  connectOrCreate: [TicketCreateOrConnectWithoutPaymentInput!]
+  create: [TicketCreateWithoutPaymentInput!]
+  createMany: TicketCreateManyPaymentInputEnvelope
+  delete: [TicketWhereUniqueInput!]
+  deleteMany: [TicketScalarWhereInput!]
+  disconnect: [TicketWhereUniqueInput!]
+  set: [TicketWhereUniqueInput!]
+  update: [TicketUpdateWithWhereUniqueWithoutPaymentInput!]
+  updateMany: [TicketUpdateManyWithWhereWithoutPaymentInput!]
+  upsert: [TicketUpsertWithWhereUniqueWithoutPaymentInput!]
+}
+
 input TicketUpdateManyWithoutPromoCodeInput {
   connect: [TicketWhereUniqueInput!]
   connectOrCreate: [TicketCreateOrConnectWithoutPromoCodeInput!]
@@ -5410,14 +5457,6 @@ input TicketUpdateManyWithoutPromoCodeInput {
   upsert: [TicketUpsertWithWhereUniqueWithoutPromoCodeInput!]
 }
 
-input TicketUpdateOneRequiredWithoutPaymentInput {
-  connect: TicketWhereUniqueInput
-  connectOrCreate: TicketCreateOrConnectWithoutPaymentInput
-  create: TicketCreateWithoutPaymentInput
-  update: TicketUpdateWithoutPaymentInput
-  upsert: TicketUpsertWithoutPaymentInput
-}
-
 input TicketUpdateWithWhereUniqueWithoutEventInput {
   data: TicketUpdateWithoutEventInput!
   where: TicketWhereUniqueInput!
@@ -5425,6 +5464,11 @@ input TicketUpdateWithWhereUniqueWithoutEventInput {
 
 input TicketUpdateWithWhereUniqueWithoutGuardianInput {
   data: TicketUpdateWithoutGuardianInput!
+  where: TicketWhereUniqueInput!
+}
+
+input TicketUpdateWithWhereUniqueWithoutPaymentInput {
+  data: TicketUpdateWithoutPaymentInput!
   where: TicketWhereUniqueInput!
 }
 
@@ -5443,7 +5487,7 @@ input TicketUpdateWithoutEventInput {
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
   metadata: JSON
-  payment: PaymentUpdateOneWithoutTicketInput
+  payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
@@ -5461,7 +5505,7 @@ input TicketUpdateWithoutGuardianInput {
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
   metadata: JSON
-  payment: PaymentUpdateOneWithoutTicketInput
+  payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
@@ -5498,7 +5542,7 @@ input TicketUpdateWithoutPromoCodeInput {
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
   metadata: JSON
-  payment: PaymentUpdateOneWithoutTicketInput
+  payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -5517,15 +5561,16 @@ input TicketUpsertWithWhereUniqueWithoutGuardianInput {
   where: TicketWhereUniqueInput!
 }
 
+input TicketUpsertWithWhereUniqueWithoutPaymentInput {
+  create: TicketCreateWithoutPaymentInput!
+  update: TicketUpdateWithoutPaymentInput!
+  where: TicketWhereUniqueInput!
+}
+
 input TicketUpsertWithWhereUniqueWithoutPromoCodeInput {
   create: TicketCreateWithoutPromoCodeInput!
   update: TicketUpdateWithoutPromoCodeInput!
   where: TicketWhereUniqueInput!
-}
-
-input TicketUpsertWithoutPaymentInput {
-  create: TicketCreateWithoutPaymentInput!
-  update: TicketUpdateWithoutPaymentInput!
 }
 
 input TicketWhereInput {
@@ -5544,6 +5589,7 @@ input TicketWhereInput {
   lastName: StringFilter
   metadata: JsonNullableFilter
   payment: PaymentRelationFilter
+  paymentId: StringNullableFilter
   personId: StringNullableFilter
   phone: StringNullableFilter
   promoCode: PromoCodeRelationFilter

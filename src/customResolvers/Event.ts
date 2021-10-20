@@ -205,11 +205,11 @@ export class CustomEventResolver {
         return errors;
     }
 
-    @Mutation(_returns => String) // returns stripe payment intent secret key
+    @Mutation(_returns => String, { nullable: true }) // returns stripe payment intent secret key
     async registerForEvent(
         @Ctx() { prisma }: Context,
         @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode }: RegisterForEventArgs,
-    ) : Promise<String> {
+    ) : Promise<string | null> {
         if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
         const tickets = ticketsData ?? [ticketData];
 
@@ -240,14 +240,24 @@ export class CustomEventResolver {
         const promo = await this.fetchPromo(prisma, event, promoCode);
         const price = this.calculatePriceWithPromo(event, promo);
 
-        const paymentIntent = await stripe.paymentIntents?.create({
-            amount: Math.round(price * 100) * tickets.length,
-            currency: 'usd',
-            statement_descriptor: 'CodeDay',
-        });
+        let paymentIntent: Stripe.Response<Stripe.PaymentIntent> | null = null;
+        let paymentId: string | null = null;
+        if (price > 0) {
+          paymentIntent = await stripe.paymentIntents?.create({
+              amount: Math.round(price * 100) * tickets.length,
+              currency: 'usd',
+              statement_descriptor: 'CodeDay',
+          });
 
-        if (!paymentIntent.client_secret) {
-            throw new Error('Error retrieving stripe client secret');
+          if (!paymentIntent.client_secret) {
+              throw new Error('Error retrieving stripe client secret');
+          }
+
+          const { id: _paymentId } = await prisma.payment.create({
+            data: { stripePaymentIntentId: paymentIntent.id },
+            select: { id: true },
+          });
+          paymentId = _paymentId;
         }
 
         let guardianId: string | null = null;
@@ -265,11 +275,11 @@ export class CustomEventResolver {
                 ...ticket,
                 event: { connect: { id: event.id } },
                 guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
-                payment: { create: { stripePaymentIntentId: paymentIntent.id } },
+                payment: paymentId ? { connect: { id: paymentId } } : undefined,
             }});
         }));
 
-        return paymentIntent.client_secret;
+        return paymentIntent?.client_secret || null;
     }
 
     @Mutation(_returns => [String])
@@ -281,7 +291,6 @@ export class CustomEventResolver {
         if (intent.status !== 'succeeded') {
             throw new Error(`Payment status is still ${intent.status}. Please contact support.`);
         }
-
         await prisma.payment.updateMany({
             where: { stripePaymentIntentId: paymentIntentId },
             data: { complete: true },
@@ -294,6 +303,29 @@ export class CustomEventResolver {
 
         return tickets.map(ticket => ticket.id);
     }
+
+    @Mutation(_returns => [String])
+    async withdrawFailedPayment(
+        @Ctx() { prisma }: Context,
+        @Arg('paymentIntentId') paymentIntentId: string,
+    ): Promise<Boolean> {
+        const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        if (intent.status === 'succeeded') {
+            throw new Error(`Payment was already processed. Contact support for a refund.`);
+        }
+
+        const tickets = await prisma.ticket.findMany({
+            where: { payment: { stripePaymentIntentId: paymentIntentId } },
+            select: { id: true },
+        });
+
+        await prisma.ticket.deleteMany({
+          where: { id: { in: tickets.map((t) => t.id) }},
+        });
+
+        return true;
+    }
+
 }
 
 @Resolver(of => Event)
