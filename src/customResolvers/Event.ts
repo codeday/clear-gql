@@ -314,13 +314,8 @@ export class CustomEventResolver {
             throw new Error(`Payment was already processed. Contact support for a refund.`);
         }
 
-        const tickets = await prisma.ticket.findMany({
-            where: { payment: { stripePaymentIntentId: paymentIntentId } },
-            select: { id: true },
-        });
-
         await prisma.ticket.deleteMany({
-          where: { id: { in: tickets.map((t) => t.id) }},
+          where: { payment: { stripePaymentIntentId: paymentIntentId } },
         });
 
         return true;
