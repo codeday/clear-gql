@@ -169,9 +169,11 @@ model Ticket {
 
   event       Event    @relation(fields: [eventId], references: [id])
   eventId     String
-  payment     Payment?
   personId    String?
   promoCodeId String?
+
+  payment Payment? @relation(fields: [paymentId], references: [id])
+  paymentId String?
 }
 
 model Payment {
@@ -184,9 +186,9 @@ model Payment {
 
   // Data
   stripePaymentIntentId String
-  Ticket                Ticket @relation(fields: [ticketId], references: [id])
-  ticketId              String
+  complete              Boolean @default(false)
 
+  tickets Ticket[]
 }
 
 model ScheduleItem {

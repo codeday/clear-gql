@@ -1,7 +1,9 @@
 import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
-import {Event, FindManyEventArgs, FindUniqueEventArgs, PromoCode} from "../generated/typegraphql-prisma";
+import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoCode, TicketCreateWithoutEventInput} from "../generated/typegraphql-prisma";
 import moment from 'moment'
-import {Prisma} from "@prisma/client";
+import emailValidator from 'email-validator';
+import {phone} from 'phone';
+import {Prisma, PrismaClient, Ticket} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import {GraphQLJSONObject} from "graphql-scalars";
@@ -10,11 +12,16 @@ import {RegisterForEventArgs} from "../args/RegisterForEventArgs";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {apiVersion: "2020-08-27"});
 
+export const MAJORITY_AGE = 18;
+export const MIN_AGE = 13;
+export const MAX_AGE = 25;
+
 interface CheckPromoCodeResult {
     valid: boolean;
     displayDiscountName: string | null;
     displayDiscountAmount: string | null;
-    effectivePrice: Number | null;
+    effectivePrice: number | null;
+    remainingUses: number | null;
 }
 
 @Resolver(of => Event)
@@ -30,6 +37,27 @@ export class CustomEventResolver {
         } else {
             return `${startDate.format('MMM Do')}-${endDate.format('MMM Do YYYY')}`
         }
+    }
+
+    @FieldResolver(type => Number)
+    majorityAge(
+        @Root() event: Event,
+    ): number {
+        return MAJORITY_AGE;
+    }
+
+    @FieldResolver(type => Number)
+    minAge(
+        @Root() event: Event,
+    ): number {
+        return MIN_AGE;
+    }
+
+    @FieldResolver(type => Number)
+    maxAge(
+        @Root() event: Event,
+    ): number {
+        return MAX_AGE;
     }
 
     @FieldResolver(type => Boolean)
@@ -69,120 +97,230 @@ export class CustomEventResolver {
         return await prisma.event.findMany({...args})
     }
 
-    calculatePriceWithPromo(event: Event, promo: PromoCode) {
-        if(!event.promoCodes?.includes(promo)) {
-            throw 'Event does not contain passed promo code!'
-        }
-        const activeTicketPrice = this.activeTicketPrice(event)
+    async fetchPromo(
+        prisma: PrismaClient,
+        event: Event,
+        code?: string | null,
+    ): Promise<PromoCode & { tickets: Ticket[] } | null> {
+        if (!code) return null;
+        const codes = await prisma.promoCode.findMany({
+            where: {
+              event: { id: event.id },
+              code: {
+                equals: code.trim(),
+                mode: 'insensitive'
+              },
+            },
+            include: { tickets: true }
+        });
+        const match = codes.filter(c => !c.uses || !c.tickets || c.uses > c.tickets.length)[0];
+        // TODO(@tylermenezes): If there are multiple promo codes use the best available one.
 
+        if (!match) return null;
+        return match;
+    }
+
+    calculatePriceWithPromo(event: Event, promo?: PromoCode | null) {
+        const activeTicketPrice = this.activeTicketPrice(event)
         if(!activeTicketPrice) {
             throw 'Event does not have an active ticket price! (Most likely registrations are closed)'
         }
-        let out;
+
+        if (!promo) return activeTicketPrice;
+
+        if(promo.eventId !== event.id) {
+            throw 'Event does not contain this promo code!'
+        }
+
         if(promo.type === "SUBTRACT") {
-            out = parseFloat(activeTicketPrice.toString()) - promo.amount
+            return Math.max(0, activeTicketPrice - promo.amount);
         } else if (promo.type === "PERCENT") {
-            out = parseFloat((parseFloat(activeTicketPrice.toString()) * (1 - (promo.amount / 100))).toFixed(2))
-            // I hate this
+            return Math.max(0, activeTicketPrice * (1 - (promo.amount / 100)));
         }
-        if (!out) {
-            return activeTicketPrice
-        } else if (out <= 0) {
-            out = 0
-        }
-        return out
+
+        return 0;
     }
+
     @FieldResolver(type => GraphQLJSONObject)
     async checkPromoCode(
+        @Ctx() { prisma }: Context,
         @Root() event: Event,
-        @Arg('code') code: String,
+        @Arg('code', type => String) code: string,
     ): Promise<CheckPromoCodeResult> {
         let result: CheckPromoCodeResult;
-        const matchingCodes = event.promoCodes?.filter((val) => {
-            if(val.uses && val.tickets)
-                if(val.uses > val.tickets.length)
-                    return false;
-            return val.code.toLowerCase() === code.toLowerCase();
-        })
         const activeTicketPrice = this.activeTicketPrice(event);
-        if (!matchingCodes || !activeTicketPrice) {
+        const promo = await this.fetchPromo(prisma, event, code);
+        if (promo === null || activeTicketPrice === null) {
             return {
                 valid: false,
                 displayDiscountAmount: null,
                 displayDiscountName: null,
-                effectivePrice: activeTicketPrice
+                remainingUses: null,
+                effectivePrice: activeTicketPrice,
+            }
+        } else {
+            return {
+                valid: true,
+                displayDiscountAmount: promo.type === 'PERCENT' ? promo.amount + '%' : '$' + promo.amount.toFixed(2),
+                displayDiscountName: promo.code.toUpperCase(),
+                remainingUses: promo.uses ? promo.uses - promo?.tickets.length : null,
+                effectivePrice: this.calculatePriceWithPromo(event, promo),
             }
         }
-        let lowestPromoCodeOutput: CheckPromoCodeResult = {
-            valid: false,
-            effectivePrice: activeTicketPrice,
-            displayDiscountName: null,
-            displayDiscountAmount: null,
-        };
-        matchingCodes.forEach((code) => {
-            const effectivePrice = this.calculatePriceWithPromo(event, code)
-            // @ts-ignore
-            if(effectivePrice < lowestPromoCodeOutput.effectivePrice) {
-                lowestPromoCodeOutput = {
-                    valid: true,
-                    effectivePrice: effectivePrice,
-                    displayDiscountAmount: (code.type === 'SUBTRACT'? `$${code.amount} off`: `${code.amount}% off`),
-                    displayDiscountName: code.code.toUpperCase()
-                }
-            }
-        })
-        return lowestPromoCodeOutput;
     }
 
-    @Mutation(_returns => String) // returns stripe payment intent secret key
+    validateTicket(event: Event, ticket: TicketCreateWithoutEventInput): string[] {
+        const errors: string[] = [];
+        const minAge = this.minAge(event);
+        const maxAge = this.maxAge(event);
+
+        if (!ticket.age) errors.push(`Age is required`);
+        else if (ticket.age < minAge) errors.push(`You must be at least ${minAge} to participate.`);
+        else if (ticket.age > maxAge) errors.push(`You must be under ${maxAge} to participate.`);
+
+        if (!ticket.firstName || !ticket.lastName) errors.push('Name is required.');
+        if (!ticket.email && !ticket.phone) errors.push('Email or phone is required.');
+        if (ticket.email && !emailValidator.validate(ticket.email)) {
+            errors.push(`${ticket.email} is not a valid email.`)
+        }
+        if (ticket.phone && !phone(ticket.phone).isValid) {
+            errors.push(`${ticket.phone} is not a valid phone number.`);
+        }
+
+        return errors;
+    }
+
+    validateGuardianData(guardianData: PersonCreateInput): string[] {
+        const errors: string[] = [];
+
+        if (!guardianData.firstName || !guardianData.lastName) errors.push('Guardian name is required.');
+        if (!guardianData.email && !guardianData.phone) errors.push('Guardian email or phone is required.');
+        if (guardianData.email && !emailValidator.validate(guardianData.email)) {
+            errors.push(`${guardianData.email} is not a valid email.`);
+        }
+        if (guardianData.phone && !phone(guardianData.phone).isValid) {
+            errors.push(`${guardianData.phone} is not a valid phone number.`);
+        }
+
+        return errors;
+    }
+
+    @Mutation(_returns => String, { nullable: true }) // returns stripe payment intent secret key
     async registerForEvent(
         @Ctx() { prisma }: Context,
-        @Args() args: RegisterForEventArgs,
+        @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode }: RegisterForEventArgs,
+    ) : Promise<string | null> {
+        if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
+        const tickets = ticketsData ?? [ticketData];
 
-    ) : Promise<String> {
-        if(!args.ticketData.age) throw 'Age is required'
+        const event = await prisma.event.findUnique({
+            rejectOnNotFound: true,
+            where: eventWhere,
+        });
 
-        if(args.ticketData.age < 18) {
-            if(!args.guardianData) {
-                throw 'Guardian details required'
+        // Check if all required information is present on the ticket.
+        const ticketsMissingInformation = tickets.map(ticket => this.validateTicket(event, ticket)).flat();
+        if (ticketsMissingInformation.length > 0) {
+            throw new Error(ticketsMissingInformation.join(' '));
+        }
+
+        // If any participants are minors, guardian data is required.
+        const ticketContainsMinor = tickets.filter(ticket => ticket.age! < this.majorityAge(event)).length > 0;
+        if (ticketContainsMinor && !guardianData) {
+            throw new Error('Guardian data is required because a participant is a minor.');
+        }
+
+        if (guardianData) {
+            const guardianMissingInformation = this.validateGuardianData(guardianData);
+            if (guardianMissingInformation.length > 0) {
+                throw new Error(guardianMissingInformation.join(' '));
             }
-            if (!args.guardianData.phone && !args.guardianData.email) {
-                throw 'Either guardian email or phone is required'
-            }
         }
 
-        if(!args.ticketData.phone && !args.ticketData.email) {
-            throw 'Either email or phone is required'
+        const promo = await this.fetchPromo(prisma, event, promoCode);
+        const price = this.calculatePriceWithPromo(event, promo);
+
+        let paymentIntent: Stripe.Response<Stripe.PaymentIntent> | null = null;
+        let paymentId: string | null = null;
+        if (price > 0) {
+          paymentIntent = await stripe.paymentIntents?.create({
+              amount: Math.round(price * 100) * tickets.length,
+              currency: 'usd',
+              statement_descriptor: 'CodeDay',
+          });
+
+          if (!paymentIntent.client_secret) {
+              throw new Error('Error retrieving stripe client secret');
+          }
+
+          const { id: _paymentId } = await prisma.payment.create({
+            data: { stripePaymentIntentId: paymentIntent.id },
+            select: { id: true },
+          });
+          paymentId = _paymentId;
         }
-        const event = await prisma.event.findUnique({where: args.eventWhere})
-        if(!event) throw 'Event not found!'
-        const activeTicketPrice = this.activeTicketPrice(event)
-        if(!activeTicketPrice) throw 'No active ticket price!'
-        const paymentIntent = await stripe.paymentIntents?.create({
-            amount: activeTicketPrice * 100,
-            currency: 'usd'
-        })
-        if (!paymentIntent.client_secret) {
-            throw 'Error retrieving stripe client secret'
+
+        let guardianId: string | null = null;
+        if (guardianData) {
+            const { id: _guardianId } = await prisma.person.create({
+                data: guardianData,
+            });
+            guardianId = _guardianId;
         }
-        await prisma.ticket.create({data: {
-                ...args.ticketData,
-                event: {
-                    connect: {
-                        id: event.id
-                    }
-                },
-                guardian: {
-                ...(args.guardianData? {create: {...args.guardianData}}: null)
-                },
-                payment: {
-                    create: {
-                        stripePaymentIntentId: paymentIntent.id
-                   }
-                }
-            }})
-        return paymentIntent.client_secret
+
+        await prisma.$transaction(tickets.map((ticket) => {
+            const isMinor = ticket.age! > this.majorityAge(event);
+
+            return prisma.ticket.create({data: {
+                ...ticket,
+                event: { connect: { id: event.id } },
+                guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
+                payment: paymentId ? { connect: { id: paymentId } } : undefined,
+            }});
+        }));
+
+        return paymentIntent?.client_secret || null;
     }
+
+    @Mutation(_returns => [String])
+    async finalizePayment(
+        @Ctx() { prisma }: Context,
+        @Arg('paymentIntentId', () => String) paymentIntentId: string,
+    ): Promise<string[]> {
+        const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        if (intent.status !== 'succeeded') {
+            throw new Error(`Payment status is still ${intent.status}. Please contact support.`);
+        }
+        await prisma.payment.updateMany({
+            where: { stripePaymentIntentId: paymentIntentId },
+            data: { complete: true },
+        });
+
+        const tickets = await prisma.ticket.findMany({
+            where: { payment: { stripePaymentIntentId: paymentIntentId } },
+            select: { id: true },
+        });
+
+        return tickets.map(ticket => ticket.id);
+    }
+
+    @Mutation(_returns => Boolean)
+    async withdrawFailedPayment(
+        @Ctx() { prisma }: Context,
+        @Arg('paymentIntentId', () => String) paymentIntentId: string,
+    ): Promise<Boolean> {
+        const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        if (intent.status === 'succeeded') {
+            throw new Error(`Payment was already processed. Contact support for a refund.`);
+        }
+
+        await prisma.ticket.deleteMany({
+          where: { payment: { stripePaymentIntentId: paymentIntentId } },
+        });
+
+        return true;
+    }
+
 }
 
 @Resolver(of => Event)
