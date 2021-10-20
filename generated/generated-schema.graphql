@@ -2186,7 +2186,7 @@ type Mutation {
   upsertSponsor(create: SponsorCreateInput!, update: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor!
   upsertTicket(create: TicketCreateInput!, update: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket!
   upsertVenue(create: VenueCreateInput!, update: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue!
-  withdrawFailedPayment(paymentIntentId: String!): [String!]!
+  withdrawFailedPayment(paymentIntentId: String!): Boolean!
 }
 
 input NestedBoolFilter {

@@ -285,7 +285,7 @@ export class CustomEventResolver {
     @Mutation(_returns => [String])
     async finalizePayment(
         @Ctx() { prisma }: Context,
-        @Arg('paymentIntentId') paymentIntentId: string,
+        @Arg('paymentIntentId', () => String) paymentIntentId: string,
     ): Promise<string[]> {
         const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
         if (intent.status !== 'succeeded') {
@@ -304,10 +304,10 @@ export class CustomEventResolver {
         return tickets.map(ticket => ticket.id);
     }
 
-    @Mutation(_returns => [String])
+    @Mutation(_returns => Boolean)
     async withdrawFailedPayment(
         @Ctx() { prisma }: Context,
-        @Arg('paymentIntentId') paymentIntentId: string,
+        @Arg('paymentIntentId', () => String) paymentIntentId: string,
     ): Promise<Boolean> {
         const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
         if (intent.status === 'succeeded') {
