@@ -221,7 +221,10 @@ type Event {
   getMetadata(key: String!): String
   id: String!
   interestedEmails(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMember!]!
+  majorityAge: Float!
   managers: [String!]!
+  maxAge: Float!
+  minAge: Float!
   name: String!
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
@@ -2140,7 +2143,8 @@ type Mutation {
   deleteSponsor(where: SponsorWhereUniqueInput!): Sponsor
   deleteTicket(where: TicketWhereUniqueInput!): Ticket
   deleteVenue(where: VenueWhereUniqueInput!): Venue
-  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput!): String!
+  finalizePayment(paymentIntentId: String!): [String!]!
+  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String!
   setEventGroupMetadata(key: String!, value: String!, where: EventGroupWhereUniqueInput!): EventGroup
   setEventMetadata(key: String!, value: String!, where: EventWhereUniqueInput!): Event
   setMailingListMemberMetadata(key: String!, value: String!, where: MailingListMemberWhereUniqueInput!): MailingListMember
@@ -2458,6 +2462,7 @@ input NullableStringFieldUpdateOperationsInput {
 
 type Payment {
   Ticket: Ticket!
+  complete: Boolean!
   createdAt: DateTime!
   getMetadata(key: String!): String
   id: String!
@@ -2468,6 +2473,7 @@ type Payment {
 
 type PaymentCountAggregate {
   _all: Int!
+  complete: Int!
   createdAt: Int!
   id: Int!
   metadata: Int!
@@ -2477,6 +2483,7 @@ type PaymentCountAggregate {
 }
 
 input PaymentCountOrderByAggregateInput {
+  complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
@@ -2487,6 +2494,7 @@ input PaymentCountOrderByAggregateInput {
 
 input PaymentCreateInput {
   Ticket: TicketCreateNestedOneWithoutPaymentInput!
+  complete: Boolean
   createdAt: DateTime
   id: String
   metadata: JSON
@@ -2495,6 +2503,7 @@ input PaymentCreateInput {
 }
 
 input PaymentCreateManyInput {
+  complete: Boolean
   createdAt: DateTime
   id: String
   metadata: JSON
@@ -2515,6 +2524,7 @@ input PaymentCreateOrConnectWithoutTicketInput {
 }
 
 input PaymentCreateWithoutTicketInput {
+  complete: Boolean
   createdAt: DateTime
   id: String
   metadata: JSON
@@ -2526,6 +2536,7 @@ type PaymentGroupBy {
   _count: PaymentCountAggregate
   _max: PaymentMaxAggregate
   _min: PaymentMinAggregate
+  complete: Boolean!
   createdAt: DateTime!
   id: String!
   metadata: JSON
@@ -2535,6 +2546,7 @@ type PaymentGroupBy {
 }
 
 type PaymentMaxAggregate {
+  complete: Boolean
   createdAt: DateTime
   id: String
   stripePaymentIntentId: String
@@ -2543,6 +2555,7 @@ type PaymentMaxAggregate {
 }
 
 input PaymentMaxOrderByAggregateInput {
+  complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   stripePaymentIntentId: SortOrder
@@ -2551,6 +2564,7 @@ input PaymentMaxOrderByAggregateInput {
 }
 
 type PaymentMinAggregate {
+  complete: Boolean
   createdAt: DateTime
   id: String
   stripePaymentIntentId: String
@@ -2559,6 +2573,7 @@ type PaymentMinAggregate {
 }
 
 input PaymentMinOrderByAggregateInput {
+  complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   stripePaymentIntentId: SortOrder
@@ -2570,6 +2585,7 @@ input PaymentOrderByWithAggregationInput {
   _count: PaymentCountOrderByAggregateInput
   _max: PaymentMaxOrderByAggregateInput
   _min: PaymentMinOrderByAggregateInput
+  complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
@@ -2580,6 +2596,7 @@ input PaymentOrderByWithAggregationInput {
 
 input PaymentOrderByWithRelationInput {
   Ticket: TicketOrderByWithRelationInput
+  complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
@@ -2594,6 +2611,7 @@ input PaymentRelationFilter {
 }
 
 enum PaymentScalarFieldEnum {
+  complete
   createdAt
   id
   metadata
@@ -2606,6 +2624,7 @@ input PaymentScalarWhereWithAggregatesInput {
   AND: [PaymentScalarWhereWithAggregatesInput!]
   NOT: [PaymentScalarWhereWithAggregatesInput!]
   OR: [PaymentScalarWhereWithAggregatesInput!]
+  complete: BoolWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
   id: StringWithAggregatesFilter
   metadata: JsonNullableWithAggregatesFilter
@@ -2616,6 +2635,7 @@ input PaymentScalarWhereWithAggregatesInput {
 
 input PaymentUpdateInput {
   Ticket: TicketUpdateOneRequiredWithoutPaymentInput
+  complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
@@ -2624,6 +2644,7 @@ input PaymentUpdateInput {
 }
 
 input PaymentUpdateManyMutationInput {
+  complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
@@ -2642,6 +2663,7 @@ input PaymentUpdateOneWithoutTicketInput {
 }
 
 input PaymentUpdateWithoutTicketInput {
+  complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
@@ -2659,6 +2681,7 @@ input PaymentWhereInput {
   NOT: [PaymentWhereInput!]
   OR: [PaymentWhereInput!]
   Ticket: TicketRelationFilter
+  complete: BoolFilter
   createdAt: DateTimeFilter
   id: StringFilter
   metadata: JsonNullableFilter

@@ -184,8 +184,10 @@ model Payment {
 
   // Data
   stripePaymentIntentId String
-  Ticket                Ticket @relation(fields: [ticketId], references: [id])
-  ticketId              String
+  complete              Boolean @default(false)
+
+  Ticket   Ticket @relation(fields: [ticketId], references: [id])
+  ticketId String
 
 }
 

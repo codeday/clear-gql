@@ -15,9 +15,14 @@ export class RegisterForEventArgs {
     eventWhere!: EventWhereUniqueInput;
 
     @Field(_type => TicketCreateWithoutEventInput, {
-        nullable: false
+        nullable: true
     })
     ticketData!: TicketCreateWithoutEventInput;
+
+    @Field(_type => [TicketCreateWithoutEventInput], {
+        nullable: true
+    })
+    ticketsData!: TicketCreateWithoutEventInput[];
 
     @Field(_type => PersonCreateInput, {
     nullable: true
