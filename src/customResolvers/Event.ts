@@ -325,7 +325,7 @@ export class CustomEventResolver {
                 event: { connect: { id: event.id } },
                 guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
                 payment: paymentId ? { connect: { id: paymentId } } : undefined,
-                promoCode: promo ? { connect: { id: promoCode } } : undefined,
+                promoCode: promo ? { connect: { id: promo.id } } : undefined,
             }});
         }));
 
