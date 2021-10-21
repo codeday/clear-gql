@@ -650,6 +650,11 @@ acorn@^8.4.1:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.5.0.tgz#4512ccb99b3698c752591e9bb4472e38ad43cee2"
   integrity sha512-yXbYeFy+jUuYd3/CDcg2NkIYE991XYX/bje7LmjJigUciaeO1JR4XxXgCIV1/Zc/dRuFEyw1L0pbA+qynJkW5Q==
 
+addresser@^1.1.19:
+  version "1.1.19"
+  resolved "https://registry.yarnpkg.com/addresser/-/addresser-1.1.19.tgz#52a072923b0bddc63f1c2044693b3f9b7f3a4a08"
+  integrity sha512-H1gn214SFJLfdNnNtQzJ2mWaCQW9JTzAmUftWyuMiyqjpyp2s9YzcMMxHIaFk42eH0PDE2koHQWBPAk7KbFNmA==
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
