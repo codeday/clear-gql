@@ -229,7 +229,9 @@ type Event {
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean!
+  remainingTickets: Float
   schedule(cursor: ScheduleItemWhereUniqueInput, distinct: [ScheduleItemScalarFieldEnum!], orderBy: [ScheduleItemOrderByWithRelationInput!], skip: Int, take: Int, where: ScheduleItemWhereInput): [ScheduleItem!]!
+  soldTickets(onlyStudents: Boolean = false): Float!
   sponsors(cursor: SponsorWhereUniqueInput, distinct: [SponsorScalarFieldEnum!], orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): [Sponsor!]!
   startDate: DateTime!
   ticketPrice: Float!
