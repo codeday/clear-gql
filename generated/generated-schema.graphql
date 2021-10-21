@@ -5606,7 +5606,9 @@ input TicketWhereUniqueInput {
 type Venue {
   _count: VenueCount
   address: String
+  addressLine1: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
@@ -5616,7 +5618,10 @@ type Venue {
   id: String!
   mapLink: String
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime!
+  zipCode: String
 }
 
 type VenueAvgAggregate {
