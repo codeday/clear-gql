@@ -9,5 +9,6 @@ export const ticketEnhanceConfig: ModelConfig<"Ticket"> = {
     fields: {
         ...defaultPerms,
         id: [],
+
     }
 }
