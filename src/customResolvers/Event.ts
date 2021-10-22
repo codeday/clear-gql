@@ -199,7 +199,9 @@ export class CustomEventResolver {
                 valid: true,
                 displayDiscountAmount: promo.type === 'PERCENT' ? promo.amount + '%' : '$' + promo.amount.toFixed(2),
                 displayDiscountName: promo.code.toUpperCase(),
-                remainingUses: promo.uses ? promo.uses - promo?.tickets.length : null,
+                remainingUses: promo.uses !== null && typeof promo.uses !== 'undefined'
+                  ? promo.uses - promo?.tickets.length
+                  : null,
                 effectivePrice: this.calculatePriceWithPromo(event, promo),
             }
         }
