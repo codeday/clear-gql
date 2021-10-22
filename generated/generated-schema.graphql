@@ -229,7 +229,9 @@ type Event {
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean!
+  remainingTickets: Float
   schedule(cursor: ScheduleItemWhereUniqueInput, distinct: [ScheduleItemScalarFieldEnum!], orderBy: [ScheduleItemOrderByWithRelationInput!], skip: Int, take: Int, where: ScheduleItemWhereInput): [ScheduleItem!]!
+  soldTickets(onlyStudents: Boolean = false): Float!
   sponsors(cursor: SponsorWhereUniqueInput, distinct: [SponsorScalarFieldEnum!], orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): [Sponsor!]!
   startDate: DateTime!
   ticketPrice: Float!
@@ -5606,7 +5608,9 @@ input TicketWhereUniqueInput {
 type Venue {
   _count: VenueCount
   address: String
+  addressLine1: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
@@ -5616,7 +5620,10 @@ type Venue {
   id: String!
   mapLink: String
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime!
+  zipCode: String
 }
 
 type VenueAvgAggregate {

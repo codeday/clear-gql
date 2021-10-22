@@ -97,6 +97,42 @@ export class CustomEventResolver {
         return await prisma.event.findMany({...args})
     }
 
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @FieldResolver(_returns => Number)
+    async soldTickets(
+      @Root() event: Event,
+      @Ctx() { prisma }: Context,
+      @Arg('onlyStudents', () => Boolean, { defaultValue: false }) onlyStudents: Boolean,
+    ): Promise<number> {
+      return prisma.ticket.count({
+        where: {
+          event: { id: event.id },
+          ...(onlyStudents ? { type: 'STUDENT' } : {}),
+        },
+      });
+    }
+
+    @FieldResolver(_returns => Number, { nullable: true })
+    async remainingTickets(
+      @Root() event: Event,
+      @Ctx() { prisma, auth }: Context,
+    ): Promise<number | null> {
+      if (!event.venueId) return null;
+      const [venue, soldTickets] = await Promise.all([
+        prisma.venue.findUnique({ where: { id: event.venueId }, select: { capacity: true } }),
+        prisma.ticket.count({ where: { eventId: event.id } }),
+      ]);
+
+      if (!venue?.capacity) return null;
+
+      const remaining = venue.capacity - soldTickets;
+
+      // Publicly report the approximate capacity if more than 10 tickets remain, so that it's harder for people
+      // to gather ticket speed statistics.
+      if (remaining <= 10 || auth.isAdmin || auth.isManager || auth.isVolunteer) return remaining;
+      else return Math.floor(remaining / 10) * 10;
+    }
+
     async fetchPromo(
         prisma: PrismaClient,
         event: Event,
@@ -213,10 +249,23 @@ export class CustomEventResolver {
         if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
         const tickets = ticketsData ?? [ticketData];
 
-        const event = await prisma.event.findUnique({
-            rejectOnNotFound: true,
-            where: eventWhere,
-        });
+        const [{ venue, ...event }, ticketCount] = await Promise.all([
+            prisma.event.findUnique({
+                rejectOnNotFound: true,
+                where: eventWhere,
+                include: { venue: { select: { capacity: true } } },
+            }),
+            prisma.ticket.count({ where: { event: eventWhere } }),
+        ]);
+
+        if (!venue?.capacity || !event.registrationsOpen) {
+            throw new Error('Registrations for this event are not open.');
+        }
+
+        const remainingCapacity = venue.capacity - ticketCount;
+        if (remainingCapacity < tickets.length) {
+            throw new Error(`Sorry, only ${remainingCapacity} tickets are still available for this event.`);
+        }
 
         // Check if all required information is present on the ticket.
         const ticketsMissingInformation = tickets.map(ticket => this.validateTicket(event, ticket)).flat();
@@ -276,6 +325,7 @@ export class CustomEventResolver {
                 event: { connect: { id: event.id } },
                 guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
                 payment: paymentId ? { connect: { id: paymentId } } : undefined,
+                promoCode: promo ? { connect: { id: promo.id } } : undefined,
             }});
         }));
 
