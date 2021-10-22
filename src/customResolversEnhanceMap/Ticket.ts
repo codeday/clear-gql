@@ -7,6 +7,7 @@ Object.getOwnPropertyNames(TicketCrudResolver.prototype).forEach((value: string)
 
 export const ticketEnhanceConfig: ResolverActionsConfig<"Ticket"> = {
     ...defaultPerms,
+    ticket: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     createTicket: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     updateTicket: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     deleteTicket: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)]

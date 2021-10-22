@@ -150,7 +150,7 @@ export class CustomEventResolver {
         let result: CheckPromoCodeResult;
         const activeTicketPrice = this.activeTicketPrice(event);
         const promo = await this.fetchPromo(prisma, event, code);
-        if (promo === null || activeTicketPrice === null) {
+        if (promo === null || activeTicketPrice === null || promo.uses && promo.uses <= promo.tickets.length) {
             return {
                 valid: false,
                 displayDiscountAmount: null,
