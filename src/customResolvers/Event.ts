@@ -6,6 +6,7 @@ import {phone} from 'phone';
 import {Prisma, PrismaClient, Ticket} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
+import { roundDecimal } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
 import Stripe from "stripe";
 import {RegisterForEventArgs} from "../args/RegisterForEventArgs";
@@ -169,9 +170,9 @@ export class CustomEventResolver {
         }
 
         if(promo.type === "SUBTRACT") {
-            return Math.max(0, activeTicketPrice - promo.amount);
+            return roundDecimal(Math.max(0, activeTicketPrice - promo.amount));
         } else if (promo.type === "PERCENT") {
-            return Math.max(0, activeTicketPrice * (1 - (promo.amount / 100)));
+            return roundDecimal(Math.max(0, activeTicketPrice * (1 - (promo.amount / 100))));
         }
 
         return 0;
