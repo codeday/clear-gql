@@ -170,11 +170,9 @@ export class CustomEventResolver {
         }
 
         if(promo.type === "SUBTRACT") {
-            let price = roundDecimal(Math.max(0, activeTicketPrice - promo.amount));
-            return (price > activeTicketPrice? activeTicketPrice:price)
+            return roundDecimal(Math.max(0, activeTicketPrice - promo.amount));
         } else if (promo.type === "PERCENT") {
-            let price = roundDecimal(Math.max(0, activeTicketPrice * (1 - (promo.amount / 100))));
-            return (price > activeTicketPrice? activeTicketPrice:price)
+            return roundDecimal(Math.max(0, activeTicketPrice * (1 - (promo.amount / 100))));
         }
 
         return 0;
