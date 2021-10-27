@@ -10,5 +10,8 @@ export const sponsorEnhanceConfig: ModelConfig<"Sponsor"> = {
         ...defaultPerms,
         id: [],
         name: [],
+        logoImageUri: [],
+        description: [],
+        perks: [],
     }
 }
