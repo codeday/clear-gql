@@ -16,6 +16,7 @@ export const scheduleitemEnhanceConfig: ModelConfig<"ScheduleItem"> = {
         hostPronoun: [],
         description: [],
         link: [],
+        type: [],
         finalized: [],
         internal: [],
     }
