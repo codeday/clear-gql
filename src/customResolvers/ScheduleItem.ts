@@ -88,10 +88,10 @@ export class CustomScheduleItemResolver {
 
         if (sameDay) {
             return [
-                start.toLocaleString({ ...dayFormat, ...hourFormat }),
                 sameMeridiem
-                    ? stripAmPm(end.toLocaleString(hourFormat))
-                    : end.toLocaleString(hourFormat),
+                    ? stripAmPm(start.toLocaleString({ ...dayFormat, ...hourFormat }))
+                    : start.toLocaleString({ ...dayFormat, ...hourFormat }),
+                end.toLocaleString(hourFormat),
             ].join('-');
         }
 
