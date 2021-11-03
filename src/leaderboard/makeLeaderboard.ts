@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 export default async function makeLeaderboard(): Promise<string> {
     const now = DateTime.now()
     let leaderboard = `🏆 Registration leaderboard for ${now.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}:\n`
+
     const openEvents = await prisma.event.findMany({
         where: {
             registrationsOpen: true,
@@ -12,7 +13,7 @@ export default async function makeLeaderboard(): Promise<string> {
         },
         select: {
             name: true,
-            tickets: true
+            tickets: {where: {type : {equals: 'STUDENT'}}}
         }
     })
     openEvents.sort((a,b) => (a.tickets.length > b.tickets.length) ? -1 : 1).forEach((event, idx) => {
