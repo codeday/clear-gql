@@ -10,5 +10,14 @@ export const scheduleitemEnhanceConfig: ModelConfig<"ScheduleItem"> = {
         ...defaultPerms,
         id: [],
         name: [],
+        start: [],
+        end: [],
+        hostName: [],
+        hostPronoun: [],
+        description: [],
+        link: [],
+        type: [],
+        finalized: [],
+        internal: [],
     }
 }

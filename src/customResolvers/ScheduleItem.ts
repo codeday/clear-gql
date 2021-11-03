@@ -1,34 +1,104 @@
-import { Prisma } from "@prisma/client"
+import { Prisma, PrismaClient } from "@prisma/client"
 import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {ScheduleItem, FindUniqueScheduleItemArgs} from "../generated/typegraphql-prisma";
 import {AuthRole, Context} from "../context";
+import fetch from 'node-fetch';
 import dot from "dot-object";
-import moment from "moment";
+import { DateTime } from 'luxon';
+
+function stripAmPm(str: string): string {
+    return str.replace(' AM', '').replace(' PM', '');
+}
+
+type GetTimezoneQueryResponse = { data: { cms: { regions: { items: { timezone: string }[] } } } };
+const GET_TIMEZONE_QUERY = `
+query GetTimezoneQuery($webname: String!) {
+  cms {
+    regions(where:{webname:$webname}, limit:1) {
+      items {
+        timezone
+      }
+    }
+  }
+}
+`;
+
+// TODO(@tylermenezes): This is a bad solution to support server-side time formatting
+async function getEventTimezone(prisma: PrismaClient, eventId?: string | null): Promise<string> {
+    if (!eventId) return 'UTC';
+    try {
+        const event = await prisma.event.findUnique({
+            where: { id: eventId },
+            select: { contentfulWebname: true },
+            rejectOnNotFound: true,
+        });
+
+        const res = await fetch('https://graph.codeday.org/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query: GET_TIMEZONE_QUERY, variables: { webname: event.contentfulWebname } }),
+        });
+        const { data } = <GetTimezoneQueryResponse> await res.json();
+        return data.cms.regions.items[0].timezone;
+    } catch (ex) {
+        return 'UTC';
+    }
+}
 
 @Resolver(of => ScheduleItem)
 export class CustomScheduleItemResolver {
     @FieldResolver(type => String)
-    displayTime(
+    async displayTime(
         @Root() scheduleItem: ScheduleItem,
-        ): String {
-        const start = moment(scheduleItem.start)
-        if (!scheduleItem.end) return start.format('h:mma')
-        const end = moment(scheduleItem.end)
-        if (start.format('a') === end.format('a')) return `${start.format('h:mm')} - ${end.format('h:mma')}`
-        return `${start.format('h:mma')} - ${end.format('h:mma')}`
+        @Ctx() { prisma }: Context,
+    ): Promise<String> {
+        const tz = await getEventTimezone(prisma, scheduleItem.eventId);
+
+        const start = DateTime.fromJSDate(scheduleItem.start).setZone(tz);
+        if (!scheduleItem.end) return start.toLocaleString({ hour: 'numeric', minute: 'numeric' });
+
+        const end = DateTime.fromJSDate(scheduleItem.end).setZone(tz);
+
+        const sameMeridiem = Math.sign(start.hour - 12) === Math.sign(end.hour - 12);
+        return [
+            sameMeridiem
+                ? stripAmPm(start.toLocaleString(DateTime.TIME_SIMPLE))
+                : start.toLocaleString(DateTime.TIME_SIMPLE),
+            end.toLocaleString(DateTime.TIME_SIMPLE),
+        ].join('-');
     }
 
     @FieldResolver(type => String)
-    displayTimeWithDate(
+    async displayTimeWithDate(
         @Root() scheduleItem: ScheduleItem,
-        ): String {
-        const start = moment(scheduleItem.start)
-        if (!scheduleItem.end) return start.format('MMM Do h:mma')
-        const end = moment(scheduleItem.end)
-        if (start.month() !== end.month()) return `${start.format('MMM Do h:mma')} - ${end.format('MMM Do h:mma')}`
-        if (start.day() !== end.day()) return `${start.format('MMM Do h:mma')} - ${end.format('Do h:mma')}`
-        if (start.format('a') !== end.format('a')) return `${start.format('MMM Do h:mma')} - ${end.format('h:mma')}`
-        return `${start.format('MMM Do hh:mm')} - ${end.format('h:mma')}`
+        @Ctx() { prisma }: Context,
+    ): Promise<String> {
+        const tz = await getEventTimezone(prisma, scheduleItem.eventId);
+        const dayFormat: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
+        const hourFormat = DateTime.TIME_SIMPLE;
+
+        const start = DateTime.fromJSDate(scheduleItem.start).setZone(tz);
+        if (!scheduleItem.end) return start.toLocaleString({ ...dayFormat, ...hourFormat })
+
+        const end = DateTime.fromJSDate(scheduleItem.end).setZone(tz);
+        const sameDay = start.day === end.day && start.month === end.month && start.year === end.year;
+        const sameMeridiem = Math.sign(start.hour - 12) === Math.sign(end.hour - 12);
+
+        if (sameDay) {
+            return [
+                sameMeridiem
+                    ? stripAmPm(start.toLocaleString({ ...dayFormat, ...hourFormat }))
+                    : start.toLocaleString({ ...dayFormat, ...hourFormat }),
+                end.toLocaleString(hourFormat),
+            ].join('-');
+        }
+
+        return [
+            start.toLocaleString({ ...dayFormat, ...hourFormat }),
+            end.toLocaleString({ ...dayFormat, ...hourFormat }),
+        ].join('-');
     }
 }
 
