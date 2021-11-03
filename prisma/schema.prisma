@@ -23,9 +23,9 @@ enum MetadataVisibility {
 
 model EventGroup {
   // Metadata
-  id                 String         @id @default(cuid())
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  id                 String   @id @default(cuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
   /// @TypeGraphQL.omit(output: true)
   metadata           Json?
   // Data
@@ -39,9 +39,9 @@ model EventGroup {
   showcaseId         String?
 
   // Relations
-  events             Event[]
-  schedule           ScheduleItem[]
-  promoCodes         PromoCode[]
+  events     Event[]
+  schedule   ScheduleItem[]
+  promoCodes PromoCode[]
 }
 
 model Event {
