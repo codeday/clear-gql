@@ -7,6 +7,7 @@
     "dev": "ts-node-dev --no-notify --respawn --transpile-only src"
   },
   "dependencies": {
+    "@codeday/uploader-node": "^1.0.1",
     "@prisma/client": "3.0.2",
     "@types/dot-object": "^2.1.2",
     "@types/ws": "^7.4.7",

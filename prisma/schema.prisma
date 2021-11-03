@@ -167,12 +167,12 @@ model Ticket {
   // Relations
   guardian Person? @relation(fields: [personId], references: [id])
 
-  event       Event    @relation(fields: [eventId], references: [id])
+  event       Event   @relation(fields: [eventId], references: [id])
   eventId     String
   personId    String?
   promoCodeId String?
 
-  payment Payment? @relation(fields: [paymentId], references: [id])
+  payment   Payment? @relation(fields: [paymentId], references: [id])
   paymentId String?
 }
 

@@ -54,6 +54,14 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@codeday/uploader-node@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@codeday/uploader-node/-/uploader-node-1.0.1.tgz#6a30a832f44cc768f86a6185e0f9afced06bac6c"
+  integrity sha512-Yyv7n28vOajZF/4WzlJsNC3PCBJjlCBN4kW7jMIIIGIz4Srej7daa6aSSfjVaui6nRkHxHo3B8owsLMkB3PvYQ==
+  dependencies:
+    form-data "^3.0.0"
+    node-fetch "^2.6.0"
+
 "@cspotcode/source-map-consumer@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@cspotcode/source-map-consumer/-/source-map-consumer-0.8.0.tgz#33bf4b7b39c178821606f669bbc447a6a629786b"

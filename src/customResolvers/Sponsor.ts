@@ -2,8 +2,35 @@ import {Prisma} from "@prisma/client"
 import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Resolver, Root} from "type-graphql";
 import {FindUniqueSponsorArgs, Sponsor} from "../generated/typegraphql-prisma";
 import {AuthRole, Context} from "../context";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
+// @ts-ignore
+import Uploader from '@codeday/uploader-node';
 import dot from "dot-object";
 
+const uploader = new Uploader(process.env.UPLOADER_URL, process.env.UPLOADER_SECRET);
+
+@Resolver(of => Sponsor)
+export class CustomSponsorResolver {
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @Mutation(_returns => Sponsor, {nullable: true})
+    async uploadSponsorLogo(
+        @Args() where: FindUniqueSponsorArgs,
+        @Arg("upload", () => GraphQLUpload) { createReadStream, filename}: FileUpload,
+        @Ctx() { prisma }: Context,
+    ): Promise<Sponsor> {
+        const chunks = [];
+        for await (const chunk of createReadStream()) {
+            chunks.push(chunk)
+        }
+        const uploadBuffer = Buffer.concat(chunks);
+
+        const result = await uploader.image(uploadBuffer, filename || '_.jpg')
+        if (!result.url) {
+            throw new Error("An error occurred while uploading your picture. Please refresh the page and try again.")
+        }
+        return prisma.sponsor.update({...where, data: {logoImageUri: result.url}})
+    }
+}
 @Resolver(of => Sponsor)
 export class SponsorMetadataResolver {
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
