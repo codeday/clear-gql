@@ -12,7 +12,7 @@ export class CustomTicketResolver {
         @Root() ticket: Ticket,
     ): Boolean {
         if (ticket.age && ticket.age >= 18) return false;
-        if (ticket.guardian instanceof Person) return false;
+        if (ticket.personId) return false;
         return true
     }
 }
