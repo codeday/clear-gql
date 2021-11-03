@@ -321,7 +321,7 @@ export class CustomEventResolver {
         }
 
         await prisma.$transaction(tickets.map((ticket) => {
-            const isMinor = ticket.age! > this.majorityAge(event);
+            const isMinor = ticket.age! < this.majorityAge(event);
 
             return prisma.ticket.create({data: {
                 ...ticket,
