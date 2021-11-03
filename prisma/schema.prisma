@@ -36,6 +36,8 @@ model EventGroup {
   earlyBirdPrice     Float
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
+  showcaseId         String?
+
   // Relations
   events             Event[]
   schedule           ScheduleItem[]
@@ -61,6 +63,7 @@ model Event {
   managers           String[] // codeday account usernames
   registrationsOpen  Boolean  @default(false)
   contentfulWebname  String?
+  showcaseId         String?
 
   // Relations
   eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
@@ -103,6 +106,7 @@ model Sponsor {
   metadata     Json?
   // Data
   name         String
+  link         String?
   logoImageUri String?
   description  String?
   perks        String?

@@ -13,5 +13,6 @@ export const sponsorEnhanceConfig: ModelConfig<"Sponsor"> = {
         logoImageUri: [],
         description: [],
         perks: [],
+        link: [],
     }
 }
