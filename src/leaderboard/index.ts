@@ -6,6 +6,8 @@ export default async function leaderboard(): Promise<void> {
     if (WEBHOOK_URL) {
         const rule = new schedule.RecurrenceRule();
         rule.hour = 9;
+        rule.minute = 0;
+        rule.second = 0;
         rule.tz = 'America/Los_Angeles';
         schedule.scheduleJob(rule, () => (sendLeaderboard(WEBHOOK_URL)));
     } else {

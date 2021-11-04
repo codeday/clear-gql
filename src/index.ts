@@ -5,4 +5,4 @@ import server from './server'
 import leaderboard from "./leaderboard";
 
 server();
-// leaderboard();
+leaderboard();
