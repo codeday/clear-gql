@@ -53,6 +53,7 @@ export default async function emails() {
             // @ts-ignore
             const msgText = renderStudentWaiverText(ticket)
             twilio.messages.create({from: config.twilio.number, to: ticket.phone, body: msgText})
+            dot.str('waiverSent', true, metadataObject)
             await prisma.ticket.update({where: {id: ticket.id}, data: {metadata: metadataObject}})
         }
     })
