@@ -14,7 +14,15 @@ const config = {
     auth: {
         secret: process.env.AUTH_SECRET!,
         audience: process.env.AUTH_AUDIENCE!,
-    }
+    },
+    postmark: {
+        serverToken: process.env.POSTMARK_KEY,
+    },
+    twilio: {
+        sid: process.env.TWILIO_SID || '',
+        token: process.env.TWILIO_TOKEN || '',
+        number: process.env.TWILIO_TEXT_NUMBER,
+    },
 };
 
 export default config;
