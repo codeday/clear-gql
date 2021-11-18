@@ -1,0 +1,9 @@
+.env
+.env.*
+prisma/.env
+generated/
+dist/
+.eslint*
+README.md
+fly.toml
+node_modules/

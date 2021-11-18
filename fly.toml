@@ -1,0 +1,13 @@
+# fly.toml file generated for codeday-clear-gql on 2021-11-18T09:35:51-05:00
+
+app = "codeday-clear-gql"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
