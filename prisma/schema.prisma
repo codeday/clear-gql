@@ -61,9 +61,11 @@ model Event {
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
   managers           String[] // codeday account usernames
-  registrationsOpen  Boolean  @default(false)
+  registrationsOpen  Boolean            @default(false)
   contentfulWebname  String?
   showcaseId         String?
+  covidRestrictions  CovidRestriction[]
+  timezone           String?
 
   // Relations
   eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
@@ -264,4 +266,55 @@ model MailingListMember {
   email              String    @unique
   interestedInEvents Event[]
   lastEmailed        DateTime?
+}
+
+enum EmailWhenFrom {
+  REGISTER
+  EVENTSTART
+  EVENTEND
+}
+
+model EmailTemplate {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  name            String
+  automatic       Boolean
+  fromName        String        @default("John Peter")
+  fromEmail       String        @default("team@codeday.org")
+  subject         String
+  sendTo          TicketType
+  when            String
+  whenFrom        EmailWhenFrom
+  sendLate        Boolean
+  sendInWorkHours Boolean
+  sendAfterEvent  Boolean
+  sendParent      Boolean
+  template        String
+  marketing       Boolean
+  extraFilters    Json?
+  sendText        Boolean
+  textMsg         String?
+}
+
+model CovidRestriction {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  name    String
+  iconUri String?
+  title   String
+  details String?
+  Events  Event[]
+  eventId String?
 }
