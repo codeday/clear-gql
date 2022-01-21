@@ -3,7 +3,7 @@ import { sign } from "jsonwebtoken";
 import config from "../config";
 
 
-function mintWaiverLink(ticket: Ticket): string {
+export function mintWaiverLink(ticket: Ticket): string {
     const tid = ticket.id;
     const audience = 'www-event';
     const token = sign(
