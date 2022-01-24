@@ -12,16 +12,17 @@ const prisma = new PrismaClient()
 const postmark = new ServerClient(config.postmark.serverToken || '');
 const twilio = new Twilio(config.twilio.sid, config.twilio.token);
 
-function IsWorkHours(tz: string | undefined, fallback='America/Los_Angeles') {
+function IsWorkHours(tz: string | undefined, fallback='America/Los_Angeles'): Boolean {
     let now = DateTime.local().setZone(tz)
     if (!now.isValid) {
         now = DateTime.local().setZone(fallback)
         if (!now.isValid) {
-            throw('Invalid Fallback Timezone')
+            return true
         }
     }
     return now.hour >= 9 && now.hour < 17
 }
+
 
 export default async function emails() {
     const templates = await prisma.emailTemplate.findMany({
