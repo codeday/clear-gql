@@ -21,7 +21,7 @@ interface TemplateData {
     guardian: Person | null,
     waiverLink: string
 }
-function IsWorkHours(tz: string | null, fallback='America/Los_Angeles'): Boolean {
+export function IsWorkHours(tz: string | null, fallback='America/Los_Angeles'): Boolean {
     let now = DateTime.local().setZone(tz || undefined)
     if (!now.isValid) {
         now = DateTime.local().setZone(fallback)
@@ -32,21 +32,21 @@ function IsWorkHours(tz: string | null, fallback='America/Los_Angeles'): Boolean
     return now.hour >= 9 && now.hour < 17
 }
 
-function IsAfterEvent(event: Event): boolean {
+export function IsAfterEvent(event: Event): boolean {
     return new Date() > event.endDate
 }
 
-function WouldSendLate(event: Event, ticket: Ticket, template: EmailTemplate) {
+export function WouldSendLate(event: Event, ticket: Ticket, template: EmailTemplate) {
     if (template.whenFrom != "EVENTSTART") return false
     // @ts-ignore
-    return ticket.createdAt > new Date(event.startDate - ms(template.when))
+    return ticket.createdAt > new Date(+event.startDate + ms(template.when))
 }
 
-async function ProcessTicket(template: EmailTemplate,
-                             ticket: Ticket,
-                             smsBodyTemplate: Handlebars.TemplateDelegate,
-                             emailSubjectTemplate: Handlebars.TemplateDelegate,
-                             emailBodyTemplate: Handlebars.TemplateDelegate,
+export async function ProcessTicket(template: EmailTemplate,
+                                    ticket: Ticket,
+                                    smsBodyTemplate: Handlebars.TemplateDelegate,
+                                    emailSubjectTemplate: Handlebars.TemplateDelegate,
+                                    emailBodyTemplate: Handlebars.TemplateDelegate,
 ): Promise<void> {
     const event = await prisma.event.findUnique({where: {id: ticket.eventId}})
     if (!event) return
@@ -137,20 +137,20 @@ async function ProcessTemplate(template: EmailTemplate): Promise<void> {
 
 
 async function QueueEmail(sendTo: string,
-                    template: EmailTemplate,
-                    emailSubjectTemplate: Handlebars.TemplateDelegate,
-                    emailBodyTemplate: Handlebars.TemplateDelegate,
-                    data: TemplateData,
+                          template: EmailTemplate,
+                          emailSubjectTemplate: Handlebars.TemplateDelegate,
+                          emailBodyTemplate: Handlebars.TemplateDelegate,
+                          data: TemplateData,
 
 ): Promise<void> {
     emailQueue.push({
-            To: sendTo,
-            ReplyTo: template.replyTo,
-            From: `${template.fromName} <${template.fromEmail}>`,
-            Subject: emailSubjectTemplate(data),
-            HtmlBody: marked.parse(emailBodyTemplate(data)),
-            MessageStream: template.marketing? "attendees" : "outbound"
-        })
+        To: sendTo,
+        ReplyTo: template.replyTo,
+        From: `${template.fromName} <${template.fromEmail}>`,
+        Subject: emailSubjectTemplate(data),
+        HtmlBody: marked.parse(emailBodyTemplate(data)),
+        MessageStream: template.marketing? "attendees" : "outbound"
+    })
 }
 
 async function SendQueuedEmails(): Promise<void> {
