@@ -21,7 +21,7 @@ interface TemplateData {
     guardian: Person | null,
     waiverLink: string
 }
-export function IsWorkHours(tz: string | null, fallback='America/Los_Angeles'): Boolean {
+export function IsWorkHours(tz: string | null | undefined, fallback='America/Los_Angeles'): Boolean {
     let now = DateTime.local().setZone(tz || undefined)
     if (!now.isValid) {
         now = DateTime.local().setZone(fallback)
@@ -48,10 +48,10 @@ export async function ProcessTicket(template: EmailTemplate,
                                     emailSubjectTemplate: Handlebars.TemplateDelegate,
                                     emailBodyTemplate: Handlebars.TemplateDelegate,
 ): Promise<void> {
-    const event = await prisma.event.findUnique({where: {id: ticket.eventId}})
+    const event = ticket.event
     if (!event) return
-    const venue = event.venueId? await prisma.venue.findUnique({where: {id: event.venueId || undefined}}) : null
-    const guardian = ticket.personId? await prisma.person.findUnique({where: {id: ticket.personId || undefined}}) : null
+    const venue = ticket.event?.venue || null
+    const guardian = ticket.guardian || null
     const data: TemplateData = {
         ticket,
         event,
@@ -80,7 +80,7 @@ export async function ProcessTicket(template: EmailTemplate,
     await prisma.ticket.update({where: {id: ticket.id}, data: {sentEmails: {connect: {id: template.id}}}})
 }
 
-async function ProcessTemplate(template: EmailTemplate): Promise<void> {
+export async function ProcessTemplate(template: EmailTemplate): Promise<void> {
     const extrafilters = []
     const offset = ms(template.when)
     const emailSubjectTemplate = handlebars.compile(template.subject)
@@ -129,6 +129,15 @@ async function ProcessTemplate(template: EmailTemplate): Promise<void> {
                 ...extrafilters
             ]
         },
+        include: {
+            event: {
+                include: {
+                    venue: true
+                }
+            },
+            guardian: true
+
+        }
     })
     await Promise.all(tickets.map(async (ticket) => {
         await ProcessTicket(template, ticket, smsBodyTemplate, emailSubjectTemplate, emailBodyTemplate)
@@ -136,7 +145,7 @@ async function ProcessTemplate(template: EmailTemplate): Promise<void> {
 }
 
 
-async function QueueEmail(sendTo: string,
+export async function QueueEmail(sendTo: string,
                           template: EmailTemplate,
                           emailSubjectTemplate: Handlebars.TemplateDelegate,
                           emailBodyTemplate: Handlebars.TemplateDelegate,
@@ -153,13 +162,13 @@ async function QueueEmail(sendTo: string,
     })
 }
 
-async function SendQueuedEmails(): Promise<void> {
+export async function SendQueuedEmails(): Promise<void> {
     await postmark.sendEmailBatch(emailQueue)
     // https://stackoverflow.com/a/1232046
     emailQueue.splice(0, emailQueue.length)
 }
 
-async function SendText(sendTo: string,
+export async function SendText(sendTo: string,
                         smsBodyTemplate: Handlebars.TemplateDelegate,
                         data: TemplateData
 ): Promise<void> {
