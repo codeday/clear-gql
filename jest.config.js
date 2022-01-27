@@ -3,5 +3,5 @@ module.exports = {
   testEnvironment: 'node',
   transformIgnorePatterns: ["node_modules\\?!(marked)\\"],
   timers: "fake",
-  maxWorkers: "50%"
+  maxWorkers: "50%",
 };

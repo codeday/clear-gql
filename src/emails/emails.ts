@@ -64,7 +64,7 @@ export async function ProcessTicket(template: EmailTemplate,
     if(!template.sendLate && WouldSendLate(event, ticket, template)) return
 
     if(template.sendParent) {
-        if(!guardian) return
+        if(!guardian) return console.log('')
         if(template.sendText && guardian.phone) {
             await SendText(guardian.phone, smsBodyTemplate, data)
         } else if(guardian.email) {
@@ -175,7 +175,7 @@ export async function SendText(sendTo: string,
     await twilio.messages.create({from: config.twilio.number, to: sendTo, body: smsBodyTemplate(data)})
 }
 
-export default async function emails() {
+export default async function emails(): Promise<void> {
     const templates = await prisma.emailTemplate.findMany({
         where: {automatic: true}
     })
