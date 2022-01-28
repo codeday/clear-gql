@@ -64,7 +64,7 @@ model Event {
   registrationsOpen  Boolean            @default(false)
   contentfulWebname  String?
   showcaseId         String?
-  covidRestrictions  CovidRestriction[]
+  eventRestrictions  EventRestriction[]
   timezone           String?
   majorityAge        Int                @default(18)
 
@@ -306,7 +306,7 @@ model EmailTemplate {
   sentTo          Ticket[]
 }
 
-model CovidRestriction {
+model EventRestriction {
   // Metadata
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())

@@ -9,7 +9,7 @@ import {eventgroupEnhanceConfig} from "./EventGroup";
 import {venueEnhanceConfig} from "./Venue";
 import {promocodeEnhanceConfig} from "./PromoCode";
 import {mailinglistmemberEnhanceConfig} from "./MailingListMember";
-import {covidRestrictionEnhanceConfig} from "./CovidRestriction";
+import {eventRestrictionEnhanceConfig} from "./EventRestriction";
 import {emailTemplateEnhanceConfig} from "./EmailTemplate";
 
 const customModelsEnhanceMap: ModelsEnhanceMap =
@@ -24,7 +24,7 @@ const customModelsEnhanceMap: ModelsEnhanceMap =
         Venue: venueEnhanceConfig,
         PromoCode: promocodeEnhanceConfig,
         MailingListMember: mailinglistmemberEnhanceConfig,
-        CovidRestriction: covidRestrictionEnhanceConfig,
+        EventRestriction: eventRestrictionEnhanceConfig,
         EmailTemplate: emailTemplateEnhanceConfig,
     }
 

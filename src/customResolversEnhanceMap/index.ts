@@ -9,7 +9,7 @@ import {eventgroupEnhanceConfig} from "./EventGroup";
 import {venueEnhanceConfig} from "./Venue";
 import {promocodeEnhanceConfig} from "./PromoCode";
 import {mailinglistmemberEnhanceConfig} from "./MailingListMember";
-import {covidrestrictionEnhanceConfig} from "./CovidRestriction";
+import {eventRestrictionEnhanceConfig} from "./EventRestriction";
 import {emailtemplateEnhanceConfig} from "./EmailTemplate";
 
 const customResolversEnhanceMap: ResolversEnhanceMap =
@@ -24,7 +24,7 @@ const customResolversEnhanceMap: ResolversEnhanceMap =
         Venue: venueEnhanceConfig,
         PromoCode: promocodeEnhanceConfig,
         MailingListMember: mailinglistmemberEnhanceConfig,
-        CovidRestriction: covidrestrictionEnhanceConfig,
+        EventRestriction: eventRestrictionEnhanceConfig,
         EmailTemplate: emailtemplateEnhanceConfig,
     }
 

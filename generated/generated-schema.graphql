@@ -7,12 +7,6 @@ type AffectedRowsOutput {
   count: Int!
 }
 
-type AggregateCovidRestriction {
-  _count: CovidRestrictionCountAggregate
-  _max: CovidRestrictionMaxAggregate
-  _min: CovidRestrictionMinAggregate
-}
-
 type AggregateEmailTemplate {
   _count: EmailTemplateCountAggregate
   _max: EmailTemplateMaxAggregate
@@ -33,6 +27,12 @@ type AggregateEventGroup {
   _max: EventGroupMaxAggregate
   _min: EventGroupMinAggregate
   _sum: EventGroupSumAggregate
+}
+
+type AggregateEventRestriction {
+  _count: EventRestrictionCountAggregate
+  _max: EventRestrictionMaxAggregate
+  _min: EventRestrictionMinAggregate
 }
 
 type AggregateMailingListMember {
@@ -108,302 +108,6 @@ input BoolWithAggregatesFilter {
   _min: NestedBoolFilter
   equals: Boolean
   not: NestedBoolWithAggregatesFilter
-}
-
-type CovidRestriction {
-  Events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
-  _count: CovidRestrictionCount
-  createdAt: DateTime!
-  details: String
-  getMetadata(key: String!): String
-  iconUri: String
-  id: String!
-  name: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
-type CovidRestrictionCount {
-  Events: Int!
-}
-
-type CovidRestrictionCountAggregate {
-  _all: Int!
-  createdAt: Int!
-  details: Int!
-  iconUri: Int!
-  id: Int!
-  metadata: Int!
-  name: Int!
-  title: Int!
-  updatedAt: Int!
-}
-
-input CovidRestrictionCountOrderByAggregateInput {
-  createdAt: SortOrder
-  details: SortOrder
-  iconUri: SortOrder
-  id: SortOrder
-  metadata: SortOrder
-  name: SortOrder
-  title: SortOrder
-  updatedAt: SortOrder
-}
-
-input CovidRestrictionCreateInput {
-  Events: EventCreateNestedManyWithoutCovidRestrictionsInput
-  createdAt: DateTime
-  details: String
-  iconUri: String
-  id: String
-  metadata: JSON
-  name: String!
-  title: String!
-  updatedAt: DateTime
-}
-
-input CovidRestrictionCreateManyInput {
-  createdAt: DateTime
-  details: String
-  iconUri: String
-  id: String
-  metadata: JSON
-  name: String!
-  title: String!
-  updatedAt: DateTime
-}
-
-input CovidRestrictionCreateNestedManyWithoutEventsInput {
-  connect: [CovidRestrictionWhereUniqueInput!]
-  connectOrCreate: [CovidRestrictionCreateOrConnectWithoutEventsInput!]
-  create: [CovidRestrictionCreateWithoutEventsInput!]
-}
-
-input CovidRestrictionCreateOrConnectWithoutEventsInput {
-  create: CovidRestrictionCreateWithoutEventsInput!
-  where: CovidRestrictionWhereUniqueInput!
-}
-
-input CovidRestrictionCreateWithoutEventsInput {
-  createdAt: DateTime
-  details: String
-  iconUri: String
-  id: String
-  metadata: JSON
-  name: String!
-  title: String!
-  updatedAt: DateTime
-}
-
-type CovidRestrictionGroupBy {
-  _count: CovidRestrictionCountAggregate
-  _max: CovidRestrictionMaxAggregate
-  _min: CovidRestrictionMinAggregate
-  createdAt: DateTime!
-  details: String
-  iconUri: String
-  id: String!
-  metadata: JSON
-  name: String!
-  title: String!
-  updatedAt: DateTime!
-}
-
-input CovidRestrictionListRelationFilter {
-  every: CovidRestrictionWhereInput
-  none: CovidRestrictionWhereInput
-  some: CovidRestrictionWhereInput
-}
-
-type CovidRestrictionMaxAggregate {
-  createdAt: DateTime
-  details: String
-  iconUri: String
-  id: String
-  name: String
-  title: String
-  updatedAt: DateTime
-}
-
-input CovidRestrictionMaxOrderByAggregateInput {
-  createdAt: SortOrder
-  details: SortOrder
-  iconUri: SortOrder
-  id: SortOrder
-  name: SortOrder
-  title: SortOrder
-  updatedAt: SortOrder
-}
-
-type CovidRestrictionMinAggregate {
-  createdAt: DateTime
-  details: String
-  iconUri: String
-  id: String
-  name: String
-  title: String
-  updatedAt: DateTime
-}
-
-input CovidRestrictionMinOrderByAggregateInput {
-  createdAt: SortOrder
-  details: SortOrder
-  iconUri: SortOrder
-  id: SortOrder
-  name: SortOrder
-  title: SortOrder
-  updatedAt: SortOrder
-}
-
-input CovidRestrictionOrderByRelationAggregateInput {
-  _count: SortOrder
-}
-
-input CovidRestrictionOrderByWithAggregationInput {
-  _count: CovidRestrictionCountOrderByAggregateInput
-  _max: CovidRestrictionMaxOrderByAggregateInput
-  _min: CovidRestrictionMinOrderByAggregateInput
-  createdAt: SortOrder
-  details: SortOrder
-  iconUri: SortOrder
-  id: SortOrder
-  metadata: SortOrder
-  name: SortOrder
-  title: SortOrder
-  updatedAt: SortOrder
-}
-
-input CovidRestrictionOrderByWithRelationInput {
-  Events: EventOrderByRelationAggregateInput
-  createdAt: SortOrder
-  details: SortOrder
-  iconUri: SortOrder
-  id: SortOrder
-  metadata: SortOrder
-  name: SortOrder
-  title: SortOrder
-  updatedAt: SortOrder
-}
-
-enum CovidRestrictionScalarFieldEnum {
-  createdAt
-  details
-  iconUri
-  id
-  metadata
-  name
-  title
-  updatedAt
-}
-
-input CovidRestrictionScalarWhereInput {
-  AND: [CovidRestrictionScalarWhereInput!]
-  NOT: [CovidRestrictionScalarWhereInput!]
-  OR: [CovidRestrictionScalarWhereInput!]
-  createdAt: DateTimeFilter
-  details: StringNullableFilter
-  iconUri: StringNullableFilter
-  id: StringFilter
-  metadata: JsonNullableFilter
-  name: StringFilter
-  title: StringFilter
-  updatedAt: DateTimeFilter
-}
-
-input CovidRestrictionScalarWhereWithAggregatesInput {
-  AND: [CovidRestrictionScalarWhereWithAggregatesInput!]
-  NOT: [CovidRestrictionScalarWhereWithAggregatesInput!]
-  OR: [CovidRestrictionScalarWhereWithAggregatesInput!]
-  createdAt: DateTimeWithAggregatesFilter
-  details: StringNullableWithAggregatesFilter
-  iconUri: StringNullableWithAggregatesFilter
-  id: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
-  name: StringWithAggregatesFilter
-  title: StringWithAggregatesFilter
-  updatedAt: DateTimeWithAggregatesFilter
-}
-
-input CovidRestrictionUpdateInput {
-  Events: EventUpdateManyWithoutCovidRestrictionsInput
-  createdAt: DateTimeFieldUpdateOperationsInput
-  details: NullableStringFieldUpdateOperationsInput
-  iconUri: NullableStringFieldUpdateOperationsInput
-  id: StringFieldUpdateOperationsInput
-  metadata: JSON
-  name: StringFieldUpdateOperationsInput
-  title: StringFieldUpdateOperationsInput
-  updatedAt: DateTimeFieldUpdateOperationsInput
-}
-
-input CovidRestrictionUpdateManyMutationInput {
-  createdAt: DateTimeFieldUpdateOperationsInput
-  details: NullableStringFieldUpdateOperationsInput
-  iconUri: NullableStringFieldUpdateOperationsInput
-  id: StringFieldUpdateOperationsInput
-  metadata: JSON
-  name: StringFieldUpdateOperationsInput
-  title: StringFieldUpdateOperationsInput
-  updatedAt: DateTimeFieldUpdateOperationsInput
-}
-
-input CovidRestrictionUpdateManyWithWhereWithoutEventsInput {
-  data: CovidRestrictionUpdateManyMutationInput!
-  where: CovidRestrictionScalarWhereInput!
-}
-
-input CovidRestrictionUpdateManyWithoutEventsInput {
-  connect: [CovidRestrictionWhereUniqueInput!]
-  connectOrCreate: [CovidRestrictionCreateOrConnectWithoutEventsInput!]
-  create: [CovidRestrictionCreateWithoutEventsInput!]
-  delete: [CovidRestrictionWhereUniqueInput!]
-  deleteMany: [CovidRestrictionScalarWhereInput!]
-  disconnect: [CovidRestrictionWhereUniqueInput!]
-  set: [CovidRestrictionWhereUniqueInput!]
-  update: [CovidRestrictionUpdateWithWhereUniqueWithoutEventsInput!]
-  updateMany: [CovidRestrictionUpdateManyWithWhereWithoutEventsInput!]
-  upsert: [CovidRestrictionUpsertWithWhereUniqueWithoutEventsInput!]
-}
-
-input CovidRestrictionUpdateWithWhereUniqueWithoutEventsInput {
-  data: CovidRestrictionUpdateWithoutEventsInput!
-  where: CovidRestrictionWhereUniqueInput!
-}
-
-input CovidRestrictionUpdateWithoutEventsInput {
-  createdAt: DateTimeFieldUpdateOperationsInput
-  details: NullableStringFieldUpdateOperationsInput
-  iconUri: NullableStringFieldUpdateOperationsInput
-  id: StringFieldUpdateOperationsInput
-  metadata: JSON
-  name: StringFieldUpdateOperationsInput
-  title: StringFieldUpdateOperationsInput
-  updatedAt: DateTimeFieldUpdateOperationsInput
-}
-
-input CovidRestrictionUpsertWithWhereUniqueWithoutEventsInput {
-  create: CovidRestrictionCreateWithoutEventsInput!
-  update: CovidRestrictionUpdateWithoutEventsInput!
-  where: CovidRestrictionWhereUniqueInput!
-}
-
-input CovidRestrictionWhereInput {
-  AND: [CovidRestrictionWhereInput!]
-  Events: EventListRelationFilter
-  NOT: [CovidRestrictionWhereInput!]
-  OR: [CovidRestrictionWhereInput!]
-  createdAt: DateTimeFilter
-  details: StringNullableFilter
-  iconUri: StringNullableFilter
-  id: StringFilter
-  metadata: JsonNullableFilter
-  name: StringFilter
-  title: StringFilter
-  updatedAt: DateTimeFilter
-}
-
-input CovidRestrictionWhereUniqueInput {
-  id: String
 }
 
 """
@@ -1118,7 +822,6 @@ type Event {
   canRegister: Boolean!
   checkPromoCode(code: String!): JSONObject!
   contentfulWebname: String
-  covidRestrictions(cursor: CovidRestrictionWhereUniqueInput, distinct: [CovidRestrictionScalarFieldEnum!], orderBy: [CovidRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: CovidRestrictionWhereInput): [CovidRestriction!]!
   createdAt: DateTime!
   displayDate: String!
   earlyBirdCutoff: DateTime!
@@ -1126,6 +829,7 @@ type Event {
   endDate: DateTime!
   eventGroup: EventGroup!
   eventGroupId: String!
+  eventRestrictions(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestriction!]!
   getMetadata(key: String!): String
   id: String!
   interestedEmails(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMember!]!
@@ -1164,7 +868,7 @@ input EventAvgOrderByAggregateInput {
 }
 
 type EventCount {
-  covidRestrictions: Int!
+  eventRestrictions: Int!
   interestedEmails: Int!
   promoCodes: Int!
   schedule: Int!
@@ -1219,12 +923,12 @@ input EventCountOrderByAggregateInput {
 
 input EventCreateInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1323,17 +1027,17 @@ input EventCreateManymanagersInput {
   set: [String!]!
 }
 
-input EventCreateNestedManyWithoutCovidRestrictionsInput {
-  connect: [EventWhereUniqueInput!]
-  connectOrCreate: [EventCreateOrConnectWithoutCovidRestrictionsInput!]
-  create: [EventCreateWithoutCovidRestrictionsInput!]
-}
-
 input EventCreateNestedManyWithoutEventGroupInput {
   connect: [EventWhereUniqueInput!]
   connectOrCreate: [EventCreateOrConnectWithoutEventGroupInput!]
   create: [EventCreateWithoutEventGroupInput!]
   createMany: EventCreateManyEventGroupInputEnvelope
+}
+
+input EventCreateNestedManyWithoutEventRestrictionsInput {
+  connect: [EventWhereUniqueInput!]
+  connectOrCreate: [EventCreateOrConnectWithoutEventRestrictionsInput!]
+  create: [EventCreateWithoutEventRestrictionsInput!]
 }
 
 input EventCreateNestedManyWithoutInterestedEmailsInput {
@@ -1373,13 +1077,13 @@ input EventCreateNestedOneWithoutTicketsInput {
   create: EventCreateWithoutTicketsInput
 }
 
-input EventCreateOrConnectWithoutCovidRestrictionsInput {
-  create: EventCreateWithoutCovidRestrictionsInput!
+input EventCreateOrConnectWithoutEventGroupInput {
+  create: EventCreateWithoutEventGroupInput!
   where: EventWhereUniqueInput!
 }
 
-input EventCreateOrConnectWithoutEventGroupInput {
-  create: EventCreateWithoutEventGroupInput!
+input EventCreateOrConnectWithoutEventRestrictionsInput {
+  create: EventCreateWithoutEventRestrictionsInput!
   where: EventWhereUniqueInput!
 }
 
@@ -1413,13 +1117,13 @@ input EventCreateOrConnectWithoutVenueInput {
   where: EventWhereUniqueInput!
 }
 
-input EventCreateWithoutCovidRestrictionsInput {
+input EventCreateWithoutEventGroupInput {
   contentfulWebname: String
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
-  eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1440,13 +1144,13 @@ input EventCreateWithoutCovidRestrictionsInput {
   venue: VenueCreateNestedOneWithoutEventsInput
 }
 
-input EventCreateWithoutEventGroupInput {
+input EventCreateWithoutEventRestrictionsInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
+  eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1469,12 +1173,12 @@ input EventCreateWithoutEventGroupInput {
 
 input EventCreateWithoutInterestedEmailsInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   majorityAge: Int
   managers: EventCreatemanagersInput
@@ -1496,12 +1200,12 @@ input EventCreateWithoutInterestedEmailsInput {
 
 input EventCreateWithoutPromoCodesInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1523,12 +1227,12 @@ input EventCreateWithoutPromoCodesInput {
 
 input EventCreateWithoutScheduleInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1550,12 +1254,12 @@ input EventCreateWithoutScheduleInput {
 
 input EventCreateWithoutSponsorsInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1577,12 +1281,12 @@ input EventCreateWithoutSponsorsInput {
 
 input EventCreateWithoutTicketsInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -1604,12 +1308,12 @@ input EventCreateWithoutTicketsInput {
 
 input EventCreateWithoutVenueInput {
   contentfulWebname: String
-  covidRestrictions: CovidRestrictionCreateNestedManyWithoutEventsInput
   createdAt: DateTime
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
@@ -2277,13 +1981,13 @@ input EventOrderByWithAggregationInput {
 
 input EventOrderByWithRelationInput {
   contentfulWebname: SortOrder
-  covidRestrictions: CovidRestrictionOrderByRelationAggregateInput
   createdAt: SortOrder
   earlyBirdCutoff: SortOrder
   earlyBirdPrice: SortOrder
   endDate: SortOrder
   eventGroup: EventGroupOrderByWithRelationInput
   eventGroupId: SortOrder
+  eventRestrictions: EventRestrictionOrderByRelationAggregateInput
   id: SortOrder
   interestedEmails: MailingListMemberOrderByRelationAggregateInput
   majorityAge: SortOrder
@@ -2308,6 +2012,302 @@ input EventOrderByWithRelationInput {
 input EventRelationFilter {
   is: EventWhereInput
   isNot: EventWhereInput
+}
+
+type EventRestriction {
+  Events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
+  _count: EventRestrictionCount
+  createdAt: DateTime!
+  details: String
+  getMetadata(key: String!): String
+  iconUri: String
+  id: String!
+  name: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type EventRestrictionCount {
+  Events: Int!
+}
+
+type EventRestrictionCountAggregate {
+  _all: Int!
+  createdAt: Int!
+  details: Int!
+  iconUri: Int!
+  id: Int!
+  metadata: Int!
+  name: Int!
+  title: Int!
+  updatedAt: Int!
+}
+
+input EventRestrictionCountOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionCreateInput {
+  Events: EventCreateNestedManyWithoutEventRestrictionsInput
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+input EventRestrictionCreateManyInput {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+input EventRestrictionCreateNestedManyWithoutEventsInput {
+  connect: [EventRestrictionWhereUniqueInput!]
+  connectOrCreate: [EventRestrictionCreateOrConnectWithoutEventsInput!]
+  create: [EventRestrictionCreateWithoutEventsInput!]
+}
+
+input EventRestrictionCreateOrConnectWithoutEventsInput {
+  create: EventRestrictionCreateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionCreateWithoutEventsInput {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+type EventRestrictionGroupBy {
+  _count: EventRestrictionCountAggregate
+  _max: EventRestrictionMaxAggregate
+  _min: EventRestrictionMinAggregate
+  createdAt: DateTime!
+  details: String
+  iconUri: String
+  id: String!
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input EventRestrictionListRelationFilter {
+  every: EventRestrictionWhereInput
+  none: EventRestrictionWhereInput
+  some: EventRestrictionWhereInput
+}
+
+type EventRestrictionMaxAggregate {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  name: String
+  title: String
+  updatedAt: DateTime
+}
+
+input EventRestrictionMaxOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+type EventRestrictionMinAggregate {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  name: String
+  title: String
+  updatedAt: DateTime
+}
+
+input EventRestrictionMinOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EventRestrictionOrderByWithAggregationInput {
+  _count: EventRestrictionCountOrderByAggregateInput
+  _max: EventRestrictionMaxOrderByAggregateInput
+  _min: EventRestrictionMinOrderByAggregateInput
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionOrderByWithRelationInput {
+  Events: EventOrderByRelationAggregateInput
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+enum EventRestrictionScalarFieldEnum {
+  createdAt
+  details
+  iconUri
+  id
+  metadata
+  name
+  title
+  updatedAt
+}
+
+input EventRestrictionScalarWhereInput {
+  AND: [EventRestrictionScalarWhereInput!]
+  NOT: [EventRestrictionScalarWhereInput!]
+  OR: [EventRestrictionScalarWhereInput!]
+  createdAt: DateTimeFilter
+  details: StringNullableFilter
+  iconUri: StringNullableFilter
+  id: StringFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input EventRestrictionScalarWhereWithAggregatesInput {
+  AND: [EventRestrictionScalarWhereWithAggregatesInput!]
+  NOT: [EventRestrictionScalarWhereWithAggregatesInput!]
+  OR: [EventRestrictionScalarWhereWithAggregatesInput!]
+  createdAt: DateTimeWithAggregatesFilter
+  details: StringNullableWithAggregatesFilter
+  iconUri: StringNullableWithAggregatesFilter
+  id: StringWithAggregatesFilter
+  metadata: JsonNullableWithAggregatesFilter
+  name: StringWithAggregatesFilter
+  title: StringWithAggregatesFilter
+  updatedAt: DateTimeWithAggregatesFilter
+}
+
+input EventRestrictionUpdateInput {
+  Events: EventUpdateManyWithoutEventRestrictionsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpdateManyMutationInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpdateManyWithWhereWithoutEventsInput {
+  data: EventRestrictionUpdateManyMutationInput!
+  where: EventRestrictionScalarWhereInput!
+}
+
+input EventRestrictionUpdateManyWithoutEventsInput {
+  connect: [EventRestrictionWhereUniqueInput!]
+  connectOrCreate: [EventRestrictionCreateOrConnectWithoutEventsInput!]
+  create: [EventRestrictionCreateWithoutEventsInput!]
+  delete: [EventRestrictionWhereUniqueInput!]
+  deleteMany: [EventRestrictionScalarWhereInput!]
+  disconnect: [EventRestrictionWhereUniqueInput!]
+  set: [EventRestrictionWhereUniqueInput!]
+  update: [EventRestrictionUpdateWithWhereUniqueWithoutEventsInput!]
+  updateMany: [EventRestrictionUpdateManyWithWhereWithoutEventsInput!]
+  upsert: [EventRestrictionUpsertWithWhereUniqueWithoutEventsInput!]
+}
+
+input EventRestrictionUpdateWithWhereUniqueWithoutEventsInput {
+  data: EventRestrictionUpdateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionUpdateWithoutEventsInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpsertWithWhereUniqueWithoutEventsInput {
+  create: EventRestrictionCreateWithoutEventsInput!
+  update: EventRestrictionUpdateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionWhereInput {
+  AND: [EventRestrictionWhereInput!]
+  Events: EventListRelationFilter
+  NOT: [EventRestrictionWhereInput!]
+  OR: [EventRestrictionWhereInput!]
+  createdAt: DateTimeFilter
+  details: StringNullableFilter
+  iconUri: StringNullableFilter
+  id: StringFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input EventRestrictionWhereUniqueInput {
+  id: String
 }
 
 enum EventScalarFieldEnum {
@@ -2396,12 +2396,12 @@ input EventSumOrderByAggregateInput {
 
 input EventUpdateInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2442,12 +2442,12 @@ input EventUpdateManyMutationInput {
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
-input EventUpdateManyWithWhereWithoutCovidRestrictionsInput {
+input EventUpdateManyWithWhereWithoutEventGroupInput {
   data: EventUpdateManyMutationInput!
   where: EventScalarWhereInput!
 }
 
-input EventUpdateManyWithWhereWithoutEventGroupInput {
+input EventUpdateManyWithWhereWithoutEventRestrictionsInput {
   data: EventUpdateManyMutationInput!
   where: EventScalarWhereInput!
 }
@@ -2462,19 +2462,6 @@ input EventUpdateManyWithWhereWithoutVenueInput {
   where: EventScalarWhereInput!
 }
 
-input EventUpdateManyWithoutCovidRestrictionsInput {
-  connect: [EventWhereUniqueInput!]
-  connectOrCreate: [EventCreateOrConnectWithoutCovidRestrictionsInput!]
-  create: [EventCreateWithoutCovidRestrictionsInput!]
-  delete: [EventWhereUniqueInput!]
-  deleteMany: [EventScalarWhereInput!]
-  disconnect: [EventWhereUniqueInput!]
-  set: [EventWhereUniqueInput!]
-  update: [EventUpdateWithWhereUniqueWithoutCovidRestrictionsInput!]
-  updateMany: [EventUpdateManyWithWhereWithoutCovidRestrictionsInput!]
-  upsert: [EventUpsertWithWhereUniqueWithoutCovidRestrictionsInput!]
-}
-
 input EventUpdateManyWithoutEventGroupInput {
   connect: [EventWhereUniqueInput!]
   connectOrCreate: [EventCreateOrConnectWithoutEventGroupInput!]
@@ -2487,6 +2474,19 @@ input EventUpdateManyWithoutEventGroupInput {
   update: [EventUpdateWithWhereUniqueWithoutEventGroupInput!]
   updateMany: [EventUpdateManyWithWhereWithoutEventGroupInput!]
   upsert: [EventUpsertWithWhereUniqueWithoutEventGroupInput!]
+}
+
+input EventUpdateManyWithoutEventRestrictionsInput {
+  connect: [EventWhereUniqueInput!]
+  connectOrCreate: [EventCreateOrConnectWithoutEventRestrictionsInput!]
+  create: [EventCreateWithoutEventRestrictionsInput!]
+  delete: [EventWhereUniqueInput!]
+  deleteMany: [EventScalarWhereInput!]
+  disconnect: [EventWhereUniqueInput!]
+  set: [EventWhereUniqueInput!]
+  update: [EventUpdateWithWhereUniqueWithoutEventRestrictionsInput!]
+  updateMany: [EventUpdateManyWithWhereWithoutEventRestrictionsInput!]
+  upsert: [EventUpsertWithWhereUniqueWithoutEventRestrictionsInput!]
 }
 
 input EventUpdateManyWithoutInterestedEmailsInput {
@@ -2554,13 +2554,13 @@ input EventUpdateOneWithoutSponsorsInput {
   upsert: EventUpsertWithoutSponsorsInput
 }
 
-input EventUpdateWithWhereUniqueWithoutCovidRestrictionsInput {
-  data: EventUpdateWithoutCovidRestrictionsInput!
+input EventUpdateWithWhereUniqueWithoutEventGroupInput {
+  data: EventUpdateWithoutEventGroupInput!
   where: EventWhereUniqueInput!
 }
 
-input EventUpdateWithWhereUniqueWithoutEventGroupInput {
-  data: EventUpdateWithoutEventGroupInput!
+input EventUpdateWithWhereUniqueWithoutEventRestrictionsInput {
+  data: EventUpdateWithoutEventRestrictionsInput!
   where: EventWhereUniqueInput!
 }
 
@@ -2574,13 +2574,13 @@ input EventUpdateWithWhereUniqueWithoutVenueInput {
   where: EventWhereUniqueInput!
 }
 
-input EventUpdateWithoutCovidRestrictionsInput {
+input EventUpdateWithoutEventGroupInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
-  eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2601,13 +2601,13 @@ input EventUpdateWithoutCovidRestrictionsInput {
   venue: VenueUpdateOneWithoutEventsInput
 }
 
-input EventUpdateWithoutEventGroupInput {
+input EventUpdateWithoutEventRestrictionsInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
+  eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2630,12 +2630,12 @@ input EventUpdateWithoutEventGroupInput {
 
 input EventUpdateWithoutInterestedEmailsInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
@@ -2657,12 +2657,12 @@ input EventUpdateWithoutInterestedEmailsInput {
 
 input EventUpdateWithoutPromoCodesInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2684,12 +2684,12 @@ input EventUpdateWithoutPromoCodesInput {
 
 input EventUpdateWithoutScheduleInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2711,12 +2711,12 @@ input EventUpdateWithoutScheduleInput {
 
 input EventUpdateWithoutSponsorsInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2738,12 +2738,12 @@ input EventUpdateWithoutSponsorsInput {
 
 input EventUpdateWithoutTicketsInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2765,12 +2765,12 @@ input EventUpdateWithoutTicketsInput {
 
 input EventUpdateWithoutVenueInput {
   contentfulWebname: NullableStringFieldUpdateOperationsInput
-  covidRestrictions: CovidRestrictionUpdateManyWithoutEventsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
@@ -2795,15 +2795,15 @@ input EventUpdatemanagersInput {
   set: [String!]
 }
 
-input EventUpsertWithWhereUniqueWithoutCovidRestrictionsInput {
-  create: EventCreateWithoutCovidRestrictionsInput!
-  update: EventUpdateWithoutCovidRestrictionsInput!
-  where: EventWhereUniqueInput!
-}
-
 input EventUpsertWithWhereUniqueWithoutEventGroupInput {
   create: EventCreateWithoutEventGroupInput!
   update: EventUpdateWithoutEventGroupInput!
+  where: EventWhereUniqueInput!
+}
+
+input EventUpsertWithWhereUniqueWithoutEventRestrictionsInput {
+  create: EventCreateWithoutEventRestrictionsInput!
+  update: EventUpdateWithoutEventRestrictionsInput!
   where: EventWhereUniqueInput!
 }
 
@@ -2844,13 +2844,13 @@ input EventWhereInput {
   NOT: [EventWhereInput!]
   OR: [EventWhereInput!]
   contentfulWebname: StringNullableFilter
-  covidRestrictions: CovidRestrictionListRelationFilter
   createdAt: DateTimeFilter
   earlyBirdCutoff: DateTimeFilter
   earlyBirdPrice: FloatFilter
   endDate: DateTimeFilter
   eventGroup: EventGroupRelationFilter
   eventGroupId: StringFilter
+  eventRestrictions: EventRestrictionListRelationFilter
   id: StringFilter
   interestedEmails: MailingListMemberListRelationFilter
   majorityAge: IntFilter
@@ -3254,15 +3254,15 @@ input MailingListMemberWhereUniqueInput {
 }
 
 type Mutation {
-  createCovidRestriction(data: CovidRestrictionCreateInput!): CovidRestriction!
   createEmailTemplate(data: EmailTemplateCreateInput!): EmailTemplate!
   createEvent(data: EventCreateInput!): Event!
   createEventGroup(data: EventGroupCreateInput!): EventGroup!
+  createEventRestriction(data: EventRestrictionCreateInput!): EventRestriction!
   createMailingListMember(data: MailingListMemberCreateInput!): MailingListMember!
-  createManyCovidRestriction(data: [CovidRestrictionCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEmailTemplate(data: [EmailTemplateCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEvent(data: [EventCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEventGroup(data: [EventGroupCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
+  createManyEventRestriction(data: [EventRestrictionCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyMailingListMember(data: [MailingListMemberCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyPayment(data: [PaymentCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyPerson(data: [PersonCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
@@ -3278,15 +3278,15 @@ type Mutation {
   createSponsor(data: SponsorCreateInput!): Sponsor!
   createTicket(data: TicketCreateInput!): Ticket!
   createVenue(data: VenueCreateInput!): Venue!
-  deleteCovidRestriction(where: CovidRestrictionWhereUniqueInput!): CovidRestriction
   deleteEmailTemplate(where: EmailTemplateWhereUniqueInput!): EmailTemplate
   deleteEvent(where: EventWhereUniqueInput!): Event
   deleteEventGroup(where: EventGroupWhereUniqueInput!): EventGroup
+  deleteEventRestriction(where: EventRestrictionWhereUniqueInput!): EventRestriction
   deleteMailingListMember(where: MailingListMemberWhereUniqueInput!): MailingListMember
-  deleteManyCovidRestriction(where: CovidRestrictionWhereInput): AffectedRowsOutput!
   deleteManyEmailTemplate(where: EmailTemplateWhereInput): AffectedRowsOutput!
   deleteManyEvent(where: EventWhereInput): AffectedRowsOutput!
   deleteManyEventGroup(where: EventGroupWhereInput): AffectedRowsOutput!
+  deleteManyEventRestriction(where: EventRestrictionWhereInput): AffectedRowsOutput!
   deleteManyMailingListMember(where: MailingListMemberWhereInput): AffectedRowsOutput!
   deleteManyPayment(where: PaymentWhereInput): AffectedRowsOutput!
   deleteManyPerson(where: PersonWhereInput): AffectedRowsOutput!
@@ -3304,10 +3304,10 @@ type Mutation {
   deleteVenue(where: VenueWhereUniqueInput!): Venue
   finalizePayment(paymentIntentId: String!): [String!]!
   registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String
-  setCovidRestrictionMetadata(key: String!, value: String!, where: CovidRestrictionWhereUniqueInput!): CovidRestriction
   setEmailTemplateMetadata(key: String!, value: String!, where: EmailTemplateWhereUniqueInput!): EmailTemplate
   setEventGroupMetadata(key: String!, value: String!, where: EventGroupWhereUniqueInput!): EventGroup
   setEventMetadata(key: String!, value: String!, where: EventWhereUniqueInput!): Event
+  setEventRestrictionMetadata(key: String!, value: String!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   setMailingListMemberMetadata(key: String!, value: String!, where: MailingListMemberWhereUniqueInput!): MailingListMember
   setPaymentMetadata(key: String!, value: String!, where: PaymentWhereUniqueInput!): Payment
   setPersonMetadata(key: String!, value: String!, where: PersonWhereUniqueInput!): Person
@@ -3317,15 +3317,15 @@ type Mutation {
   setTicketMetadata(key: String!, value: String!, where: TicketWhereUniqueInput!): Ticket
   setVenueMetadata(key: String!, value: String!, where: VenueWhereUniqueInput!): Venue
   subscribeToMailingList(email: String!, where: EventWhereUniqueInput!): MailingListMember
-  updateCovidRestriction(data: CovidRestrictionUpdateInput!, where: CovidRestrictionWhereUniqueInput!): CovidRestriction
   updateEmailTemplate(data: EmailTemplateUpdateInput!, where: EmailTemplateWhereUniqueInput!): EmailTemplate
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
   updateEventGroup(data: EventGroupUpdateInput!, where: EventGroupWhereUniqueInput!): EventGroup
+  updateEventRestriction(data: EventRestrictionUpdateInput!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   updateMailingListMember(data: MailingListMemberUpdateInput!, where: MailingListMemberWhereUniqueInput!): MailingListMember
-  updateManyCovidRestriction(data: CovidRestrictionUpdateManyMutationInput!, where: CovidRestrictionWhereInput): AffectedRowsOutput!
   updateManyEmailTemplate(data: EmailTemplateUpdateManyMutationInput!, where: EmailTemplateWhereInput): AffectedRowsOutput!
   updateManyEvent(data: EventUpdateManyMutationInput!, where: EventWhereInput): AffectedRowsOutput!
   updateManyEventGroup(data: EventGroupUpdateManyMutationInput!, where: EventGroupWhereInput): AffectedRowsOutput!
+  updateManyEventRestriction(data: EventRestrictionUpdateManyMutationInput!, where: EventRestrictionWhereInput): AffectedRowsOutput!
   updateManyMailingListMember(data: MailingListMemberUpdateManyMutationInput!, where: MailingListMemberWhereInput): AffectedRowsOutput!
   updateManyPayment(data: PaymentUpdateManyMutationInput!, where: PaymentWhereInput): AffectedRowsOutput!
   updateManyPerson(data: PersonUpdateManyMutationInput!, where: PersonWhereInput): AffectedRowsOutput!
@@ -3341,12 +3341,12 @@ type Mutation {
   updateSponsor(data: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor
   updateTicket(data: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
-  uploadCovidRestrictionIcon(upload: Upload!, where: CovidRestrictionWhereUniqueInput!): CovidRestriction
+  uploadEventRestrictionIcon(upload: Upload!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   uploadSponsorLogo(upload: Upload!, where: SponsorWhereUniqueInput!): Sponsor
-  upsertCovidRestriction(create: CovidRestrictionCreateInput!, update: CovidRestrictionUpdateInput!, where: CovidRestrictionWhereUniqueInput!): CovidRestriction!
   upsertEmailTemplate(create: EmailTemplateCreateInput!, update: EmailTemplateUpdateInput!, where: EmailTemplateWhereUniqueInput!): EmailTemplate!
   upsertEvent(create: EventCreateInput!, update: EventUpdateInput!, where: EventWhereUniqueInput!): Event!
   upsertEventGroup(create: EventGroupCreateInput!, update: EventGroupUpdateInput!, where: EventGroupWhereUniqueInput!): EventGroup!
+  upsertEventRestriction(create: EventRestrictionCreateInput!, update: EventRestrictionUpdateInput!, where: EventRestrictionWhereUniqueInput!): EventRestriction!
   upsertMailingListMember(create: MailingListMemberCreateInput!, update: MailingListMemberUpdateInput!, where: MailingListMemberWhereUniqueInput!): MailingListMember!
   upsertPayment(create: PaymentCreateInput!, update: PaymentUpdateInput!, where: PaymentWhereUniqueInput!): Payment!
   upsertPerson(create: PersonCreateInput!, update: PersonUpdateInput!, where: PersonWhereUniqueInput!): Person!
@@ -4739,10 +4739,10 @@ input PromoCodeWhereUniqueInput {
 }
 
 type Query {
-  aggregateCovidRestriction(cursor: CovidRestrictionWhereUniqueInput, orderBy: [CovidRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: CovidRestrictionWhereInput): AggregateCovidRestriction!
   aggregateEmailTemplate(cursor: EmailTemplateWhereUniqueInput, orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): AggregateEmailTemplate!
   aggregateEvent(cursor: EventWhereUniqueInput, orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): AggregateEvent!
   aggregateEventGroup(cursor: EventGroupWhereUniqueInput, orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): AggregateEventGroup!
+  aggregateEventRestriction(cursor: EventRestrictionWhereUniqueInput, orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): AggregateEventRestriction!
   aggregateMailingListMember(cursor: MailingListMemberWhereUniqueInput, orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): AggregateMailingListMember!
   aggregatePayment(cursor: PaymentWhereUniqueInput, orderBy: [PaymentOrderByWithRelationInput!], skip: Int, take: Int, where: PaymentWhereInput): AggregatePayment!
   aggregatePerson(cursor: PersonWhereUniqueInput, orderBy: [PersonOrderByWithRelationInput!], skip: Int, take: Int, where: PersonWhereInput): AggregatePerson!
@@ -4751,18 +4751,18 @@ type Query {
   aggregateSponsor(cursor: SponsorWhereUniqueInput, orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): AggregateSponsor!
   aggregateTicket(cursor: TicketWhereUniqueInput, orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): AggregateTicket!
   aggregateVenue(cursor: VenueWhereUniqueInput, orderBy: [VenueOrderByWithRelationInput!], skip: Int, take: Int, where: VenueWhereInput): AggregateVenue!
-  covidRestriction(where: CovidRestrictionWhereUniqueInput!): CovidRestriction
-  covidRestrictions(cursor: CovidRestrictionWhereUniqueInput, distinct: [CovidRestrictionScalarFieldEnum!], orderBy: [CovidRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: CovidRestrictionWhereInput): [CovidRestriction!]!
   emailTemplate(where: EmailTemplateWhereUniqueInput!): EmailTemplate
   emailTemplates(cursor: EmailTemplateWhereUniqueInput, distinct: [EmailTemplateScalarFieldEnum!], orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): [EmailTemplate!]!
   event(where: EventWhereUniqueInput!): Event
   eventGroup(where: EventGroupWhereUniqueInput!): EventGroup
   eventGroups(cursor: EventGroupWhereUniqueInput, distinct: [EventGroupScalarFieldEnum!], orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): [EventGroup!]!
+  eventRestriction(where: EventRestrictionWhereUniqueInput!): EventRestriction
+  eventRestrictions(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestriction!]!
   events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], editable: Boolean, orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
-  findFirstCovidRestriction(cursor: CovidRestrictionWhereUniqueInput, distinct: [CovidRestrictionScalarFieldEnum!], orderBy: [CovidRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: CovidRestrictionWhereInput): CovidRestriction
   findFirstEmailTemplate(cursor: EmailTemplateWhereUniqueInput, distinct: [EmailTemplateScalarFieldEnum!], orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): EmailTemplate
   findFirstEvent(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): Event
   findFirstEventGroup(cursor: EventGroupWhereUniqueInput, distinct: [EventGroupScalarFieldEnum!], orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): EventGroup
+  findFirstEventRestriction(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): EventRestriction
   findFirstMailingListMember(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): MailingListMember
   findFirstPayment(cursor: PaymentWhereUniqueInput, distinct: [PaymentScalarFieldEnum!], orderBy: [PaymentOrderByWithRelationInput!], skip: Int, take: Int, where: PaymentWhereInput): Payment
   findFirstPerson(cursor: PersonWhereUniqueInput, distinct: [PersonScalarFieldEnum!], orderBy: [PersonOrderByWithRelationInput!], skip: Int, take: Int, where: PersonWhereInput): Person
@@ -4771,10 +4771,10 @@ type Query {
   findFirstSponsor(cursor: SponsorWhereUniqueInput, distinct: [SponsorScalarFieldEnum!], orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): Sponsor
   findFirstTicket(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): Ticket
   findFirstVenue(cursor: VenueWhereUniqueInput, distinct: [VenueScalarFieldEnum!], orderBy: [VenueOrderByWithRelationInput!], skip: Int, take: Int, where: VenueWhereInput): Venue
-  groupByCovidRestriction(by: [CovidRestrictionScalarFieldEnum!]!, having: CovidRestrictionScalarWhereWithAggregatesInput, orderBy: [CovidRestrictionOrderByWithAggregationInput!], skip: Int, take: Int, where: CovidRestrictionWhereInput): [CovidRestrictionGroupBy!]!
   groupByEmailTemplate(by: [EmailTemplateScalarFieldEnum!]!, having: EmailTemplateScalarWhereWithAggregatesInput, orderBy: [EmailTemplateOrderByWithAggregationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): [EmailTemplateGroupBy!]!
   groupByEvent(by: [EventScalarFieldEnum!]!, having: EventScalarWhereWithAggregatesInput, orderBy: [EventOrderByWithAggregationInput!], skip: Int, take: Int, where: EventWhereInput): [EventGroupBy!]!
   groupByEventGroup(by: [EventGroupScalarFieldEnum!]!, having: EventGroupScalarWhereWithAggregatesInput, orderBy: [EventGroupOrderByWithAggregationInput!], skip: Int, take: Int, where: EventGroupWhereInput): [EventGroupGroupBy!]!
+  groupByEventRestriction(by: [EventRestrictionScalarFieldEnum!]!, having: EventRestrictionScalarWhereWithAggregatesInput, orderBy: [EventRestrictionOrderByWithAggregationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestrictionGroupBy!]!
   groupByMailingListMember(by: [MailingListMemberScalarFieldEnum!]!, having: MailingListMemberScalarWhereWithAggregatesInput, orderBy: [MailingListMemberOrderByWithAggregationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMemberGroupBy!]!
   groupByPayment(by: [PaymentScalarFieldEnum!]!, having: PaymentScalarWhereWithAggregatesInput, orderBy: [PaymentOrderByWithAggregationInput!], skip: Int, take: Int, where: PaymentWhereInput): [PaymentGroupBy!]!
   groupByPerson(by: [PersonScalarFieldEnum!]!, having: PersonScalarWhereWithAggregatesInput, orderBy: [PersonOrderByWithAggregationInput!], skip: Int, take: Int, where: PersonWhereInput): [PersonGroupBy!]!
