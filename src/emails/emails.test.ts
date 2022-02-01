@@ -2,8 +2,6 @@ import emails, {IsAfterEvent, IsWorkHours, WouldSendLate} from "./emails";
 import {EmailTemplate, Event, Ticket} from "../generated/typegraphql-prisma";
 import {PrismaClient} from '@prisma/client';
 
-const mockSendEmailBatch = jest.fn()
-
 // importing these enums directly throws a compiler error
 enum TicketType {
     STUDENT = "STUDENT",
@@ -20,6 +18,9 @@ enum EmailWhenFrom {
     EVENTEND = "EVENTEND"
 }
 
+const mockSendEmailBatch = jest.fn()
+const mockSendText = jest.fn()
+
 jest.mock('postmark', () => {
     return {
         ServerClient: jest.fn().mockImplementation(() => {
@@ -28,6 +29,17 @@ jest.mock('postmark', () => {
     }
 })
 
+jest.mock('twilio', () => {
+    return {
+        Twilio: jest.fn().mockImplementation(() => {
+            return {
+                messages: {
+                    create: (opts: {[key: string]: any}) => {mockSendText(opts)}
+                }
+            }
+        })
+    }
+})
 const prisma = new PrismaClient({
     datasources: {
         db: {
@@ -218,6 +230,9 @@ describe("Prisma Integration Tests", () => {
     interface CreateTicketOpts {
         [key:string]: any
     }
+    interface CreateGuardianOpts {
+        [key:string]: any
+    }
     const create_email_template = async (opts: {
         [key: string]: any
         when: string
@@ -274,6 +289,7 @@ describe("Prisma Integration Tests", () => {
             earlyBirdPrice: opts.earlyBirdPrice || 10,
             earlyBirdCutoff: opts.earlyBirdCutoff || new Date(Date.UTC(2022, 0, 20, 0, 0).valueOf()),
             registrationCutoff: opts.registrationCutoff || new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+            timezone: opts.timezone || undefined,
             tickets: {
                 create: opts.tickets.map((t) => make_create_ticket_args(t))
             }
@@ -286,12 +302,29 @@ describe("Prisma Integration Tests", () => {
             lastName: opts.lastName || "Test Case Last Name",
             type: opts.type || "STUDENT",
             email: opts.email || "ticket@email",
+            phone: opts.phone || undefined,
+            guardian: opts.guardian? {
+                create: make_create_guardian_args(opts.guardian)
+            } : undefined
         }
     }
 
+    const make_create_guardian_args = (opts: CreateGuardianOpts) => {
+        return {
+            firstName: opts.firstName || "Test Case Guardian First Name",
+            lastName: opts.lastName || "Test Case Guardian Last Name",
+            email: opts.email || "guardian@email",
+            phone: opts.phone || undefined,
+        }
+    }
     const all_ticket_emails_are_true = (calls: any[]) => {
         return calls.filter(call => call.To !== 'true').length == 0
     }
+
+    const all_texts_sent_are_true = (calls: any[]) => {
+        return calls.filter(call => call.to !== 'true').length == 0
+    }
+
     afterEach(async () => {
         await prisma.venue.deleteMany()
         await prisma.emailTemplate.deleteMany()
@@ -300,6 +333,7 @@ describe("Prisma Integration Tests", () => {
         await prisma.event.deleteMany()
         await prisma.eventGroup.deleteMany()
         mockSendEmailBatch.mockReset()
+        mockSendText.mockReset()
     })
     describe("Send to right group", () => {
         // @ts-ignore
@@ -726,6 +760,424 @@ describe("Prisma Integration Tests", () => {
                 await emails()
                 expect(mockSendEmailBatch).toHaveBeenCalledTimes(3)
                 expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
+            })
+        })
+    })
+    describe("Flags", () => {
+        describe("SendLate", () => {
+            test("False", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '-2w',
+                    whenFrom: EmailWhenFrom.EVENTSTART,
+                    sendLate: false
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [
+                                {
+                                    createdAt:  new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
+                                    email: "true"
+                                },
+                                {
+                                    createdAt: new Date(Date.UTC(2022, 0, 20, 0, 0).valueOf()),
+                                    email: "false"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 19, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 21, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(2)
+                expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
+            })
+            test("True", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '-2w',
+                    whenFrom: EmailWhenFrom.EVENTSTART,
+                    sendLate: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [
+                                {
+                                    createdAt:  new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
+                                    email: "true"
+                                },
+                                {
+                                    createdAt: new Date(Date.UTC(2022, 0, 20, 0, 0).valueOf()),
+                                    email: "true"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 20, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(2)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+        })
+        describe("SendInWorkHours", () => {
+            test("Midnight Los Angeles", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendInWorkHours: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            timezone: 'America/Los_Angeles',
+                            tickets: [
+                                {
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 1, 8, 0, 0).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
+            })
+            test("10am Los Angeles", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendInWorkHours: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            timezone: 'America/Los_Angeles',
+                            tickets: [
+                                {
+                                    email: "true"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 1, 18, 0, 0).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+            test("6pm Eastern, 3pm Pacific", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendInWorkHours: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            timezone: 'America/Los_Angeles',
+                            tickets: [
+                                {
+                                    email: "false"
+                                }
+                            ]
+                        },
+                        {
+                            timezone: 'America/New_York',
+                            tickets: [
+                                {
+                                    email: "true"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 1, 23, 0, 0).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0]))
+            })
+
+        })
+        describe("SendAfterEvent", () => {
+            test("False", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendAfterEvent: false
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            endDate:  new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+                            tickets: [
+                                {
+                                    email: "true"
+                                }
+                            ]
+                        },
+                        {
+                            endDate:  new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
+                            tickets: [
+                                {
+                                    email: "false"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 16, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+            test("True", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendAfterEvent: false
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            endsAt:  new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+                            tickets: [
+                                {
+                                    email: "true"
+                                }
+                            ]
+                        },
+                        {
+                            endsAt:  new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
+                            tickets: [
+                                {
+                                    email: "true"
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 16, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(2)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+
+        })
+        describe("SendParent", () => {
+            test("With Parent info", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendParent: true
+                })
+                await create_event_group({
+                    events: [{
+                        tickets: [
+                            {
+                                email: 'false',
+                                guardian: {
+                                    email: 'true'
+                                }
+                            }
+                        ]
+                    }]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 0, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+            test("Without Parent info", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendParent: true
+                })
+                await create_event_group({
+                    events: [{
+                        tickets: [
+                            {
+                                email: 'false',
+                            }
+                        ]
+                    }]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 0, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
+            })
+            test("One with Parent info, one without", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: '0m',
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendParent: true
+                })
+                await create_event_group({
+                    events: [{
+                        tickets: [
+                            {
+                                email: 'false',
+                            },
+                            {
+                                email: 'false',
+                                guardian: {
+                                    email: 'true'
+                                }
+                            }
+                        ]
+                    }]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 0, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+            })
+        })
+        describe("SendText", () => {
+            test("True", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: "0m",
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendText: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [{
+                                phone: 'true'
+                            }]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 15, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendText).toHaveBeenCalledTimes(1)
+                expect(all_texts_sent_are_true(mockSendText.mock.calls[0]))
+                expect(mockSendText.mock.calls[0]).toHaveLength(1)
+            })
+            test("False", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: "0m",
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendText: false
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [{
+                                email: 'true',
+                                phone: 'false'
+                            }]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 15, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendText).toHaveBeenCalledTimes(0)
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+            })
+        })
+        describe("SendText + SendParent", () => {
+            test("All parents have numbers",async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: "0m",
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendParent: true,
+                    sendText: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [
+                                {
+                                    email: 'false',
+                                    phone: 'false',
+                                    guardian: {
+                                        email: 'false',
+                                        phone: 'true'
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 15, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
+                expect(mockSendText).toHaveBeenCalledTimes(1)
+                expect(all_texts_sent_are_true(mockSendText.mock.calls[0])).toBe(true)
+            })
+            test("One parent has number, one parent has email, one student without parent", async () => {
+                await create_email_template({
+                    sendTo: TicketType.STUDENT,
+                    when: "0m",
+                    whenFrom: EmailWhenFrom.REGISTER,
+                    sendParent: true,
+                    sendText: true
+                })
+                await create_event_group({
+                    events: [
+                        {
+                            tickets: [
+                                {
+                                    email: 'false',
+                                    phone: 'false',
+                                    guardian: {
+                                        email: 'false',
+                                        phone: 'true'
+                                    }
+                                },
+                                {
+                                    email: 'false',
+                                    phone: 'false',
+                                    guardian: {
+                                        email: 'true'
+                                    }
+                                },
+                                {
+                                    email: 'false',
+                                    phone: 'false'
+                                }
+                            ]
+                        }
+                    ]
+                })
+                jest.setSystemTime(new Date(Date.UTC(2022, 0, 15, 0, 0, 1).valueOf()))
+                await emails()
+                expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+                expect(mockSendEmailBatch.mock.calls[0][0]).toHaveLength(1)
+                expect(all_ticket_emails_are_true(mockSendEmailBatch.mock.calls[0][0])).toBe(true)
+                expect(mockSendText).toHaveBeenCalledTimes(1)
+                expect(all_texts_sent_are_true(mockSendText.mock.calls[0])).toBe(true)
             })
         })
     })
