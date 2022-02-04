@@ -14,6 +14,10 @@ const postmark = new ServerClient(config.postmark.serverToken || '');
 const twilio = new Twilio(config.twilio.sid, config.twilio.token);
 const emailQueue: Message[] | { To: string; ReplyTo: string; From: string; HtmlBody: string; Subject: string; MessageStream: string; }[] = []
 
+Handlebars.registerHelper('date', (date) => {
+    return DateTime.fromJSDate(date).setZone('UTC').toLocaleString(DateTime.DATE_FULL)
+})
+
 interface TemplateData {
     ticket: Ticket,
     event: Event,

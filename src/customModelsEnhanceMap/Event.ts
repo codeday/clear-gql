@@ -19,6 +19,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         endDate: [],
         registrationsOpen: [],
         eventRestrictions: [],
-        timezone: []
+        timezone: [],
+        majorityAge: [],
     }
 }
