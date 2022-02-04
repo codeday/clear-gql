@@ -378,7 +378,7 @@ export class CustomEventResolver {
 
 @Resolver(of => Event)
 export class EventMetadataResolver {
-    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    // @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => String, {nullable: true})
     getMetadata(
         @Root() event: Event,
