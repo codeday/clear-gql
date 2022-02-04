@@ -61,9 +61,12 @@ model Event {
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
   managers           String[] // codeday account usernames
-  registrationsOpen  Boolean  @default(false)
+  registrationsOpen  Boolean            @default(false)
   contentfulWebname  String?
   showcaseId         String?
+  eventRestrictions  EventRestriction[]
+  timezone           String?
+  majorityAge        Int                @default(18)
 
   // Relations
   eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
@@ -176,8 +179,9 @@ model Ticket {
   personId    String?
   promoCodeId String?
 
-  payment   Payment? @relation(fields: [paymentId], references: [id])
-  paymentId String?
+  payment    Payment?        @relation(fields: [paymentId], references: [id])
+  paymentId  String?
+  sentEmails EmailTemplate[]
 }
 
 model Payment {
@@ -264,4 +268,56 @@ model MailingListMember {
   email              String    @unique
   interestedInEvents Event[]
   lastEmailed        DateTime?
+}
+
+enum EmailWhenFrom {
+  REGISTER
+  EVENTSTART
+  EVENTEND
+}
+
+model EmailTemplate {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  name            String
+  automatic       Boolean       @default(false)
+  fromName        String        @default("John Peter")
+  fromEmail       String        @default("team@codeday.org")
+  replyTo         String        @default("team@codeday.org")
+  subject         String
+  sendTo          TicketType
+  when            String
+  whenFrom        EmailWhenFrom
+  sendLate        Boolean       @default(false)
+  sendInWorkHours Boolean       @default(false)
+  sendAfterEvent  Boolean       @default(false)
+  sendParent      Boolean       @default(false)
+  template        String
+  marketing       Boolean       @default(false)
+  extraFilters    Json?
+  sendText        Boolean       @default(false)
+  textMsg         String?
+  sentTo          Ticket[]
+}
+
+model EventRestriction {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  /// @TypeGraphQL.omit(output: true)
+  metadata  Json?
+
+  // Data
+  name    String
+  iconUri String?
+  title   String
+  details String?
+  Events  Event[]
 }

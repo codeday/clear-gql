@@ -7,6 +7,12 @@ type AffectedRowsOutput {
   count: Int!
 }
 
+type AggregateEmailTemplate {
+  _count: EmailTemplateCountAggregate
+  _max: EmailTemplateMaxAggregate
+  _min: EmailTemplateMinAggregate
+}
+
 type AggregateEvent {
   _avg: EventAvgAggregate
   _count: EventCountAggregate
@@ -21,6 +27,12 @@ type AggregateEventGroup {
   _max: EventGroupMaxAggregate
   _min: EventGroupMinAggregate
   _sum: EventGroupSumAggregate
+}
+
+type AggregateEventRestriction {
+  _count: EventRestrictionCountAggregate
+  _max: EventRestrictionMaxAggregate
+  _min: EventRestrictionMinAggregate
 }
 
 type AggregateMailingListMember {
@@ -162,6 +174,584 @@ enum DiscountType {
   SUBTRACT
 }
 
+type EmailTemplate {
+  _count: EmailTemplateCount
+  automatic: Boolean!
+  createdAt: DateTime!
+  extraFilters: JSON
+  fromEmail: String!
+  fromName: String!
+  getMetadata(key: String!): String
+  id: String!
+  marketing: Boolean!
+  name: String!
+  replyTo: String!
+  sendAfterEvent: Boolean!
+  sendInWorkHours: Boolean!
+  sendLate: Boolean!
+  sendParent: Boolean!
+  sendText: Boolean!
+  sendTo: TicketType!
+  sentTo(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
+  subject: String!
+  template: String!
+  textMsg: String
+  updatedAt: DateTime!
+  when: String!
+  whenFrom: EmailWhenFrom!
+}
+
+type EmailTemplateCount {
+  sentTo: Int!
+}
+
+type EmailTemplateCountAggregate {
+  _all: Int!
+  automatic: Int!
+  createdAt: Int!
+  extraFilters: Int!
+  fromEmail: Int!
+  fromName: Int!
+  id: Int!
+  marketing: Int!
+  metadata: Int!
+  name: Int!
+  replyTo: Int!
+  sendAfterEvent: Int!
+  sendInWorkHours: Int!
+  sendLate: Int!
+  sendParent: Int!
+  sendText: Int!
+  sendTo: Int!
+  subject: Int!
+  template: Int!
+  textMsg: Int!
+  updatedAt: Int!
+  when: Int!
+  whenFrom: Int!
+}
+
+input EmailTemplateCountOrderByAggregateInput {
+  automatic: SortOrder
+  createdAt: SortOrder
+  extraFilters: SortOrder
+  fromEmail: SortOrder
+  fromName: SortOrder
+  id: SortOrder
+  marketing: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  replyTo: SortOrder
+  sendAfterEvent: SortOrder
+  sendInWorkHours: SortOrder
+  sendLate: SortOrder
+  sendParent: SortOrder
+  sendText: SortOrder
+  sendTo: SortOrder
+  subject: SortOrder
+  template: SortOrder
+  textMsg: SortOrder
+  updatedAt: SortOrder
+  when: SortOrder
+  whenFrom: SortOrder
+}
+
+input EmailTemplateCreateInput {
+  automatic: Boolean
+  createdAt: DateTime
+  extraFilters: JSON
+  fromEmail: String
+  fromName: String
+  id: String
+  marketing: Boolean
+  metadata: JSON
+  name: String!
+  replyTo: String
+  sendAfterEvent: Boolean
+  sendInWorkHours: Boolean
+  sendLate: Boolean
+  sendParent: Boolean
+  sendText: Boolean
+  sendTo: TicketType!
+  sentTo: TicketCreateNestedManyWithoutSentEmailsInput
+  subject: String!
+  template: String!
+  textMsg: String
+  updatedAt: DateTime
+  when: String!
+  whenFrom: EmailWhenFrom!
+}
+
+input EmailTemplateCreateManyInput {
+  automatic: Boolean
+  createdAt: DateTime
+  extraFilters: JSON
+  fromEmail: String
+  fromName: String
+  id: String
+  marketing: Boolean
+  metadata: JSON
+  name: String!
+  replyTo: String
+  sendAfterEvent: Boolean
+  sendInWorkHours: Boolean
+  sendLate: Boolean
+  sendParent: Boolean
+  sendText: Boolean
+  sendTo: TicketType!
+  subject: String!
+  template: String!
+  textMsg: String
+  updatedAt: DateTime
+  when: String!
+  whenFrom: EmailWhenFrom!
+}
+
+input EmailTemplateCreateNestedManyWithoutSentToInput {
+  connect: [EmailTemplateWhereUniqueInput!]
+  connectOrCreate: [EmailTemplateCreateOrConnectWithoutSentToInput!]
+  create: [EmailTemplateCreateWithoutSentToInput!]
+}
+
+input EmailTemplateCreateOrConnectWithoutSentToInput {
+  create: EmailTemplateCreateWithoutSentToInput!
+  where: EmailTemplateWhereUniqueInput!
+}
+
+input EmailTemplateCreateWithoutSentToInput {
+  automatic: Boolean
+  createdAt: DateTime
+  extraFilters: JSON
+  fromEmail: String
+  fromName: String
+  id: String
+  marketing: Boolean
+  metadata: JSON
+  name: String!
+  replyTo: String
+  sendAfterEvent: Boolean
+  sendInWorkHours: Boolean
+  sendLate: Boolean
+  sendParent: Boolean
+  sendText: Boolean
+  sendTo: TicketType!
+  subject: String!
+  template: String!
+  textMsg: String
+  updatedAt: DateTime
+  when: String!
+  whenFrom: EmailWhenFrom!
+}
+
+type EmailTemplateGroupBy {
+  _count: EmailTemplateCountAggregate
+  _max: EmailTemplateMaxAggregate
+  _min: EmailTemplateMinAggregate
+  automatic: Boolean!
+  createdAt: DateTime!
+  extraFilters: JSON
+  fromEmail: String!
+  fromName: String!
+  id: String!
+  marketing: Boolean!
+  metadata: JSON
+  name: String!
+  replyTo: String!
+  sendAfterEvent: Boolean!
+  sendInWorkHours: Boolean!
+  sendLate: Boolean!
+  sendParent: Boolean!
+  sendText: Boolean!
+  sendTo: TicketType!
+  subject: String!
+  template: String!
+  textMsg: String
+  updatedAt: DateTime!
+  when: String!
+  whenFrom: EmailWhenFrom!
+}
+
+input EmailTemplateListRelationFilter {
+  every: EmailTemplateWhereInput
+  none: EmailTemplateWhereInput
+  some: EmailTemplateWhereInput
+}
+
+type EmailTemplateMaxAggregate {
+  automatic: Boolean
+  createdAt: DateTime
+  fromEmail: String
+  fromName: String
+  id: String
+  marketing: Boolean
+  name: String
+  replyTo: String
+  sendAfterEvent: Boolean
+  sendInWorkHours: Boolean
+  sendLate: Boolean
+  sendParent: Boolean
+  sendText: Boolean
+  sendTo: TicketType
+  subject: String
+  template: String
+  textMsg: String
+  updatedAt: DateTime
+  when: String
+  whenFrom: EmailWhenFrom
+}
+
+input EmailTemplateMaxOrderByAggregateInput {
+  automatic: SortOrder
+  createdAt: SortOrder
+  fromEmail: SortOrder
+  fromName: SortOrder
+  id: SortOrder
+  marketing: SortOrder
+  name: SortOrder
+  replyTo: SortOrder
+  sendAfterEvent: SortOrder
+  sendInWorkHours: SortOrder
+  sendLate: SortOrder
+  sendParent: SortOrder
+  sendText: SortOrder
+  sendTo: SortOrder
+  subject: SortOrder
+  template: SortOrder
+  textMsg: SortOrder
+  updatedAt: SortOrder
+  when: SortOrder
+  whenFrom: SortOrder
+}
+
+type EmailTemplateMinAggregate {
+  automatic: Boolean
+  createdAt: DateTime
+  fromEmail: String
+  fromName: String
+  id: String
+  marketing: Boolean
+  name: String
+  replyTo: String
+  sendAfterEvent: Boolean
+  sendInWorkHours: Boolean
+  sendLate: Boolean
+  sendParent: Boolean
+  sendText: Boolean
+  sendTo: TicketType
+  subject: String
+  template: String
+  textMsg: String
+  updatedAt: DateTime
+  when: String
+  whenFrom: EmailWhenFrom
+}
+
+input EmailTemplateMinOrderByAggregateInput {
+  automatic: SortOrder
+  createdAt: SortOrder
+  fromEmail: SortOrder
+  fromName: SortOrder
+  id: SortOrder
+  marketing: SortOrder
+  name: SortOrder
+  replyTo: SortOrder
+  sendAfterEvent: SortOrder
+  sendInWorkHours: SortOrder
+  sendLate: SortOrder
+  sendParent: SortOrder
+  sendText: SortOrder
+  sendTo: SortOrder
+  subject: SortOrder
+  template: SortOrder
+  textMsg: SortOrder
+  updatedAt: SortOrder
+  when: SortOrder
+  whenFrom: SortOrder
+}
+
+input EmailTemplateOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EmailTemplateOrderByWithAggregationInput {
+  _count: EmailTemplateCountOrderByAggregateInput
+  _max: EmailTemplateMaxOrderByAggregateInput
+  _min: EmailTemplateMinOrderByAggregateInput
+  automatic: SortOrder
+  createdAt: SortOrder
+  extraFilters: SortOrder
+  fromEmail: SortOrder
+  fromName: SortOrder
+  id: SortOrder
+  marketing: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  replyTo: SortOrder
+  sendAfterEvent: SortOrder
+  sendInWorkHours: SortOrder
+  sendLate: SortOrder
+  sendParent: SortOrder
+  sendText: SortOrder
+  sendTo: SortOrder
+  subject: SortOrder
+  template: SortOrder
+  textMsg: SortOrder
+  updatedAt: SortOrder
+  when: SortOrder
+  whenFrom: SortOrder
+}
+
+input EmailTemplateOrderByWithRelationInput {
+  automatic: SortOrder
+  createdAt: SortOrder
+  extraFilters: SortOrder
+  fromEmail: SortOrder
+  fromName: SortOrder
+  id: SortOrder
+  marketing: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  replyTo: SortOrder
+  sendAfterEvent: SortOrder
+  sendInWorkHours: SortOrder
+  sendLate: SortOrder
+  sendParent: SortOrder
+  sendText: SortOrder
+  sendTo: SortOrder
+  sentTo: TicketOrderByRelationAggregateInput
+  subject: SortOrder
+  template: SortOrder
+  textMsg: SortOrder
+  updatedAt: SortOrder
+  when: SortOrder
+  whenFrom: SortOrder
+}
+
+enum EmailTemplateScalarFieldEnum {
+  automatic
+  createdAt
+  extraFilters
+  fromEmail
+  fromName
+  id
+  marketing
+  metadata
+  name
+  replyTo
+  sendAfterEvent
+  sendInWorkHours
+  sendLate
+  sendParent
+  sendText
+  sendTo
+  subject
+  template
+  textMsg
+  updatedAt
+  when
+  whenFrom
+}
+
+input EmailTemplateScalarWhereInput {
+  AND: [EmailTemplateScalarWhereInput!]
+  NOT: [EmailTemplateScalarWhereInput!]
+  OR: [EmailTemplateScalarWhereInput!]
+  automatic: BoolFilter
+  createdAt: DateTimeFilter
+  extraFilters: JsonNullableFilter
+  fromEmail: StringFilter
+  fromName: StringFilter
+  id: StringFilter
+  marketing: BoolFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  replyTo: StringFilter
+  sendAfterEvent: BoolFilter
+  sendInWorkHours: BoolFilter
+  sendLate: BoolFilter
+  sendParent: BoolFilter
+  sendText: BoolFilter
+  sendTo: EnumTicketTypeFilter
+  subject: StringFilter
+  template: StringFilter
+  textMsg: StringNullableFilter
+  updatedAt: DateTimeFilter
+  when: StringFilter
+  whenFrom: EnumEmailWhenFromFilter
+}
+
+input EmailTemplateScalarWhereWithAggregatesInput {
+  AND: [EmailTemplateScalarWhereWithAggregatesInput!]
+  NOT: [EmailTemplateScalarWhereWithAggregatesInput!]
+  OR: [EmailTemplateScalarWhereWithAggregatesInput!]
+  automatic: BoolWithAggregatesFilter
+  createdAt: DateTimeWithAggregatesFilter
+  extraFilters: JsonNullableWithAggregatesFilter
+  fromEmail: StringWithAggregatesFilter
+  fromName: StringWithAggregatesFilter
+  id: StringWithAggregatesFilter
+  marketing: BoolWithAggregatesFilter
+  metadata: JsonNullableWithAggregatesFilter
+  name: StringWithAggregatesFilter
+  replyTo: StringWithAggregatesFilter
+  sendAfterEvent: BoolWithAggregatesFilter
+  sendInWorkHours: BoolWithAggregatesFilter
+  sendLate: BoolWithAggregatesFilter
+  sendParent: BoolWithAggregatesFilter
+  sendText: BoolWithAggregatesFilter
+  sendTo: EnumTicketTypeWithAggregatesFilter
+  subject: StringWithAggregatesFilter
+  template: StringWithAggregatesFilter
+  textMsg: StringNullableWithAggregatesFilter
+  updatedAt: DateTimeWithAggregatesFilter
+  when: StringWithAggregatesFilter
+  whenFrom: EnumEmailWhenFromWithAggregatesFilter
+}
+
+input EmailTemplateUpdateInput {
+  automatic: BoolFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  extraFilters: JSON
+  fromEmail: StringFieldUpdateOperationsInput
+  fromName: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  marketing: BoolFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  replyTo: StringFieldUpdateOperationsInput
+  sendAfterEvent: BoolFieldUpdateOperationsInput
+  sendInWorkHours: BoolFieldUpdateOperationsInput
+  sendLate: BoolFieldUpdateOperationsInput
+  sendParent: BoolFieldUpdateOperationsInput
+  sendText: BoolFieldUpdateOperationsInput
+  sendTo: EnumTicketTypeFieldUpdateOperationsInput
+  sentTo: TicketUpdateManyWithoutSentEmailsInput
+  subject: StringFieldUpdateOperationsInput
+  template: StringFieldUpdateOperationsInput
+  textMsg: NullableStringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  when: StringFieldUpdateOperationsInput
+  whenFrom: EnumEmailWhenFromFieldUpdateOperationsInput
+}
+
+input EmailTemplateUpdateManyMutationInput {
+  automatic: BoolFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  extraFilters: JSON
+  fromEmail: StringFieldUpdateOperationsInput
+  fromName: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  marketing: BoolFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  replyTo: StringFieldUpdateOperationsInput
+  sendAfterEvent: BoolFieldUpdateOperationsInput
+  sendInWorkHours: BoolFieldUpdateOperationsInput
+  sendLate: BoolFieldUpdateOperationsInput
+  sendParent: BoolFieldUpdateOperationsInput
+  sendText: BoolFieldUpdateOperationsInput
+  sendTo: EnumTicketTypeFieldUpdateOperationsInput
+  subject: StringFieldUpdateOperationsInput
+  template: StringFieldUpdateOperationsInput
+  textMsg: NullableStringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  when: StringFieldUpdateOperationsInput
+  whenFrom: EnumEmailWhenFromFieldUpdateOperationsInput
+}
+
+input EmailTemplateUpdateManyWithWhereWithoutSentToInput {
+  data: EmailTemplateUpdateManyMutationInput!
+  where: EmailTemplateScalarWhereInput!
+}
+
+input EmailTemplateUpdateManyWithoutSentToInput {
+  connect: [EmailTemplateWhereUniqueInput!]
+  connectOrCreate: [EmailTemplateCreateOrConnectWithoutSentToInput!]
+  create: [EmailTemplateCreateWithoutSentToInput!]
+  delete: [EmailTemplateWhereUniqueInput!]
+  deleteMany: [EmailTemplateScalarWhereInput!]
+  disconnect: [EmailTemplateWhereUniqueInput!]
+  set: [EmailTemplateWhereUniqueInput!]
+  update: [EmailTemplateUpdateWithWhereUniqueWithoutSentToInput!]
+  updateMany: [EmailTemplateUpdateManyWithWhereWithoutSentToInput!]
+  upsert: [EmailTemplateUpsertWithWhereUniqueWithoutSentToInput!]
+}
+
+input EmailTemplateUpdateWithWhereUniqueWithoutSentToInput {
+  data: EmailTemplateUpdateWithoutSentToInput!
+  where: EmailTemplateWhereUniqueInput!
+}
+
+input EmailTemplateUpdateWithoutSentToInput {
+  automatic: BoolFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  extraFilters: JSON
+  fromEmail: StringFieldUpdateOperationsInput
+  fromName: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  marketing: BoolFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  replyTo: StringFieldUpdateOperationsInput
+  sendAfterEvent: BoolFieldUpdateOperationsInput
+  sendInWorkHours: BoolFieldUpdateOperationsInput
+  sendLate: BoolFieldUpdateOperationsInput
+  sendParent: BoolFieldUpdateOperationsInput
+  sendText: BoolFieldUpdateOperationsInput
+  sendTo: EnumTicketTypeFieldUpdateOperationsInput
+  subject: StringFieldUpdateOperationsInput
+  template: StringFieldUpdateOperationsInput
+  textMsg: NullableStringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  when: StringFieldUpdateOperationsInput
+  whenFrom: EnumEmailWhenFromFieldUpdateOperationsInput
+}
+
+input EmailTemplateUpsertWithWhereUniqueWithoutSentToInput {
+  create: EmailTemplateCreateWithoutSentToInput!
+  update: EmailTemplateUpdateWithoutSentToInput!
+  where: EmailTemplateWhereUniqueInput!
+}
+
+input EmailTemplateWhereInput {
+  AND: [EmailTemplateWhereInput!]
+  NOT: [EmailTemplateWhereInput!]
+  OR: [EmailTemplateWhereInput!]
+  automatic: BoolFilter
+  createdAt: DateTimeFilter
+  extraFilters: JsonNullableFilter
+  fromEmail: StringFilter
+  fromName: StringFilter
+  id: StringFilter
+  marketing: BoolFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  replyTo: StringFilter
+  sendAfterEvent: BoolFilter
+  sendInWorkHours: BoolFilter
+  sendLate: BoolFilter
+  sendParent: BoolFilter
+  sendText: BoolFilter
+  sendTo: EnumTicketTypeFilter
+  sentTo: TicketListRelationFilter
+  subject: StringFilter
+  template: StringFilter
+  textMsg: StringNullableFilter
+  updatedAt: DateTimeFilter
+  when: StringFilter
+  whenFrom: EnumEmailWhenFromFilter
+}
+
+input EmailTemplateWhereUniqueInput {
+  id: String
+}
+
+enum EmailWhenFrom {
+  EVENTEND
+  EVENTSTART
+  REGISTER
+}
+
 input EnumDiscountTypeFieldUpdateOperationsInput {
   set: DiscountType
 }
@@ -181,6 +771,27 @@ input EnumDiscountTypeWithAggregatesFilter {
   in: [DiscountType!]
   not: NestedEnumDiscountTypeWithAggregatesFilter
   notIn: [DiscountType!]
+}
+
+input EnumEmailWhenFromFieldUpdateOperationsInput {
+  set: EmailWhenFrom
+}
+
+input EnumEmailWhenFromFilter {
+  equals: EmailWhenFrom
+  in: [EmailWhenFrom!]
+  not: NestedEnumEmailWhenFromFilter
+  notIn: [EmailWhenFrom!]
+}
+
+input EnumEmailWhenFromWithAggregatesFilter {
+  _count: NestedIntFilter
+  _max: NestedEnumEmailWhenFromFilter
+  _min: NestedEnumEmailWhenFromFilter
+  equals: EmailWhenFrom
+  in: [EmailWhenFrom!]
+  not: NestedEnumEmailWhenFromWithAggregatesFilter
+  notIn: [EmailWhenFrom!]
 }
 
 input EnumTicketTypeFieldUpdateOperationsInput {
@@ -218,10 +829,11 @@ type Event {
   endDate: DateTime!
   eventGroup: EventGroup!
   eventGroupId: String!
+  eventRestrictions(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestriction!]!
   getMetadata(key: String!): String
   id: String!
   interestedEmails(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMember!]!
-  majorityAge: Float!
+  majorityAge: Int!
   managers: [String!]!
   maxAge: Float!
   minAge: Float!
@@ -231,11 +843,13 @@ type Event {
   registrationsOpen: Boolean!
   remainingTickets: Float
   schedule(cursor: ScheduleItemWhereUniqueInput, distinct: [ScheduleItemScalarFieldEnum!], orderBy: [ScheduleItemOrderByWithRelationInput!], skip: Int, take: Int, where: ScheduleItemWhereInput): [ScheduleItem!]!
+  showcaseId: String
   soldTickets(onlyStudents: Boolean = false): Float!
   sponsors(cursor: SponsorWhereUniqueInput, distinct: [SponsorScalarFieldEnum!], orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): [Sponsor!]!
   startDate: DateTime!
   ticketPrice: Float!
   tickets(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
+  timezone: String
   updatedAt: DateTime!
   venue: Venue
   venueId: String
@@ -243,15 +857,18 @@ type Event {
 
 type EventAvgAggregate {
   earlyBirdPrice: Float
+  majorityAge: Float
   ticketPrice: Float
 }
 
 input EventAvgOrderByAggregateInput {
   earlyBirdPrice: SortOrder
+  majorityAge: SortOrder
   ticketPrice: SortOrder
 }
 
 type EventCount {
+  eventRestrictions: Int!
   interestedEmails: Int!
   promoCodes: Int!
   schedule: Int!
@@ -268,13 +885,16 @@ type EventCountAggregate {
   endDate: Int!
   eventGroupId: Int!
   id: Int!
+  majorityAge: Int!
   managers: Int!
   metadata: Int!
   name: Int!
   registrationCutoff: Int!
   registrationsOpen: Int!
+  showcaseId: Int!
   startDate: Int!
   ticketPrice: Int!
+  timezone: Int!
   updatedAt: Int!
   venueId: Int!
 }
@@ -287,13 +907,16 @@ input EventCountOrderByAggregateInput {
   endDate: SortOrder
   eventGroupId: SortOrder
   id: SortOrder
+  majorityAge: SortOrder
   managers: SortOrder
   metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
+  timezone: SortOrder
   updatedAt: SortOrder
   venueId: SortOrder
 }
@@ -305,8 +928,10 @@ input EventCreateInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -314,10 +939,12 @@ input EventCreateInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -329,13 +956,16 @@ input EventCreateManyEventGroupInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   id: String
+  majorityAge: Int
   managers: EventCreateManymanagersInput
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
+  timezone: String
   updatedAt: DateTime
   venueId: String
 }
@@ -353,13 +983,16 @@ input EventCreateManyInput {
   endDate: DateTime!
   eventGroupId: String!
   id: String
+  majorityAge: Int
   managers: EventCreateManymanagersInput
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
+  timezone: String
   updatedAt: DateTime
   venueId: String
 }
@@ -372,13 +1005,16 @@ input EventCreateManyVenueInput {
   endDate: DateTime!
   eventGroupId: String!
   id: String
+  majorityAge: Int
   managers: EventCreateManymanagersInput
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
+  timezone: String
   updatedAt: DateTime
 }
 
@@ -396,6 +1032,12 @@ input EventCreateNestedManyWithoutEventGroupInput {
   connectOrCreate: [EventCreateOrConnectWithoutEventGroupInput!]
   create: [EventCreateWithoutEventGroupInput!]
   createMany: EventCreateManyEventGroupInputEnvelope
+}
+
+input EventCreateNestedManyWithoutEventRestrictionsInput {
+  connect: [EventWhereUniqueInput!]
+  connectOrCreate: [EventCreateOrConnectWithoutEventRestrictionsInput!]
+  create: [EventCreateWithoutEventRestrictionsInput!]
 }
 
 input EventCreateNestedManyWithoutInterestedEmailsInput {
@@ -440,6 +1082,11 @@ input EventCreateOrConnectWithoutEventGroupInput {
   where: EventWhereUniqueInput!
 }
 
+input EventCreateOrConnectWithoutEventRestrictionsInput {
+  create: EventCreateWithoutEventRestrictionsInput!
+  where: EventWhereUniqueInput!
+}
+
 input EventCreateOrConnectWithoutInterestedEmailsInput {
   create: EventCreateWithoutInterestedEmailsInput!
   where: EventWhereUniqueInput!
@@ -476,8 +1123,10 @@ input EventCreateWithoutEventGroupInput {
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -485,10 +1134,39 @@ input EventCreateWithoutEventGroupInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
+  updatedAt: DateTime
+  venue: VenueCreateNestedOneWithoutEventsInput
+}
+
+input EventCreateWithoutEventRestrictionsInput {
+  contentfulWebname: String
+  createdAt: DateTime
+  earlyBirdCutoff: DateTime!
+  earlyBirdPrice: Float!
+  endDate: DateTime!
+  eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  id: String
+  interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
+  managers: EventCreatemanagersInput
+  metadata: JSON
+  name: String!
+  promoCodes: PromoCodeCreateNestedManyWithoutEventInput
+  registrationCutoff: DateTime!
+  registrationsOpen: Boolean
+  schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
+  sponsors: SponsorCreateNestedManyWithoutEventInput
+  startDate: DateTime!
+  ticketPrice: Float!
+  tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -500,7 +1178,9 @@ input EventCreateWithoutInterestedEmailsInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -508,10 +1188,12 @@ input EventCreateWithoutInterestedEmailsInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -523,18 +1205,22 @@ input EventCreateWithoutPromoCodesInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -546,18 +1232,22 @@ input EventCreateWithoutScheduleInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -569,8 +1259,10 @@ input EventCreateWithoutSponsorsInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -578,9 +1270,11 @@ input EventCreateWithoutSponsorsInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -592,8 +1286,10 @@ input EventCreateWithoutTicketsInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -601,9 +1297,11 @@ input EventCreateWithoutTicketsInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
+  timezone: String
   updatedAt: DateTime
   venue: VenueCreateNestedOneWithoutEventsInput
 }
@@ -615,8 +1313,10 @@ input EventCreateWithoutVenueInput {
   earlyBirdPrice: Float!
   endDate: DateTime!
   eventGroup: EventGroupCreateNestedOneWithoutEventsInput!
+  eventRestrictions: EventRestrictionCreateNestedManyWithoutEventsInput
   id: String
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
+  majorityAge: Int
   managers: EventCreatemanagersInput
   metadata: JSON
   name: String!
@@ -624,10 +1324,12 @@ input EventCreateWithoutVenueInput {
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
+  showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
   ticketPrice: Float!
   tickets: TicketCreateNestedManyWithoutEventInput
+  timezone: String
   updatedAt: DateTime
 }
 
@@ -649,6 +1351,7 @@ type EventGroup {
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
   schedule(cursor: ScheduleItemWhereUniqueInput, distinct: [ScheduleItemScalarFieldEnum!], orderBy: [ScheduleItemOrderByWithRelationInput!], skip: Int, take: Int, where: ScheduleItemWhereInput): [ScheduleItem!]!
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime!
@@ -677,13 +1380,16 @@ type EventGroupBy {
   endDate: DateTime!
   eventGroupId: String!
   id: String!
+  majorityAge: Int!
   managers: [String!]
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean!
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
+  timezone: String
   updatedAt: DateTime!
   venueId: String
 }
@@ -704,6 +1410,7 @@ type EventGroupCountAggregate {
   metadata: Int!
   name: Int!
   registrationCutoff: Int!
+  showcaseId: Int!
   startDate: Int!
   ticketPrice: Int!
   updatedAt: Int!
@@ -718,6 +1425,7 @@ input EventGroupCountOrderByAggregateInput {
   metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
   updatedAt: SortOrder
@@ -735,6 +1443,7 @@ input EventGroupCreateInput {
   promoCodes: PromoCodeCreateNestedManyWithoutEventGroupInput
   registrationCutoff: DateTime!
   schedule: ScheduleItemCreateNestedManyWithoutEventGroupInput
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime
@@ -749,6 +1458,7 @@ input EventGroupCreateManyInput {
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime
@@ -798,6 +1508,7 @@ input EventGroupCreateWithoutEventsInput {
   promoCodes: PromoCodeCreateNestedManyWithoutEventGroupInput
   registrationCutoff: DateTime!
   schedule: ScheduleItemCreateNestedManyWithoutEventGroupInput
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime
@@ -814,6 +1525,7 @@ input EventGroupCreateWithoutPromoCodesInput {
   name: String!
   registrationCutoff: DateTime!
   schedule: ScheduleItemCreateNestedManyWithoutEventGroupInput
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime
@@ -830,6 +1542,7 @@ input EventGroupCreateWithoutScheduleInput {
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventGroupInput
   registrationCutoff: DateTime!
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime
@@ -849,6 +1562,7 @@ type EventGroupGroupBy {
   metadata: JSON
   name: String!
   registrationCutoff: DateTime!
+  showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
   updatedAt: DateTime!
@@ -862,6 +1576,7 @@ type EventGroupMaxAggregate {
   id: String
   name: String
   registrationCutoff: DateTime
+  showcaseId: String
   startDate: DateTime
   ticketPrice: Float
   updatedAt: DateTime
@@ -875,6 +1590,7 @@ input EventGroupMaxOrderByAggregateInput {
   id: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
   updatedAt: SortOrder
@@ -888,6 +1604,7 @@ type EventGroupMinAggregate {
   id: String
   name: String
   registrationCutoff: DateTime
+  showcaseId: String
   startDate: DateTime
   ticketPrice: Float
   updatedAt: DateTime
@@ -901,6 +1618,7 @@ input EventGroupMinOrderByAggregateInput {
   id: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
   updatedAt: SortOrder
@@ -920,6 +1638,7 @@ input EventGroupOrderByWithAggregationInput {
   metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
   updatedAt: SortOrder
@@ -937,6 +1656,7 @@ input EventGroupOrderByWithRelationInput {
   promoCodes: PromoCodeOrderByRelationAggregateInput
   registrationCutoff: SortOrder
   schedule: ScheduleItemOrderByRelationAggregateInput
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
   updatedAt: SortOrder
@@ -956,6 +1676,7 @@ enum EventGroupScalarFieldEnum {
   metadata
   name
   registrationCutoff
+  showcaseId
   startDate
   ticketPrice
   updatedAt
@@ -973,6 +1694,7 @@ input EventGroupScalarWhereWithAggregatesInput {
   metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   registrationCutoff: DateTimeWithAggregatesFilter
+  showcaseId: StringNullableWithAggregatesFilter
   startDate: DateTimeWithAggregatesFilter
   ticketPrice: FloatWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
@@ -1000,6 +1722,7 @@ input EventGroupUpdateInput {
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventGroupInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -1014,6 +1737,7 @@ input EventGroupUpdateManyMutationInput {
   metadata: JSON
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -1058,6 +1782,7 @@ input EventGroupUpdateWithoutEventsInput {
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventGroupInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -1074,6 +1799,7 @@ input EventGroupUpdateWithoutPromoCodesInput {
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventGroupInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -1090,6 +1816,7 @@ input EventGroupUpdateWithoutScheduleInput {
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -1125,6 +1852,7 @@ input EventGroupWhereInput {
   promoCodes: PromoCodeListRelationFilter
   registrationCutoff: DateTimeFilter
   schedule: ScheduleItemListRelationFilter
+  showcaseId: StringNullableFilter
   startDate: DateTimeFilter
   ticketPrice: FloatFilter
   updatedAt: DateTimeFilter
@@ -1148,11 +1876,14 @@ type EventMaxAggregate {
   endDate: DateTime
   eventGroupId: String
   id: String
+  majorityAge: Int
   name: String
   registrationCutoff: DateTime
   registrationsOpen: Boolean
+  showcaseId: String
   startDate: DateTime
   ticketPrice: Float
+  timezone: String
   updatedAt: DateTime
   venueId: String
 }
@@ -1165,11 +1896,14 @@ input EventMaxOrderByAggregateInput {
   endDate: SortOrder
   eventGroupId: SortOrder
   id: SortOrder
+  majorityAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
+  timezone: SortOrder
   updatedAt: SortOrder
   venueId: SortOrder
 }
@@ -1182,11 +1916,14 @@ type EventMinAggregate {
   endDate: DateTime
   eventGroupId: String
   id: String
+  majorityAge: Int
   name: String
   registrationCutoff: DateTime
   registrationsOpen: Boolean
+  showcaseId: String
   startDate: DateTime
   ticketPrice: Float
+  timezone: String
   updatedAt: DateTime
   venueId: String
 }
@@ -1199,11 +1936,14 @@ input EventMinOrderByAggregateInput {
   endDate: SortOrder
   eventGroupId: SortOrder
   id: SortOrder
+  majorityAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
+  timezone: SortOrder
   updatedAt: SortOrder
   venueId: SortOrder
 }
@@ -1225,13 +1965,16 @@ input EventOrderByWithAggregationInput {
   endDate: SortOrder
   eventGroupId: SortOrder
   id: SortOrder
+  majorityAge: SortOrder
   managers: SortOrder
   metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
+  timezone: SortOrder
   updatedAt: SortOrder
   venueId: SortOrder
 }
@@ -1244,8 +1987,10 @@ input EventOrderByWithRelationInput {
   endDate: SortOrder
   eventGroup: EventGroupOrderByWithRelationInput
   eventGroupId: SortOrder
+  eventRestrictions: EventRestrictionOrderByRelationAggregateInput
   id: SortOrder
   interestedEmails: MailingListMemberOrderByRelationAggregateInput
+  majorityAge: SortOrder
   managers: SortOrder
   metadata: SortOrder
   name: SortOrder
@@ -1253,10 +1998,12 @@ input EventOrderByWithRelationInput {
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
   schedule: ScheduleItemOrderByRelationAggregateInput
+  showcaseId: SortOrder
   sponsors: SponsorOrderByRelationAggregateInput
   startDate: SortOrder
   ticketPrice: SortOrder
   tickets: TicketOrderByRelationAggregateInput
+  timezone: SortOrder
   updatedAt: SortOrder
   venue: VenueOrderByWithRelationInput
   venueId: SortOrder
@@ -1267,6 +2014,302 @@ input EventRelationFilter {
   isNot: EventWhereInput
 }
 
+type EventRestriction {
+  Events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
+  _count: EventRestrictionCount
+  createdAt: DateTime!
+  details: String
+  getMetadata(key: String!): String
+  iconUri: String
+  id: String!
+  name: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type EventRestrictionCount {
+  Events: Int!
+}
+
+type EventRestrictionCountAggregate {
+  _all: Int!
+  createdAt: Int!
+  details: Int!
+  iconUri: Int!
+  id: Int!
+  metadata: Int!
+  name: Int!
+  title: Int!
+  updatedAt: Int!
+}
+
+input EventRestrictionCountOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionCreateInput {
+  Events: EventCreateNestedManyWithoutEventRestrictionsInput
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+input EventRestrictionCreateManyInput {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+input EventRestrictionCreateNestedManyWithoutEventsInput {
+  connect: [EventRestrictionWhereUniqueInput!]
+  connectOrCreate: [EventRestrictionCreateOrConnectWithoutEventsInput!]
+  create: [EventRestrictionCreateWithoutEventsInput!]
+}
+
+input EventRestrictionCreateOrConnectWithoutEventsInput {
+  create: EventRestrictionCreateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionCreateWithoutEventsInput {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime
+}
+
+type EventRestrictionGroupBy {
+  _count: EventRestrictionCountAggregate
+  _max: EventRestrictionMaxAggregate
+  _min: EventRestrictionMinAggregate
+  createdAt: DateTime!
+  details: String
+  iconUri: String
+  id: String!
+  metadata: JSON
+  name: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input EventRestrictionListRelationFilter {
+  every: EventRestrictionWhereInput
+  none: EventRestrictionWhereInput
+  some: EventRestrictionWhereInput
+}
+
+type EventRestrictionMaxAggregate {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  name: String
+  title: String
+  updatedAt: DateTime
+}
+
+input EventRestrictionMaxOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+type EventRestrictionMinAggregate {
+  createdAt: DateTime
+  details: String
+  iconUri: String
+  id: String
+  name: String
+  title: String
+  updatedAt: DateTime
+}
+
+input EventRestrictionMinOrderByAggregateInput {
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EventRestrictionOrderByWithAggregationInput {
+  _count: EventRestrictionCountOrderByAggregateInput
+  _max: EventRestrictionMaxOrderByAggregateInput
+  _min: EventRestrictionMinOrderByAggregateInput
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventRestrictionOrderByWithRelationInput {
+  Events: EventOrderByRelationAggregateInput
+  createdAt: SortOrder
+  details: SortOrder
+  iconUri: SortOrder
+  id: SortOrder
+  metadata: SortOrder
+  name: SortOrder
+  title: SortOrder
+  updatedAt: SortOrder
+}
+
+enum EventRestrictionScalarFieldEnum {
+  createdAt
+  details
+  iconUri
+  id
+  metadata
+  name
+  title
+  updatedAt
+}
+
+input EventRestrictionScalarWhereInput {
+  AND: [EventRestrictionScalarWhereInput!]
+  NOT: [EventRestrictionScalarWhereInput!]
+  OR: [EventRestrictionScalarWhereInput!]
+  createdAt: DateTimeFilter
+  details: StringNullableFilter
+  iconUri: StringNullableFilter
+  id: StringFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input EventRestrictionScalarWhereWithAggregatesInput {
+  AND: [EventRestrictionScalarWhereWithAggregatesInput!]
+  NOT: [EventRestrictionScalarWhereWithAggregatesInput!]
+  OR: [EventRestrictionScalarWhereWithAggregatesInput!]
+  createdAt: DateTimeWithAggregatesFilter
+  details: StringNullableWithAggregatesFilter
+  iconUri: StringNullableWithAggregatesFilter
+  id: StringWithAggregatesFilter
+  metadata: JsonNullableWithAggregatesFilter
+  name: StringWithAggregatesFilter
+  title: StringWithAggregatesFilter
+  updatedAt: DateTimeWithAggregatesFilter
+}
+
+input EventRestrictionUpdateInput {
+  Events: EventUpdateManyWithoutEventRestrictionsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpdateManyMutationInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpdateManyWithWhereWithoutEventsInput {
+  data: EventRestrictionUpdateManyMutationInput!
+  where: EventRestrictionScalarWhereInput!
+}
+
+input EventRestrictionUpdateManyWithoutEventsInput {
+  connect: [EventRestrictionWhereUniqueInput!]
+  connectOrCreate: [EventRestrictionCreateOrConnectWithoutEventsInput!]
+  create: [EventRestrictionCreateWithoutEventsInput!]
+  delete: [EventRestrictionWhereUniqueInput!]
+  deleteMany: [EventRestrictionScalarWhereInput!]
+  disconnect: [EventRestrictionWhereUniqueInput!]
+  set: [EventRestrictionWhereUniqueInput!]
+  update: [EventRestrictionUpdateWithWhereUniqueWithoutEventsInput!]
+  updateMany: [EventRestrictionUpdateManyWithWhereWithoutEventsInput!]
+  upsert: [EventRestrictionUpsertWithWhereUniqueWithoutEventsInput!]
+}
+
+input EventRestrictionUpdateWithWhereUniqueWithoutEventsInput {
+  data: EventRestrictionUpdateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionUpdateWithoutEventsInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  details: NullableStringFieldUpdateOperationsInput
+  iconUri: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input EventRestrictionUpsertWithWhereUniqueWithoutEventsInput {
+  create: EventRestrictionCreateWithoutEventsInput!
+  update: EventRestrictionUpdateWithoutEventsInput!
+  where: EventRestrictionWhereUniqueInput!
+}
+
+input EventRestrictionWhereInput {
+  AND: [EventRestrictionWhereInput!]
+  Events: EventListRelationFilter
+  NOT: [EventRestrictionWhereInput!]
+  OR: [EventRestrictionWhereInput!]
+  createdAt: DateTimeFilter
+  details: StringNullableFilter
+  iconUri: StringNullableFilter
+  id: StringFilter
+  metadata: JsonNullableFilter
+  name: StringFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input EventRestrictionWhereUniqueInput {
+  id: String
+}
+
 enum EventScalarFieldEnum {
   contentfulWebname
   createdAt
@@ -1275,13 +2318,16 @@ enum EventScalarFieldEnum {
   endDate
   eventGroupId
   id
+  majorityAge
   managers
   metadata
   name
   registrationCutoff
   registrationsOpen
+  showcaseId
   startDate
   ticketPrice
+  timezone
   updatedAt
   venueId
 }
@@ -1297,13 +2343,16 @@ input EventScalarWhereInput {
   endDate: DateTimeFilter
   eventGroupId: StringFilter
   id: StringFilter
+  majorityAge: IntFilter
   managers: StringNullableListFilter
   metadata: JsonNullableFilter
   name: StringFilter
   registrationCutoff: DateTimeFilter
   registrationsOpen: BoolFilter
+  showcaseId: StringNullableFilter
   startDate: DateTimeFilter
   ticketPrice: FloatFilter
+  timezone: StringNullableFilter
   updatedAt: DateTimeFilter
   venueId: StringNullableFilter
 }
@@ -1319,24 +2368,29 @@ input EventScalarWhereWithAggregatesInput {
   endDate: DateTimeWithAggregatesFilter
   eventGroupId: StringWithAggregatesFilter
   id: StringWithAggregatesFilter
+  majorityAge: IntWithAggregatesFilter
   managers: StringNullableListFilter
   metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   registrationCutoff: DateTimeWithAggregatesFilter
   registrationsOpen: BoolWithAggregatesFilter
+  showcaseId: StringNullableWithAggregatesFilter
   startDate: DateTimeWithAggregatesFilter
   ticketPrice: FloatWithAggregatesFilter
+  timezone: StringNullableWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
   venueId: StringNullableWithAggregatesFilter
 }
 
 type EventSumAggregate {
   earlyBirdPrice: Float
+  majorityAge: Int
   ticketPrice: Float
 }
 
 input EventSumOrderByAggregateInput {
   earlyBirdPrice: SortOrder
+  majorityAge: SortOrder
   ticketPrice: SortOrder
 }
 
@@ -1347,8 +2401,10 @@ input EventUpdateInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1356,10 +2412,12 @@ input EventUpdateInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1371,17 +2429,25 @@ input EventUpdateManyMutationInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
 input EventUpdateManyWithWhereWithoutEventGroupInput {
+  data: EventUpdateManyMutationInput!
+  where: EventScalarWhereInput!
+}
+
+input EventUpdateManyWithWhereWithoutEventRestrictionsInput {
   data: EventUpdateManyMutationInput!
   where: EventScalarWhereInput!
 }
@@ -1408,6 +2474,19 @@ input EventUpdateManyWithoutEventGroupInput {
   update: [EventUpdateWithWhereUniqueWithoutEventGroupInput!]
   updateMany: [EventUpdateManyWithWhereWithoutEventGroupInput!]
   upsert: [EventUpsertWithWhereUniqueWithoutEventGroupInput!]
+}
+
+input EventUpdateManyWithoutEventRestrictionsInput {
+  connect: [EventWhereUniqueInput!]
+  connectOrCreate: [EventCreateOrConnectWithoutEventRestrictionsInput!]
+  create: [EventCreateWithoutEventRestrictionsInput!]
+  delete: [EventWhereUniqueInput!]
+  deleteMany: [EventScalarWhereInput!]
+  disconnect: [EventWhereUniqueInput!]
+  set: [EventWhereUniqueInput!]
+  update: [EventUpdateWithWhereUniqueWithoutEventRestrictionsInput!]
+  updateMany: [EventUpdateManyWithWhereWithoutEventRestrictionsInput!]
+  upsert: [EventUpsertWithWhereUniqueWithoutEventRestrictionsInput!]
 }
 
 input EventUpdateManyWithoutInterestedEmailsInput {
@@ -1480,6 +2559,11 @@ input EventUpdateWithWhereUniqueWithoutEventGroupInput {
   where: EventWhereUniqueInput!
 }
 
+input EventUpdateWithWhereUniqueWithoutEventRestrictionsInput {
+  data: EventUpdateWithoutEventRestrictionsInput!
+  where: EventWhereUniqueInput!
+}
+
 input EventUpdateWithWhereUniqueWithoutInterestedEmailsInput {
   data: EventUpdateWithoutInterestedEmailsInput!
   where: EventWhereUniqueInput!
@@ -1496,8 +2580,10 @@ input EventUpdateWithoutEventGroupInput {
   earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1505,10 +2591,39 @@ input EventUpdateWithoutEventGroupInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  venue: VenueUpdateOneWithoutEventsInput
+}
+
+input EventUpdateWithoutEventRestrictionsInput {
+  contentfulWebname: NullableStringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  earlyBirdCutoff: DateTimeFieldUpdateOperationsInput
+  earlyBirdPrice: FloatFieldUpdateOperationsInput
+  endDate: DateTimeFieldUpdateOperationsInput
+  eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  id: StringFieldUpdateOperationsInput
+  interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
+  managers: EventUpdatemanagersInput
+  metadata: JSON
+  name: StringFieldUpdateOperationsInput
+  promoCodes: PromoCodeUpdateManyWithoutEventInput
+  registrationCutoff: DateTimeFieldUpdateOperationsInput
+  registrationsOpen: BoolFieldUpdateOperationsInput
+  schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
+  sponsors: SponsorUpdateManyWithoutEventInput
+  startDate: DateTimeFieldUpdateOperationsInput
+  ticketPrice: FloatFieldUpdateOperationsInput
+  tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1520,7 +2635,9 @@ input EventUpdateWithoutInterestedEmailsInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1528,10 +2645,12 @@ input EventUpdateWithoutInterestedEmailsInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1543,18 +2662,22 @@ input EventUpdateWithoutPromoCodesInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1566,18 +2689,22 @@ input EventUpdateWithoutScheduleInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1589,8 +2716,10 @@ input EventUpdateWithoutSponsorsInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1598,9 +2727,11 @@ input EventUpdateWithoutSponsorsInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1612,8 +2743,10 @@ input EventUpdateWithoutTicketsInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1621,9 +2754,11 @@ input EventUpdateWithoutTicketsInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   venue: VenueUpdateOneWithoutEventsInput
 }
@@ -1635,8 +2770,10 @@ input EventUpdateWithoutVenueInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneRequiredWithoutEventsInput
+  eventRestrictions: EventRestrictionUpdateManyWithoutEventsInput
   id: StringFieldUpdateOperationsInput
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
+  majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -1644,10 +2781,12 @@ input EventUpdateWithoutVenueInput {
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
+  showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutEventInput
+  timezone: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -1659,6 +2798,12 @@ input EventUpdatemanagersInput {
 input EventUpsertWithWhereUniqueWithoutEventGroupInput {
   create: EventCreateWithoutEventGroupInput!
   update: EventUpdateWithoutEventGroupInput!
+  where: EventWhereUniqueInput!
+}
+
+input EventUpsertWithWhereUniqueWithoutEventRestrictionsInput {
+  create: EventCreateWithoutEventRestrictionsInput!
+  update: EventUpdateWithoutEventRestrictionsInput!
   where: EventWhereUniqueInput!
 }
 
@@ -1705,8 +2850,10 @@ input EventWhereInput {
   endDate: DateTimeFilter
   eventGroup: EventGroupRelationFilter
   eventGroupId: StringFilter
+  eventRestrictions: EventRestrictionListRelationFilter
   id: StringFilter
   interestedEmails: MailingListMemberListRelationFilter
+  majorityAge: IntFilter
   managers: StringNullableListFilter
   metadata: JsonNullableFilter
   name: StringFilter
@@ -1714,10 +2861,12 @@ input EventWhereInput {
   registrationCutoff: DateTimeFilter
   registrationsOpen: BoolFilter
   schedule: ScheduleItemListRelationFilter
+  showcaseId: StringNullableFilter
   sponsors: SponsorListRelationFilter
   startDate: DateTimeFilter
   ticketPrice: FloatFilter
   tickets: TicketListRelationFilter
+  timezone: StringNullableFilter
   updatedAt: DateTimeFilter
   venue: VenueRelationFilter
   venueId: StringNullableFilter
@@ -2105,11 +3254,15 @@ input MailingListMemberWhereUniqueInput {
 }
 
 type Mutation {
+  createEmailTemplate(data: EmailTemplateCreateInput!): EmailTemplate!
   createEvent(data: EventCreateInput!): Event!
   createEventGroup(data: EventGroupCreateInput!): EventGroup!
+  createEventRestriction(data: EventRestrictionCreateInput!): EventRestriction!
   createMailingListMember(data: MailingListMemberCreateInput!): MailingListMember!
+  createManyEmailTemplate(data: [EmailTemplateCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEvent(data: [EventCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyEventGroup(data: [EventGroupCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
+  createManyEventRestriction(data: [EventRestrictionCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyMailingListMember(data: [MailingListMemberCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyPayment(data: [PaymentCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
   createManyPerson(data: [PersonCreateManyInput!]!, skipDuplicates: Boolean): AffectedRowsOutput!
@@ -2125,11 +3278,15 @@ type Mutation {
   createSponsor(data: SponsorCreateInput!): Sponsor!
   createTicket(data: TicketCreateInput!): Ticket!
   createVenue(data: VenueCreateInput!): Venue!
+  deleteEmailTemplate(where: EmailTemplateWhereUniqueInput!): EmailTemplate
   deleteEvent(where: EventWhereUniqueInput!): Event
   deleteEventGroup(where: EventGroupWhereUniqueInput!): EventGroup
+  deleteEventRestriction(where: EventRestrictionWhereUniqueInput!): EventRestriction
   deleteMailingListMember(where: MailingListMemberWhereUniqueInput!): MailingListMember
+  deleteManyEmailTemplate(where: EmailTemplateWhereInput): AffectedRowsOutput!
   deleteManyEvent(where: EventWhereInput): AffectedRowsOutput!
   deleteManyEventGroup(where: EventGroupWhereInput): AffectedRowsOutput!
+  deleteManyEventRestriction(where: EventRestrictionWhereInput): AffectedRowsOutput!
   deleteManyMailingListMember(where: MailingListMemberWhereInput): AffectedRowsOutput!
   deleteManyPayment(where: PaymentWhereInput): AffectedRowsOutput!
   deleteManyPerson(where: PersonWhereInput): AffectedRowsOutput!
@@ -2147,8 +3304,10 @@ type Mutation {
   deleteVenue(where: VenueWhereUniqueInput!): Venue
   finalizePayment(paymentIntentId: String!): [String!]!
   registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String
+  setEmailTemplateMetadata(key: String!, value: String!, where: EmailTemplateWhereUniqueInput!): EmailTemplate
   setEventGroupMetadata(key: String!, value: String!, where: EventGroupWhereUniqueInput!): EventGroup
   setEventMetadata(key: String!, value: String!, where: EventWhereUniqueInput!): Event
+  setEventRestrictionMetadata(key: String!, value: String!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   setMailingListMemberMetadata(key: String!, value: String!, where: MailingListMemberWhereUniqueInput!): MailingListMember
   setPaymentMetadata(key: String!, value: String!, where: PaymentWhereUniqueInput!): Payment
   setPersonMetadata(key: String!, value: String!, where: PersonWhereUniqueInput!): Person
@@ -2158,11 +3317,15 @@ type Mutation {
   setTicketMetadata(key: String!, value: String!, where: TicketWhereUniqueInput!): Ticket
   setVenueMetadata(key: String!, value: String!, where: VenueWhereUniqueInput!): Venue
   subscribeToMailingList(email: String!, where: EventWhereUniqueInput!): MailingListMember
+  updateEmailTemplate(data: EmailTemplateUpdateInput!, where: EmailTemplateWhereUniqueInput!): EmailTemplate
   updateEvent(data: EventUpdateInput!, where: EventWhereUniqueInput!): Event
   updateEventGroup(data: EventGroupUpdateInput!, where: EventGroupWhereUniqueInput!): EventGroup
+  updateEventRestriction(data: EventRestrictionUpdateInput!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   updateMailingListMember(data: MailingListMemberUpdateInput!, where: MailingListMemberWhereUniqueInput!): MailingListMember
+  updateManyEmailTemplate(data: EmailTemplateUpdateManyMutationInput!, where: EmailTemplateWhereInput): AffectedRowsOutput!
   updateManyEvent(data: EventUpdateManyMutationInput!, where: EventWhereInput): AffectedRowsOutput!
   updateManyEventGroup(data: EventGroupUpdateManyMutationInput!, where: EventGroupWhereInput): AffectedRowsOutput!
+  updateManyEventRestriction(data: EventRestrictionUpdateManyMutationInput!, where: EventRestrictionWhereInput): AffectedRowsOutput!
   updateManyMailingListMember(data: MailingListMemberUpdateManyMutationInput!, where: MailingListMemberWhereInput): AffectedRowsOutput!
   updateManyPayment(data: PaymentUpdateManyMutationInput!, where: PaymentWhereInput): AffectedRowsOutput!
   updateManyPerson(data: PersonUpdateManyMutationInput!, where: PersonWhereInput): AffectedRowsOutput!
@@ -2178,8 +3341,12 @@ type Mutation {
   updateSponsor(data: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor
   updateTicket(data: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
+  uploadEventRestrictionIcon(upload: Upload!, where: EventRestrictionWhereUniqueInput!): EventRestriction
+  uploadSponsorLogo(upload: Upload!, where: SponsorWhereUniqueInput!): Sponsor
+  upsertEmailTemplate(create: EmailTemplateCreateInput!, update: EmailTemplateUpdateInput!, where: EmailTemplateWhereUniqueInput!): EmailTemplate!
   upsertEvent(create: EventCreateInput!, update: EventUpdateInput!, where: EventWhereUniqueInput!): Event!
   upsertEventGroup(create: EventGroupCreateInput!, update: EventGroupUpdateInput!, where: EventGroupWhereUniqueInput!): EventGroup!
+  upsertEventRestriction(create: EventRestrictionCreateInput!, update: EventRestrictionUpdateInput!, where: EventRestrictionWhereUniqueInput!): EventRestriction!
   upsertMailingListMember(create: MailingListMemberCreateInput!, update: MailingListMemberUpdateInput!, where: MailingListMemberWhereUniqueInput!): MailingListMember!
   upsertPayment(create: PaymentCreateInput!, update: PaymentUpdateInput!, where: PaymentWhereUniqueInput!): Payment!
   upsertPerson(create: PersonCreateInput!, update: PersonUpdateInput!, where: PersonWhereUniqueInput!): Person!
@@ -2269,6 +3436,23 @@ input NestedEnumDiscountTypeWithAggregatesFilter {
   in: [DiscountType!]
   not: NestedEnumDiscountTypeWithAggregatesFilter
   notIn: [DiscountType!]
+}
+
+input NestedEnumEmailWhenFromFilter {
+  equals: EmailWhenFrom
+  in: [EmailWhenFrom!]
+  not: NestedEnumEmailWhenFromFilter
+  notIn: [EmailWhenFrom!]
+}
+
+input NestedEnumEmailWhenFromWithAggregatesFilter {
+  _count: NestedIntFilter
+  _max: NestedEnumEmailWhenFromFilter
+  _min: NestedEnumEmailWhenFromFilter
+  equals: EmailWhenFrom
+  in: [EmailWhenFrom!]
+  not: NestedEnumEmailWhenFromWithAggregatesFilter
+  notIn: [EmailWhenFrom!]
 }
 
 input NestedEnumTicketTypeFilter {
@@ -3555,8 +4739,10 @@ input PromoCodeWhereUniqueInput {
 }
 
 type Query {
+  aggregateEmailTemplate(cursor: EmailTemplateWhereUniqueInput, orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): AggregateEmailTemplate!
   aggregateEvent(cursor: EventWhereUniqueInput, orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): AggregateEvent!
   aggregateEventGroup(cursor: EventGroupWhereUniqueInput, orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): AggregateEventGroup!
+  aggregateEventRestriction(cursor: EventRestrictionWhereUniqueInput, orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): AggregateEventRestriction!
   aggregateMailingListMember(cursor: MailingListMemberWhereUniqueInput, orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): AggregateMailingListMember!
   aggregatePayment(cursor: PaymentWhereUniqueInput, orderBy: [PaymentOrderByWithRelationInput!], skip: Int, take: Int, where: PaymentWhereInput): AggregatePayment!
   aggregatePerson(cursor: PersonWhereUniqueInput, orderBy: [PersonOrderByWithRelationInput!], skip: Int, take: Int, where: PersonWhereInput): AggregatePerson!
@@ -3565,12 +4751,18 @@ type Query {
   aggregateSponsor(cursor: SponsorWhereUniqueInput, orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): AggregateSponsor!
   aggregateTicket(cursor: TicketWhereUniqueInput, orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): AggregateTicket!
   aggregateVenue(cursor: VenueWhereUniqueInput, orderBy: [VenueOrderByWithRelationInput!], skip: Int, take: Int, where: VenueWhereInput): AggregateVenue!
+  emailTemplate(where: EmailTemplateWhereUniqueInput!): EmailTemplate
+  emailTemplates(cursor: EmailTemplateWhereUniqueInput, distinct: [EmailTemplateScalarFieldEnum!], orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): [EmailTemplate!]!
   event(where: EventWhereUniqueInput!): Event
   eventGroup(where: EventGroupWhereUniqueInput!): EventGroup
   eventGroups(cursor: EventGroupWhereUniqueInput, distinct: [EventGroupScalarFieldEnum!], orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): [EventGroup!]!
+  eventRestriction(where: EventRestrictionWhereUniqueInput!): EventRestriction
+  eventRestrictions(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestriction!]!
   events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], editable: Boolean, orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
+  findFirstEmailTemplate(cursor: EmailTemplateWhereUniqueInput, distinct: [EmailTemplateScalarFieldEnum!], orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): EmailTemplate
   findFirstEvent(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): Event
   findFirstEventGroup(cursor: EventGroupWhereUniqueInput, distinct: [EventGroupScalarFieldEnum!], orderBy: [EventGroupOrderByWithRelationInput!], skip: Int, take: Int, where: EventGroupWhereInput): EventGroup
+  findFirstEventRestriction(cursor: EventRestrictionWhereUniqueInput, distinct: [EventRestrictionScalarFieldEnum!], orderBy: [EventRestrictionOrderByWithRelationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): EventRestriction
   findFirstMailingListMember(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): MailingListMember
   findFirstPayment(cursor: PaymentWhereUniqueInput, distinct: [PaymentScalarFieldEnum!], orderBy: [PaymentOrderByWithRelationInput!], skip: Int, take: Int, where: PaymentWhereInput): Payment
   findFirstPerson(cursor: PersonWhereUniqueInput, distinct: [PersonScalarFieldEnum!], orderBy: [PersonOrderByWithRelationInput!], skip: Int, take: Int, where: PersonWhereInput): Person
@@ -3579,8 +4771,10 @@ type Query {
   findFirstSponsor(cursor: SponsorWhereUniqueInput, distinct: [SponsorScalarFieldEnum!], orderBy: [SponsorOrderByWithRelationInput!], skip: Int, take: Int, where: SponsorWhereInput): Sponsor
   findFirstTicket(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): Ticket
   findFirstVenue(cursor: VenueWhereUniqueInput, distinct: [VenueScalarFieldEnum!], orderBy: [VenueOrderByWithRelationInput!], skip: Int, take: Int, where: VenueWhereInput): Venue
+  groupByEmailTemplate(by: [EmailTemplateScalarFieldEnum!]!, having: EmailTemplateScalarWhereWithAggregatesInput, orderBy: [EmailTemplateOrderByWithAggregationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): [EmailTemplateGroupBy!]!
   groupByEvent(by: [EventScalarFieldEnum!]!, having: EventScalarWhereWithAggregatesInput, orderBy: [EventOrderByWithAggregationInput!], skip: Int, take: Int, where: EventWhereInput): [EventGroupBy!]!
   groupByEventGroup(by: [EventGroupScalarFieldEnum!]!, having: EventGroupScalarWhereWithAggregatesInput, orderBy: [EventGroupOrderByWithAggregationInput!], skip: Int, take: Int, where: EventGroupWhereInput): [EventGroupGroupBy!]!
+  groupByEventRestriction(by: [EventRestrictionScalarFieldEnum!]!, having: EventRestrictionScalarWhereWithAggregatesInput, orderBy: [EventRestrictionOrderByWithAggregationInput!], skip: Int, take: Int, where: EventRestrictionWhereInput): [EventRestrictionGroupBy!]!
   groupByMailingListMember(by: [MailingListMemberScalarFieldEnum!]!, having: MailingListMemberScalarWhereWithAggregatesInput, orderBy: [MailingListMemberOrderByWithAggregationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMemberGroupBy!]!
   groupByPayment(by: [PaymentScalarFieldEnum!]!, having: PaymentScalarWhereWithAggregatesInput, orderBy: [PaymentOrderByWithAggregationInput!], skip: Int, take: Int, where: PaymentWhereInput): [PaymentGroupBy!]!
   groupByPerson(by: [PersonScalarFieldEnum!]!, having: PersonScalarWhereWithAggregatesInput, orderBy: [PersonOrderByWithAggregationInput!], skip: Int, take: Int, where: PersonWhereInput): [PersonGroupBy!]!
@@ -4300,6 +5494,7 @@ type Sponsor {
   eventId: String
   getMetadata(key: String!): String
   id: String!
+  link: String
   logoImageUri: String
   name: String!
   perks: String
@@ -4324,6 +5519,7 @@ type SponsorCountAggregate {
   description: Int!
   eventId: Int!
   id: Int!
+  link: Int!
   logoImageUri: Int!
   metadata: Int!
   name: Int!
@@ -4340,6 +5536,7 @@ input SponsorCountOrderByAggregateInput {
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
+  link: SortOrder
   logoImageUri: SortOrder
   metadata: SortOrder
   name: SortOrder
@@ -4356,6 +5553,7 @@ input SponsorCreateInput {
   description: String
   event: EventCreateNestedOneWithoutSponsorsInput
   id: String
+  link: String
   logoImageUri: String
   metadata: JSON
   name: String!
@@ -4371,6 +5569,7 @@ input SponsorCreateManyEventInput {
   createdAt: DateTime
   description: String
   id: String
+  link: String
   logoImageUri: String
   metadata: JSON
   name: String!
@@ -4392,6 +5591,7 @@ input SponsorCreateManyInput {
   description: String
   eventId: String
   id: String
+  link: String
   logoImageUri: String
   metadata: JSON
   name: String!
@@ -4419,6 +5619,7 @@ input SponsorCreateWithoutEventInput {
   createdAt: DateTime
   description: String
   id: String
+  link: String
   logoImageUri: String
   metadata: JSON
   name: String!
@@ -4440,6 +5641,7 @@ type SponsorGroupBy {
   description: String
   eventId: String
   id: String!
+  link: String
   logoImageUri: String
   metadata: JSON
   name: String!
@@ -4462,6 +5664,7 @@ type SponsorMaxAggregate {
   description: String
   eventId: String
   id: String
+  link: String
   logoImageUri: String
   name: String
   perks: String
@@ -4477,6 +5680,7 @@ input SponsorMaxOrderByAggregateInput {
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
+  link: SortOrder
   logoImageUri: SortOrder
   name: SortOrder
   perks: SortOrder
@@ -4492,6 +5696,7 @@ type SponsorMinAggregate {
   description: String
   eventId: String
   id: String
+  link: String
   logoImageUri: String
   name: String
   perks: String
@@ -4507,6 +5712,7 @@ input SponsorMinOrderByAggregateInput {
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
+  link: SortOrder
   logoImageUri: SortOrder
   name: SortOrder
   perks: SortOrder
@@ -4531,6 +5737,7 @@ input SponsorOrderByWithAggregationInput {
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
+  link: SortOrder
   logoImageUri: SortOrder
   metadata: SortOrder
   name: SortOrder
@@ -4548,6 +5755,7 @@ input SponsorOrderByWithRelationInput {
   event: EventOrderByWithRelationInput
   eventId: SortOrder
   id: SortOrder
+  link: SortOrder
   logoImageUri: SortOrder
   metadata: SortOrder
   name: SortOrder
@@ -4564,6 +5772,7 @@ enum SponsorScalarFieldEnum {
   description
   eventId
   id
+  link
   logoImageUri
   metadata
   name
@@ -4583,6 +5792,7 @@ input SponsorScalarWhereInput {
   description: StringNullableFilter
   eventId: StringNullableFilter
   id: StringFilter
+  link: StringNullableFilter
   logoImageUri: StringNullableFilter
   metadata: JsonNullableFilter
   name: StringFilter
@@ -4602,6 +5812,7 @@ input SponsorScalarWhereWithAggregatesInput {
   description: StringNullableWithAggregatesFilter
   eventId: StringNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
+  link: StringNullableWithAggregatesFilter
   logoImageUri: StringNullableWithAggregatesFilter
   metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
@@ -4626,6 +5837,7 @@ input SponsorUpdateInput {
   description: NullableStringFieldUpdateOperationsInput
   event: EventUpdateOneWithoutSponsorsInput
   id: StringFieldUpdateOperationsInput
+  link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -4641,6 +5853,7 @@ input SponsorUpdateManyMutationInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   description: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
+  link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -4680,6 +5893,7 @@ input SponsorUpdateWithoutEventInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   description: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
+  link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
   metadata: JSON
   name: StringFieldUpdateOperationsInput
@@ -4706,6 +5920,7 @@ input SponsorWhereInput {
   event: EventRelationFilter
   eventId: StringNullableFilter
   id: StringFilter
+  link: StringNullableFilter
   logoImageUri: StringNullableFilter
   metadata: JsonNullableFilter
   name: StringFilter
@@ -4796,6 +6011,7 @@ input StringWithAggregatesFilter {
 }
 
 type Ticket {
+  _count: TicketCount
   age: Int
   couponCode: String
   createdAt: DateTime!
@@ -4814,6 +6030,7 @@ type Ticket {
   phone: String
   promoCode: PromoCode
   promoCodeId: String
+  sentEmails(cursor: EmailTemplateWhereUniqueInput, distinct: [EmailTemplateScalarFieldEnum!], orderBy: [EmailTemplateOrderByWithRelationInput!], skip: Int, take: Int, where: EmailTemplateWhereInput): [EmailTemplate!]!
   type: TicketType!
   updatedAt: DateTime!
   waiverSigned: Boolean!
@@ -4825,6 +6042,10 @@ type TicketAvgAggregate {
 
 input TicketAvgOrderByAggregateInput {
   age: SortOrder
+}
+
+type TicketCount {
+  sentEmails: Int!
 }
 
 type TicketCountAggregate {
@@ -4880,6 +6101,7 @@ input TicketCreateInput {
   payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
+  sentEmails: EmailTemplateCreateNestedManyWithoutSentToInput
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
@@ -5024,6 +6246,12 @@ input TicketCreateNestedManyWithoutPromoCodeInput {
   createMany: TicketCreateManyPromoCodeInputEnvelope
 }
 
+input TicketCreateNestedManyWithoutSentEmailsInput {
+  connect: [TicketWhereUniqueInput!]
+  connectOrCreate: [TicketCreateOrConnectWithoutSentEmailsInput!]
+  create: [TicketCreateWithoutSentEmailsInput!]
+}
+
 input TicketCreateOrConnectWithoutEventInput {
   create: TicketCreateWithoutEventInput!
   where: TicketWhereUniqueInput!
@@ -5044,6 +6272,11 @@ input TicketCreateOrConnectWithoutPromoCodeInput {
   where: TicketWhereUniqueInput!
 }
 
+input TicketCreateOrConnectWithoutSentEmailsInput {
+  create: TicketCreateWithoutSentEmailsInput!
+  where: TicketWhereUniqueInput!
+}
+
 input TicketCreateWithoutEventInput {
   age: Int
   couponCode: String
@@ -5057,6 +6290,7 @@ input TicketCreateWithoutEventInput {
   payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
+  sentEmails: EmailTemplateCreateNestedManyWithoutSentToInput
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
@@ -5075,6 +6309,7 @@ input TicketCreateWithoutGuardianInput {
   payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
+  sentEmails: EmailTemplateCreateNestedManyWithoutSentToInput
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
@@ -5093,6 +6328,7 @@ input TicketCreateWithoutPaymentInput {
   metadata: JSON
   phone: String
   promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
+  sentEmails: EmailTemplateCreateNestedManyWithoutSentToInput
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
@@ -5111,6 +6347,26 @@ input TicketCreateWithoutPromoCodeInput {
   metadata: JSON
   payment: PaymentCreateNestedOneWithoutTicketsInput
   phone: String
+  sentEmails: EmailTemplateCreateNestedManyWithoutSentToInput
+  type: TicketType
+  updatedAt: DateTime
+  waiverSigned: Boolean
+}
+
+input TicketCreateWithoutSentEmailsInput {
+  age: Int
+  couponCode: String
+  createdAt: DateTime
+  email: String
+  event: EventCreateNestedOneWithoutTicketsInput!
+  firstName: String!
+  guardian: PersonCreateNestedOneWithoutTicketInput
+  id: String
+  lastName: String!
+  metadata: JSON
+  payment: PaymentCreateNestedOneWithoutTicketsInput
+  phone: String
+  promoCode: PromoCodeCreateNestedOneWithoutTicketsInput
   type: TicketType
   updatedAt: DateTime
   waiverSigned: Boolean
@@ -5264,6 +6520,7 @@ input TicketOrderByWithRelationInput {
   phone: SortOrder
   promoCode: PromoCodeOrderByWithRelationInput
   promoCodeId: SortOrder
+  sentEmails: EmailTemplateOrderByRelationAggregateInput
   type: SortOrder
   updatedAt: SortOrder
   waiverSigned: SortOrder
@@ -5363,6 +6620,7 @@ input TicketUpdateInput {
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
+  sentEmails: EmailTemplateUpdateManyWithoutSentToInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   waiverSigned: BoolFieldUpdateOperationsInput
@@ -5399,6 +6657,11 @@ input TicketUpdateManyWithWhereWithoutPaymentInput {
 }
 
 input TicketUpdateManyWithWhereWithoutPromoCodeInput {
+  data: TicketUpdateManyMutationInput!
+  where: TicketScalarWhereInput!
+}
+
+input TicketUpdateManyWithWhereWithoutSentEmailsInput {
   data: TicketUpdateManyMutationInput!
   where: TicketScalarWhereInput!
 }
@@ -5459,6 +6722,19 @@ input TicketUpdateManyWithoutPromoCodeInput {
   upsert: [TicketUpsertWithWhereUniqueWithoutPromoCodeInput!]
 }
 
+input TicketUpdateManyWithoutSentEmailsInput {
+  connect: [TicketWhereUniqueInput!]
+  connectOrCreate: [TicketCreateOrConnectWithoutSentEmailsInput!]
+  create: [TicketCreateWithoutSentEmailsInput!]
+  delete: [TicketWhereUniqueInput!]
+  deleteMany: [TicketScalarWhereInput!]
+  disconnect: [TicketWhereUniqueInput!]
+  set: [TicketWhereUniqueInput!]
+  update: [TicketUpdateWithWhereUniqueWithoutSentEmailsInput!]
+  updateMany: [TicketUpdateManyWithWhereWithoutSentEmailsInput!]
+  upsert: [TicketUpsertWithWhereUniqueWithoutSentEmailsInput!]
+}
+
 input TicketUpdateWithWhereUniqueWithoutEventInput {
   data: TicketUpdateWithoutEventInput!
   where: TicketWhereUniqueInput!
@@ -5479,6 +6755,11 @@ input TicketUpdateWithWhereUniqueWithoutPromoCodeInput {
   where: TicketWhereUniqueInput!
 }
 
+input TicketUpdateWithWhereUniqueWithoutSentEmailsInput {
+  data: TicketUpdateWithoutSentEmailsInput!
+  where: TicketWhereUniqueInput!
+}
+
 input TicketUpdateWithoutEventInput {
   age: NullableIntFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
@@ -5492,6 +6773,7 @@ input TicketUpdateWithoutEventInput {
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
+  sentEmails: EmailTemplateUpdateManyWithoutSentToInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   waiverSigned: BoolFieldUpdateOperationsInput
@@ -5510,6 +6792,7 @@ input TicketUpdateWithoutGuardianInput {
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
+  sentEmails: EmailTemplateUpdateManyWithoutSentToInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   waiverSigned: BoolFieldUpdateOperationsInput
@@ -5528,6 +6811,7 @@ input TicketUpdateWithoutPaymentInput {
   metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
+  sentEmails: EmailTemplateUpdateManyWithoutSentToInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   waiverSigned: BoolFieldUpdateOperationsInput
@@ -5546,6 +6830,26 @@ input TicketUpdateWithoutPromoCodeInput {
   metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
+  sentEmails: EmailTemplateUpdateManyWithoutSentToInput
+  type: EnumTicketTypeFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  waiverSigned: BoolFieldUpdateOperationsInput
+}
+
+input TicketUpdateWithoutSentEmailsInput {
+  age: NullableIntFieldUpdateOperationsInput
+  couponCode: NullableStringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  email: NullableStringFieldUpdateOperationsInput
+  event: EventUpdateOneRequiredWithoutTicketsInput
+  firstName: StringFieldUpdateOperationsInput
+  guardian: PersonUpdateOneWithoutTicketInput
+  id: StringFieldUpdateOperationsInput
+  lastName: StringFieldUpdateOperationsInput
+  metadata: JSON
+  payment: PaymentUpdateOneWithoutTicketsInput
+  phone: NullableStringFieldUpdateOperationsInput
+  promoCode: PromoCodeUpdateOneWithoutTicketsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   waiverSigned: BoolFieldUpdateOperationsInput
@@ -5575,6 +6879,12 @@ input TicketUpsertWithWhereUniqueWithoutPromoCodeInput {
   where: TicketWhereUniqueInput!
 }
 
+input TicketUpsertWithWhereUniqueWithoutSentEmailsInput {
+  create: TicketCreateWithoutSentEmailsInput!
+  update: TicketUpdateWithoutSentEmailsInput!
+  where: TicketWhereUniqueInput!
+}
+
 input TicketWhereInput {
   AND: [TicketWhereInput!]
   NOT: [TicketWhereInput!]
@@ -5596,6 +6906,7 @@ input TicketWhereInput {
   phone: StringNullableFilter
   promoCode: PromoCodeRelationFilter
   promoCodeId: StringNullableFilter
+  sentEmails: EmailTemplateListRelationFilter
   type: EnumTicketTypeFilter
   updatedAt: DateTimeFilter
   waiverSigned: BoolFilter
@@ -5604,6 +6915,9 @@ input TicketWhereInput {
 input TicketWhereUniqueInput {
   id: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type Venue {
   _count: VenueCount
