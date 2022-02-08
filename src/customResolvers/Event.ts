@@ -159,7 +159,7 @@ export class CustomEventResolver {
 
     calculatePriceWithPromo(event: Event, promo?: PromoCode | null) {
         const activeTicketPrice = this.activeTicketPrice(event)
-        if(!activeTicketPrice) {
+        if(activeTicketPrice === null || typeof activeTicketPrice === 'undefined') {
             throw 'Event does not have an active ticket price! (Most likely registrations are closed)'
         }
 
