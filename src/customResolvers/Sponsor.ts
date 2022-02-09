@@ -15,7 +15,7 @@ export class CustomSponsorResolver {
     @Mutation(_returns => Sponsor, {nullable: true})
     async uploadSponsorLogo(
         @Args() where: FindUniqueSponsorArgs,
-        @Arg("upload", () => GraphQLUpload) { createReadStream, filename}: FileUpload,
+        @Arg("upload", () => GraphQLUpload) { createReadStream, filename }: FileUpload,
         @Ctx() { prisma }: Context,
     ): Promise<Sponsor> {
         const chunks = [];
@@ -29,6 +29,26 @@ export class CustomSponsorResolver {
             throw new Error("An error occurred while uploading your picture. Please refresh the page and try again.")
         }
         return prisma.sponsor.update({...where, data: {logoImageUri: result.url}})
+    }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @Mutation(_returns => Sponsor, {nullable: true})
+    async uploadDarkSponsorLogo(
+        @Args() where: FindUniqueSponsorArgs,
+        @Arg("upload", () => GraphQLUpload) { createReadStream, filename }: FileUpload,
+        @Ctx() { prisma }: Context,
+    ): Promise<Sponsor> {
+        const chunks = [];
+        for await (const chunk of createReadStream()) {
+            chunks.push(chunk)
+        }
+        const uploadBuffer = Buffer.concat(chunks);
+
+        const result = await uploader.image(uploadBuffer, filename || '_.jpg')
+        if (!result.url) {
+            throw new Error("An error occurred while uploading your picture. Please refresh the page and try again.")
+        }
+        return prisma.sponsor.update({...where, data: {darkLogoImageUri: result.url}})
     }
 }
 @Resolver(of => Sponsor)
