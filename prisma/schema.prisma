@@ -102,21 +102,22 @@ model Venue {
 
 model Sponsor {
   // Metadata
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   /// @TypeGraphQL.omit(output: true)
-  metadata     Json?
+  metadata         Json?
   // Data
-  name         String
-  link         String?
-  logoImageUri String?
-  description  String?
-  perks        String?
-  amount       Int      @default(0)
-  contactName  String?
-  contactEmail String?
-  contactPhone String?
+  name             String
+  link             String?
+  logoImageUri     String?
+  darkLogoImageUri String?
+  description      String?
+  perks            String?
+  amount           Int      @default(0)
+  contactName      String?
+  contactEmail     String?
+  contactPhone     String?
 
   // Relations
   event   Event?  @relation(fields: [eventId], references: [id])
