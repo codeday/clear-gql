@@ -185,6 +185,7 @@ type EmailTemplate {
   id: String!
   marketing: Boolean!
   name: String!
+  previewEmailBody: String!
   replyTo: String!
   sendAfterEvent: Boolean!
   sendInWorkHours: Boolean!
@@ -5489,6 +5490,7 @@ type Sponsor {
   contactName: String
   contactPhone: String
   createdAt: DateTime!
+  darkLogoImageUri: String
   description: String
   event: Event
   eventId: String
@@ -5516,6 +5518,7 @@ type SponsorCountAggregate {
   contactName: Int!
   contactPhone: Int!
   createdAt: Int!
+  darkLogoImageUri: Int!
   description: Int!
   eventId: Int!
   id: Int!
@@ -5533,6 +5536,7 @@ input SponsorCountOrderByAggregateInput {
   contactName: SortOrder
   contactPhone: SortOrder
   createdAt: SortOrder
+  darkLogoImageUri: SortOrder
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
@@ -5550,6 +5554,7 @@ input SponsorCreateInput {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   event: EventCreateNestedOneWithoutSponsorsInput
   id: String
@@ -5567,6 +5572,7 @@ input SponsorCreateManyEventInput {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   id: String
   link: String
@@ -5588,6 +5594,7 @@ input SponsorCreateManyInput {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   eventId: String
   id: String
@@ -5617,6 +5624,7 @@ input SponsorCreateWithoutEventInput {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   id: String
   link: String
@@ -5638,6 +5646,7 @@ type SponsorGroupBy {
   contactName: String
   contactPhone: String
   createdAt: DateTime!
+  darkLogoImageUri: String
   description: String
   eventId: String
   id: String!
@@ -5661,6 +5670,7 @@ type SponsorMaxAggregate {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   eventId: String
   id: String
@@ -5677,6 +5687,7 @@ input SponsorMaxOrderByAggregateInput {
   contactName: SortOrder
   contactPhone: SortOrder
   createdAt: SortOrder
+  darkLogoImageUri: SortOrder
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
@@ -5693,6 +5704,7 @@ type SponsorMinAggregate {
   contactName: String
   contactPhone: String
   createdAt: DateTime
+  darkLogoImageUri: String
   description: String
   eventId: String
   id: String
@@ -5709,6 +5721,7 @@ input SponsorMinOrderByAggregateInput {
   contactName: SortOrder
   contactPhone: SortOrder
   createdAt: SortOrder
+  darkLogoImageUri: SortOrder
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
@@ -5734,6 +5747,7 @@ input SponsorOrderByWithAggregationInput {
   contactName: SortOrder
   contactPhone: SortOrder
   createdAt: SortOrder
+  darkLogoImageUri: SortOrder
   description: SortOrder
   eventId: SortOrder
   id: SortOrder
@@ -5751,6 +5765,7 @@ input SponsorOrderByWithRelationInput {
   contactName: SortOrder
   contactPhone: SortOrder
   createdAt: SortOrder
+  darkLogoImageUri: SortOrder
   description: SortOrder
   event: EventOrderByWithRelationInput
   eventId: SortOrder
@@ -5769,6 +5784,7 @@ enum SponsorScalarFieldEnum {
   contactName
   contactPhone
   createdAt
+  darkLogoImageUri
   description
   eventId
   id
@@ -5789,6 +5805,7 @@ input SponsorScalarWhereInput {
   contactName: StringNullableFilter
   contactPhone: StringNullableFilter
   createdAt: DateTimeFilter
+  darkLogoImageUri: StringNullableFilter
   description: StringNullableFilter
   eventId: StringNullableFilter
   id: StringFilter
@@ -5809,6 +5826,7 @@ input SponsorScalarWhereWithAggregatesInput {
   contactName: StringNullableWithAggregatesFilter
   contactPhone: StringNullableWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
+  darkLogoImageUri: StringNullableWithAggregatesFilter
   description: StringNullableWithAggregatesFilter
   eventId: StringNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
@@ -5834,6 +5852,7 @@ input SponsorUpdateInput {
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
+  darkLogoImageUri: NullableStringFieldUpdateOperationsInput
   description: NullableStringFieldUpdateOperationsInput
   event: EventUpdateOneWithoutSponsorsInput
   id: StringFieldUpdateOperationsInput
@@ -5851,6 +5870,7 @@ input SponsorUpdateManyMutationInput {
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
+  darkLogoImageUri: NullableStringFieldUpdateOperationsInput
   description: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
@@ -5891,6 +5911,7 @@ input SponsorUpdateWithoutEventInput {
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
+  darkLogoImageUri: NullableStringFieldUpdateOperationsInput
   description: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
@@ -5916,6 +5937,7 @@ input SponsorWhereInput {
   contactName: StringNullableFilter
   contactPhone: StringNullableFilter
   createdAt: DateTimeFilter
+  darkLogoImageUri: StringNullableFilter
   description: StringNullableFilter
   event: EventRelationFilter
   eventId: StringNullableFilter

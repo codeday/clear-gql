@@ -14,6 +14,7 @@ const postmark = new ServerClient(config.postmark.serverToken || '');
 const twilio = new Twilio(config.twilio.sid, config.twilio.token);
 const emailQueue: Message[] | { To: string; ReplyTo: string; From: string; HtmlBody: string; Subject: string; MessageStream: string; }[] = []
 
+
 handlebars.registerHelper('date', (date) => {
     return DateTime.fromJSDate(date).setZone('UTC').toLocaleString(DateTime.DATE_FULL)
 })
@@ -25,6 +26,54 @@ interface TemplateData {
     guardian: Person | null,
     waiverLink: string
 }
+
+export function previewTemplate(template: string) {
+    const exampleData: TemplateData = {
+        ticket: {
+            id: "ticket_id",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            type: "STUDENT",
+            firstName: "FirstName",
+            lastName: "LastName",
+            waiverSigned: false,
+            eventId: "event_id"
+        },
+        event: {
+            id: "event_id",
+            createdAt: new Date(Date.UTC(2022, 0, 0)),
+            updatedAt: new Date(Date.UTC(2022, 0, 0)),
+            name: "event_name",
+            startDate: new Date(Date.UTC(2022, 1, 1)),
+            endDate: new Date(Date.UTC(2022, 1, 2)),
+            ticketPrice: 20,
+            majorityAge: 18,
+            registrationCutoff: new Date(Date.UTC(2022, 1, 1)),
+            earlyBirdCutoff: new Date(Date.UTC(2022, 0, 15)),
+            earlyBirdPrice: 10,
+            registrationsOpen: true,
+            managers: [],
+            eventGroupId: "eventgroup_id",
+        },
+        venue: {
+            id: "venue_id",
+            name: "venue_name",
+            createdAt: new Date(Date.UTC(2022, 0, 0)),
+            updatedAt: new Date(Date.UTC(2022, 0, 0)),
+            address: "123 venue St, Venue, VN, 12345",
+        },
+        guardian: {
+            id: "guardian_id",
+            createdAt: new Date(Date.UTC(2022, 0, 0)),
+            updatedAt: new Date(Date.UTC(2022, 0, 0)),
+            firstName: "guardian_firstname",
+            lastName: "guardian_lastname",
+        },
+        waiverLink: 'https://link-to-waiver-form'
+    }
+    return handlebars.compile(template)(exampleData)
+}
+
 export function IsWorkHours(tz: string | null | undefined, fallback='America/Los_Angeles'): Boolean {
     let now = DateTime.local().setZone(tz || undefined)
     if (!now.isValid) {

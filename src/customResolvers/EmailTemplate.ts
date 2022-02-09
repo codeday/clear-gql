@@ -3,6 +3,19 @@ import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} fro
 import {FindUniqueEmailTemplateArgs, EmailTemplate} from "../generated/typegraphql-prisma";
 import {AuthRole, Context} from "../context";
 import dot from "dot-object";
+import {previewTemplate} from "../emails/emails";
+
+
+@Resolver(of => EmailTemplate)
+export class CustomEmailTemplateResolver {
+    @Authorized(AuthRole.ADMIN)
+    @FieldResolver(type => String)
+    previewEmailBody(
+        @Root() emailTemplate: EmailTemplate,
+    ): String {
+        return previewTemplate(emailTemplate.template)
+    }
+}
 
 @Resolver(of => EmailTemplate)
 export class EmailTemplateMetadataResolver {
