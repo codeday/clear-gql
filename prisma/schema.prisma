@@ -194,6 +194,7 @@ model Payment {
   metadata  Json?
 
   // Data
+  paymentProvider       String  @default("stripe")
   stripePaymentIntentId String
   complete              Boolean @default(false)
 

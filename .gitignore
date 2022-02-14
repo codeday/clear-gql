@@ -4,3 +4,4 @@ dist/
 .env
 src/generated
 generated
+yarn-error.log
