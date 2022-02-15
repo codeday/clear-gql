@@ -1,4 +1,4 @@
-import {ArgsType, Field} from "type-graphql";
+import {ArgsType, Field, registerEnumType} from "type-graphql";
 import {
     CreateTicketArgs,
     EventWhereUniqueInput,
@@ -6,6 +6,12 @@ import {
     Ticket,
     TicketCreateInput, TicketCreateWithoutEventInput
 } from "../generated/typegraphql-prisma";
+
+export enum PaymentProvider {
+  stripe = "stripe",
+  razorpay = "razorpay",
+}
+registerEnumType(PaymentProvider, { name: "PaymentProvider" });
 
 @ArgsType()
 export class RegisterForEventArgs {
@@ -33,4 +39,9 @@ export class RegisterForEventArgs {
         nullable: true
     })
     promoCode: string | undefined;
+
+    @Field(_type => PaymentProvider, {
+      defaultValue: PaymentProvider.stripe
+    })
+    paymentProvider: PaymentProvider;
 }
