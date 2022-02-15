@@ -3303,8 +3303,8 @@ type Mutation {
   deleteSponsor(where: SponsorWhereUniqueInput!): Sponsor
   deleteTicket(where: TicketWhereUniqueInput!): Ticket
   deleteVenue(where: VenueWhereUniqueInput!): Venue
-  finalizePayment(paymentIntentId: String!): [String!]!
-  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String
+  finalizePayment(paymentIntentId: String!, paymentProvider: PaymentProvider = stripe): [String!]!
+  registerForEvent(eventWhere: EventWhereUniqueInput!, guardianData: PersonCreateInput, paymentProvider: PaymentProvider = stripe, promoCode: String, ticketData: TicketCreateWithoutEventInput, ticketsData: [TicketCreateWithoutEventInput!]): String
   setEmailTemplateMetadata(key: String!, value: String!, where: EmailTemplateWhereUniqueInput!): EmailTemplate
   setEventGroupMetadata(key: String!, value: String!, where: EventGroupWhereUniqueInput!): EventGroup
   setEventMetadata(key: String!, value: String!, where: EventWhereUniqueInput!): Event
@@ -3342,6 +3342,7 @@ type Mutation {
   updateSponsor(data: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor
   updateTicket(data: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket
   updateVenue(data: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue
+  uploadDarkSponsorLogo(upload: Upload!, where: SponsorWhereUniqueInput!): Sponsor
   uploadEventRestrictionIcon(upload: Upload!, where: EventRestrictionWhereUniqueInput!): EventRestriction
   uploadSponsorLogo(upload: Upload!, where: SponsorWhereUniqueInput!): Sponsor
   upsertEmailTemplate(create: EmailTemplateCreateInput!, update: EmailTemplateUpdateInput!, where: EmailTemplateWhereUniqueInput!): EmailTemplate!
@@ -3356,7 +3357,7 @@ type Mutation {
   upsertSponsor(create: SponsorCreateInput!, update: SponsorUpdateInput!, where: SponsorWhereUniqueInput!): Sponsor!
   upsertTicket(create: TicketCreateInput!, update: TicketUpdateInput!, where: TicketWhereUniqueInput!): Ticket!
   upsertVenue(create: VenueCreateInput!, update: VenueUpdateInput!, where: VenueWhereUniqueInput!): Venue!
-  withdrawFailedPayment(paymentIntentId: String!): Boolean!
+  withdrawFailedPayment(paymentIntentId: String!, paymentProvider: PaymentProvider = stripe): Boolean!
 }
 
 input NestedBoolFilter {
@@ -3654,6 +3655,7 @@ type Payment {
   createdAt: DateTime!
   getMetadata(key: String!): String
   id: String!
+  paymentProvider: String!
   stripePaymentIntentId: String!
   tickets(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
   updatedAt: DateTime!
@@ -3669,6 +3671,7 @@ type PaymentCountAggregate {
   createdAt: Int!
   id: Int!
   metadata: Int!
+  paymentProvider: Int!
   stripePaymentIntentId: Int!
   updatedAt: Int!
 }
@@ -3678,6 +3681,7 @@ input PaymentCountOrderByAggregateInput {
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
+  paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
 }
@@ -3687,6 +3691,7 @@ input PaymentCreateInput {
   createdAt: DateTime
   id: String
   metadata: JSON
+  paymentProvider: String
   stripePaymentIntentId: String!
   tickets: TicketCreateNestedManyWithoutPaymentInput
   updatedAt: DateTime
@@ -3697,6 +3702,7 @@ input PaymentCreateManyInput {
   createdAt: DateTime
   id: String
   metadata: JSON
+  paymentProvider: String
   stripePaymentIntentId: String!
   updatedAt: DateTime
 }
@@ -3717,6 +3723,7 @@ input PaymentCreateWithoutTicketsInput {
   createdAt: DateTime
   id: String
   metadata: JSON
+  paymentProvider: String
   stripePaymentIntentId: String!
   updatedAt: DateTime
 }
@@ -3729,6 +3736,7 @@ type PaymentGroupBy {
   createdAt: DateTime!
   id: String!
   metadata: JSON
+  paymentProvider: String!
   stripePaymentIntentId: String!
   updatedAt: DateTime!
 }
@@ -3737,6 +3745,7 @@ type PaymentMaxAggregate {
   complete: Boolean
   createdAt: DateTime
   id: String
+  paymentProvider: String
   stripePaymentIntentId: String
   updatedAt: DateTime
 }
@@ -3745,6 +3754,7 @@ input PaymentMaxOrderByAggregateInput {
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
+  paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
 }
@@ -3753,6 +3763,7 @@ type PaymentMinAggregate {
   complete: Boolean
   createdAt: DateTime
   id: String
+  paymentProvider: String
   stripePaymentIntentId: String
   updatedAt: DateTime
 }
@@ -3761,6 +3772,7 @@ input PaymentMinOrderByAggregateInput {
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
+  paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
 }
@@ -3773,6 +3785,7 @@ input PaymentOrderByWithAggregationInput {
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
+  paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
 }
@@ -3782,9 +3795,15 @@ input PaymentOrderByWithRelationInput {
   createdAt: SortOrder
   id: SortOrder
   metadata: SortOrder
+  paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   tickets: TicketOrderByRelationAggregateInput
   updatedAt: SortOrder
+}
+
+enum PaymentProvider {
+  razorpay
+  stripe
 }
 
 input PaymentRelationFilter {
@@ -3797,6 +3816,7 @@ enum PaymentScalarFieldEnum {
   createdAt
   id
   metadata
+  paymentProvider
   stripePaymentIntentId
   updatedAt
 }
@@ -3809,6 +3829,7 @@ input PaymentScalarWhereWithAggregatesInput {
   createdAt: DateTimeWithAggregatesFilter
   id: StringWithAggregatesFilter
   metadata: JsonNullableWithAggregatesFilter
+  paymentProvider: StringWithAggregatesFilter
   stripePaymentIntentId: StringWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
 }
@@ -3818,6 +3839,7 @@ input PaymentUpdateInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
+  paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutPaymentInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -3828,6 +3850,7 @@ input PaymentUpdateManyMutationInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
+  paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
@@ -3847,6 +3870,7 @@ input PaymentUpdateWithoutTicketsInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   metadata: JSON
+  paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
@@ -3864,6 +3888,7 @@ input PaymentWhereInput {
   createdAt: DateTimeFilter
   id: StringFilter
   metadata: JsonNullableFilter
+  paymentProvider: StringFilter
   stripePaymentIntentId: StringFilter
   tickets: TicketListRelationFilter
   updatedAt: DateTimeFilter

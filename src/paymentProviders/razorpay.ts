@@ -12,10 +12,9 @@ export const razorpayPaymentProvider: PaymentProvider = {
       currency: 'INR',
       notes: { eventId: event.id, region: event.contentfulWebname },
     });
-
     return {
-      id: intent.order_id,
-      clientData: intent.order_id,
+      id: intent.id,
+      clientData: intent.id,
     };
   },
 
