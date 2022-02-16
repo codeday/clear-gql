@@ -117,7 +117,7 @@ export async function ProcessTicket(template: EmailTemplate,
     if(!template.sendLate && WouldSendLate(event, ticket, template)) return
 
     if(template.sendParent) {
-        if(!guardian) return console.log('')
+        if(!guardian) return
         if(template.sendText && guardian.phone) {
             await SendText(guardian.phone, smsBodyTemplate, data)
         } else if(guardian.email) {
