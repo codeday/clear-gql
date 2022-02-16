@@ -75,7 +75,7 @@ export function previewTemplate(template: string) {
 }
 
 export function IsWorkHours(tz: string | null | undefined, fallback='America/Los_Angeles'): Boolean {
-    let now = DateTime.local().setZone(tz || undefined)
+    let now = DateTime.local().setZone(tz || fallback)
     if (!now.isValid) {
         now = DateTime.local().setZone(fallback)
         if (!now.isValid) {
