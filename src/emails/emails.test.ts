@@ -229,6 +229,12 @@ describe("Prisma Integration Tests", () => {
     }
     interface CreateTicketOpts {
         [key:string]: any
+        guardian?: CreateGuardianOpts
+        payment?: CreatePaymentOpts
+    }
+    interface CreatePaymentOpts {
+        [key:string]: any
+        complete: boolean
     }
     interface CreateGuardianOpts {
         [key:string]: any
@@ -305,10 +311,19 @@ describe("Prisma Integration Tests", () => {
             phone: opts.phone || undefined,
             guardian: opts.guardian? {
                 create: make_create_guardian_args(opts.guardian)
-            } : undefined
+            } : undefined,
+            payment: opts.payment? {
+                create: make_create_payment_args(opts.payment)
+            } : undefined,
         }
     }
-
+    const make_create_payment_args = (opts: CreatePaymentOpts) => {
+        return {
+            paymentProvider: opts.paymentProvider || undefined,
+            stripePaymentIntentId: opts.stripePaymentIntentId || 'paymentIntentId',
+            complete: opts.complete
+        }
+    }
     const make_create_guardian_args = (opts: CreateGuardianOpts) => {
         return {
             firstName: opts.firstName || "Test Case Guardian First Name",
@@ -1179,6 +1194,75 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendText).toHaveBeenCalledTimes(1)
                 expect(all_texts_sent_are_true(mockSendText.mock.calls[0])).toBe(true)
             })
+        })
+    })
+    describe("Only send to finalized payments", () => {
+        test("Payment Finalized", async () => {
+            await create_email_template({
+                sendTo: TicketType.STUDENT,
+                when: "0m",
+                whenFrom: EmailWhenFrom.REGISTER
+            })
+            await create_event_group({
+                events: [
+                    {
+                        tickets: [
+                            {
+                                type: TicketType.STUDENT,
+                                email: 'true',
+                                payment: {
+                                    complete: true
+                                }
+                            },
+                            {
+                                type: TicketType.STUDENT,
+                                email: 'false',
+                                payment: {
+                                    complete: false
+                                }
+                            }
+                        ]
+                    }
+                ]
+            })
+            jest.setSystemTime(new Date(Date.UTC(2022, 0, 0, 0, 0, 1).valueOf()))
+            await emails()
+            expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+            const calls = mockSendEmailBatch.mock.calls[0][0]
+            expect(all_ticket_emails_are_true(calls)).toBe(true)
+            expect(calls.length).toBe(1)
+        })
+        test("Payment undefined (Ticket was free)", async () => {
+            await create_email_template({
+                sendTo: TicketType.STUDENT,
+                when: "0m",
+                whenFrom: EmailWhenFrom.REGISTER
+            })
+            await create_event_group({
+                events: [
+                    {
+                        tickets: [
+                            {
+                                type: TicketType.STUDENT,
+                                email: 'true',
+                            },
+                            {
+                                type: TicketType.STUDENT,
+                                email: 'false',
+                                payment: {
+                                    complete: false
+                                }
+                            }
+                        ]
+                    }
+                ]
+            })
+            jest.setSystemTime(new Date(Date.UTC(2022, 0, 0, 0, 0, 1).valueOf()))
+            await emails()
+            expect(mockSendEmailBatch).toHaveBeenCalledTimes(1)
+            const calls = mockSendEmailBatch.mock.calls[0][0]
+            expect(all_ticket_emails_are_true(calls)).toBe(true)
+            expect(calls.length).toBe(1)
         })
     })
 })

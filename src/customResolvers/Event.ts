@@ -8,10 +8,8 @@ import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import { roundDecimal } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
-import Stripe from "stripe";
-import {RegisterForEventArgs} from "../args/RegisterForEventArgs";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {apiVersion: "2020-08-27"});
+import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
+import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
 
 export const MAJORITY_AGE = 18;
 export const MIN_AGE = 13;
@@ -244,10 +242,18 @@ export class CustomEventResolver {
         return errors;
     }
 
+    createStripePaymentIntent() {
+
+    }
+
+    createPaymentIntent() {
+
+    }
+
     @Mutation(_returns => String, { nullable: true }) // returns stripe payment intent secret key
     async registerForEvent(
         @Ctx() { prisma }: Context,
-        @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode }: RegisterForEventArgs,
+        @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode, paymentProvider }: RegisterForEventArgs,
     ) : Promise<string | null> {
         if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
         const tickets = ticketsData ?? [ticketData];
@@ -292,21 +298,14 @@ export class CustomEventResolver {
         const promo = await this.fetchPromo(prisma, event, promoCode);
         const price = this.calculatePriceWithPromo(event, promo);
 
-        let paymentIntent: Stripe.Response<Stripe.PaymentIntent> | null = null;
         let paymentId: string | null = null;
+        let intent: PaymentIntent | null = null;
         if (price > 0) {
-          paymentIntent = await stripe.paymentIntents?.create({
-              amount: Math.round(price * 100) * tickets.length,
-              currency: 'usd',
-              statement_descriptor: 'CodeDay',
-          });
-
-          if (!paymentIntent.client_secret) {
-              throw new Error('Error retrieving stripe client secret');
-          }
+          const providerInstance = getPaymentProvider(paymentProvider);
+          intent = await providerInstance.createIntent(price, tickets.length, event);
 
           const { id: _paymentId } = await prisma.payment.create({
-            data: { stripePaymentIntentId: paymentIntent.id },
+            data: { paymentProvider, stripePaymentIntentId: intent.id },
             select: { id: true },
           });
           paymentId = _paymentId;
@@ -332,18 +331,20 @@ export class CustomEventResolver {
             }});
         }));
 
-        return paymentIntent?.client_secret || null;
+
+        return intent?.clientData || null;
     }
 
     @Mutation(_returns => [String])
     async finalizePayment(
         @Ctx() { prisma }: Context,
         @Arg('paymentIntentId', () => String) paymentIntentId: string,
+        @Arg('paymentProvider', () => PaymentProvider, { defaultValue: PaymentProvider.stripe }) paymentProvider: PaymentProvider,
     ): Promise<string[]> {
-        const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
-        if (intent.status !== 'succeeded') {
-            throw new Error(`Payment status is still ${intent.status}. Please contact support.`);
+        if (!(await getPaymentProvider(paymentProvider).isIntentPaid(paymentIntentId))) {
+          throw new Error(`Payment has not yet completed. Please contact support.`);
         }
+
         await prisma.payment.updateMany({
             where: { stripePaymentIntentId: paymentIntentId },
             data: { complete: true },
@@ -361,10 +362,10 @@ export class CustomEventResolver {
     async withdrawFailedPayment(
         @Ctx() { prisma }: Context,
         @Arg('paymentIntentId', () => String) paymentIntentId: string,
+        @Arg('paymentProvider', () => PaymentProvider, { defaultValue: PaymentProvider.stripe }) paymentProvider: PaymentProvider,
     ): Promise<Boolean> {
-        const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
-        if (intent.status === 'succeeded') {
-            throw new Error(`Payment was already processed. Contact support for a refund.`);
+        if (await getPaymentProvider(paymentProvider).isIntentPaid(paymentIntentId)) {
+          throw new Error(`Payment was partially processed. Please contact support to resolve issues.`);
         }
 
         await prisma.ticket.deleteMany({

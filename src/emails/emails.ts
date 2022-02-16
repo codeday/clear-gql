@@ -177,7 +177,11 @@ export async function ProcessTemplate(template: EmailTemplate): Promise<void> {
                         none: {
                             id: template.id
                         }
-                    }
+                    },
+                    OR: [
+                      { payment: null },
+                      { payment: { complete: true }},
+                    ],
                 },
                 ...extrafilters
             ]
