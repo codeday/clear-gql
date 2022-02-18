@@ -63,7 +63,7 @@ export class VenueAddressResolver {
     return `${venue.addressLine1}
     ${venue.addressLine2? `\n ${venue.addressLine2}`: ``}
     ${venue.addressLine3? `\n ${venue.addressLine3}` : ``}
-    ${venue.city}, ${venue.state}
-    ${venue.zipCode}`
+    \n ${venue.city || ``}${venue.state? `${venue.city? `, `: ``} ${venue.state}`: ``}
+    ${venue.zipCode || ``}`
   }
 }
