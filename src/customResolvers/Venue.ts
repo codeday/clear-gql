@@ -59,35 +59,11 @@ export class VenueMetadataResolver {
 @Resolver((of) => Venue)
 export class VenueAddressResolver {
   @FieldResolver((_returns) => String, { nullable: true })
-  zipCode(@Root() venue: Venue): String | null {
-    return venue.address ? addresser.parseAddress(venue.address).zipCode : null;
-  }
-
-  @FieldResolver((_returns) => String, { nullable: true })
-  addressLine1(@Root() venue: Venue): String | null {
-    return venue.address
-      ? addresser.parseAddress(venue.address).addressLine1
-      : null;
-  }
-
-  @FieldResolver((_returns) => String, { nullable: true })
-  state(@Root() venue: Venue): String | null {
-    return venue.address
-      ? addresser.parseAddress(venue.address).stateName
-      : null;
-  }
-
-  @FieldResolver((_returns) => String, { nullable: true })
-  stateAbbreviation(@Root() venue: Venue): String | null {
-    return venue.address
-      ? addresser.parseAddress(venue.address).stateAbbreviation
-      : null;
-  }
-
-  @FieldResolver((_returns) => String, { nullable: true })
-  city(@Root() venue: Venue): String | null {
-    return venue.address
-      ? addresser.parseAddress(venue.address).placeName
-      : null;
+  address(@Root() venue: Venue): String | null {
+    return `${venue.addressLine1}
+    ${venue.addressLine2? `\n ${venue.addressLine2}`: ``}
+    ${venue.addressLine3? `\n ${venue.addressLine3}` : ``}
+    ${venue.city}, ${venue.state}
+    ${venue.zipCode}`
   }
 }

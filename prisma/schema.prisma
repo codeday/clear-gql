@@ -82,19 +82,30 @@ model Event {
 
 model Venue {
   // Metadata
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   /// @TypeGraphQL.omit(output: true)
-  metadata     Json?
+  metadata  Json?
   // Data
-  name         String
-  capacity     Int?
-  address      String?
-  mapLink      String?
-  contactName  String?
-  contactEmail String?
-  contactPhone String?
+  name      String
+  capacity  Int?
+  /// @TypeGraphQL.omit(output: true)
+  address   String?
+
+  addressLine1        String?
+  addressLine2        String?
+  addressLine3        String?
+  city                String?
+  state               String?
+  stateAbbreviation   String?
+  zipCode             String?
+  country             String?
+  countryAbbreviation String?
+  mapLink             String?
+  contactName         String?
+  contactEmail        String?
+  contactPhone        String?
 
   // Relations
   events Event[]

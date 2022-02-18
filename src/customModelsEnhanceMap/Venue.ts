@@ -11,7 +11,15 @@ export const venueEnhanceConfig: ModelConfig<"Venue"> = {
         id: [],
         // TODO(@oohwooh) - only expose when registrations enabled
         name: [],
-        address: [],
         mapLink: [],
+        addressLine1: [],
+        addressLine2: [],
+        addressLine3: [],
+        city: [],
+        state: [],
+        zipCode: [],
+        country: [],
+        countryAbbreviation: [],
+        stateAbbreviation: []
     }
 }
