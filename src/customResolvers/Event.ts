@@ -31,6 +31,10 @@ export class CustomEventResolver {
     ): String {
         const startDate = moment(event.startDate).utc()
         const endDate = moment(event.endDate).utc()
+        if (startDate.dayOfYear() === endDate.dayOfYear()) {
+          return `${startDate.format(`MMM Do YYYY`)}`;
+        }
+
         if (startDate.month() === endDate.month()) {
             return `${startDate.format('MMM Do')}-${endDate.format('Do YYYY')}`
         } else {
