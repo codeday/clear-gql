@@ -42,6 +42,21 @@ export class CustomEventResolver {
         }
     }
 
+
+    @FieldResolver(type => String)
+    displayTime(
+        @Root() event: Event,
+    ): String {
+        // TODO
+        const startDate = moment(event.startDate).utc()
+        const endDate = moment(event.endDate).utc()
+        if (startDate.dayOfYear() === endDate.dayOfYear()) {
+          return `noon`;
+        }
+
+        return 'noon-noon';
+    }
+
     @FieldResolver(type => Number)
     majorityAge(
         @Root() event: Event,
