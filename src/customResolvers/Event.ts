@@ -12,7 +12,7 @@ import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArg
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
 
 export const MAJORITY_AGE = 18;
-export const MIN_AGE = 13;
+export const MIN_AGE = 12;
 export const MAX_AGE = 25;
 
 interface CheckPromoCodeResult {
