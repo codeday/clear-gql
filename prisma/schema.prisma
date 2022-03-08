@@ -67,6 +67,8 @@ model Event {
   eventRestrictions  EventRestriction[]
   timezone           String?
   majorityAge        Int                @default(18)
+  minAge             Int?
+  maxAge             Int?
 
   // Relations
   eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
