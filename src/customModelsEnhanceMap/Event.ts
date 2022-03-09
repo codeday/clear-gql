@@ -21,5 +21,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         eventRestrictions: [],
         timezone: [],
         majorityAge: [],
+        minAge: [],
+        maxAge: []
     }
 }
