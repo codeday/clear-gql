@@ -15,6 +15,35 @@ export class CustomTicketResolver {
         if (ticket.personId) return false;
         return true
     }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @Mutation(_returns => Ticket, {nullable: true})
+    async checkin(
+        @Args() args: FindUniqueTicketArgs,
+        @Ctx() { prisma }: Context,
+    ): Promise<Ticket | null> {
+        return (await prisma.ticket.update({
+            ...args,
+            data: {
+                checkedIn: new Date(),
+                checkedOut: null,
+            }
+        })) || null;
+    }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @Mutation(_returns => Ticket, {nullable: true})
+    async checkout(
+        @Args() args: FindUniqueTicketArgs,
+        @Ctx() { prisma }: Context,
+    ): Promise<Ticket | null> {
+        return (await prisma.ticket.update({
+            ...args,
+            data: {
+                checkedOut: new Date(),
+            }
+        })) || null;
+    }
 }
 
 @Resolver(of => Ticket)
@@ -51,5 +80,4 @@ export class TicketMetadataResolver {
         dot.str(key, value, metadataObject)
         return await prisma.ticket.update({...args, data: {metadata: metadataObject}})
     }
-
 }
