@@ -178,10 +178,13 @@ model Ticket {
   phone     String?
   age       Int?
 
-  waiverSigned Boolean    @default(false)
-  couponCode   String?
-  type         TicketType @default(STUDENT)
-  promoCode    PromoCode? @relation(fields: [promoCodeId], references: [id])
+  waiverSigned Boolean   @default(false)
+  checkedIn    DateTime?
+  checkedOut   DateTime?
+
+  couponCode String?
+  type       TicketType @default(STUDENT)
+  promoCode  PromoCode? @relation(fields: [promoCodeId], references: [id])
 
   // Relations
   guardian Person? @relation(fields: [personId], references: [id])
