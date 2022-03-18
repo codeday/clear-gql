@@ -1,4 +1,4 @@
-import {PaymentScalarFieldEnum, ModelConfig} from "../generated/typegraphql-prisma";
+import {ModelConfig, PaymentScalarFieldEnum} from "../generated/typegraphql-prisma";
 import {Authorized} from "type-graphql";
 import {AuthRole} from "../context";
 
@@ -9,5 +9,6 @@ export const paymentEnhanceConfig: ModelConfig<"Payment"> = {
     fields: {
         ...defaultPerms,
         id: [],
+        stripePaymentIntentId: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)]
     }
 }

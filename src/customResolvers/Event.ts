@@ -68,14 +68,14 @@ export class CustomEventResolver {
     minAge(
         @Root() event: Event,
     ): number {
-        return MIN_AGE;
+        return event.minAge || MIN_AGE;
     }
 
     @FieldResolver(type => Number)
     maxAge(
         @Root() event: Event,
     ): number {
-        return MAX_AGE;
+        return event.maxAge || MAX_AGE;
     }
 
     @FieldResolver(type => Boolean)

@@ -7,6 +7,7 @@ Object.getOwnPropertyNames(PromoCodeCrudResolver.prototype).forEach((value: stri
 
 export const promocodeEnhanceConfig: ResolverActionsConfig<"PromoCode"> = {
     ...defaultPerms,
+    promoCode: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     createPromoCode: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     updatePromoCode: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
     deletePromoCode: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
