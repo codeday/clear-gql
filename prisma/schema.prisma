@@ -61,25 +61,25 @@ model Event {
   earlyBirdCutoff    DateTime
   registrationCutoff DateTime
   managers           String[] // codeday account usernames
-  registrationsOpen  Boolean            @default(false)
+  registrationsOpen  Boolean             @default(false)
   contentfulWebname  String?
   showcaseId         String?
   eventRestrictions  EventRestriction[]
   timezone           String?
-  majorityAge        Int                @default(18)
+  majorityAge        Int                 @default(18)
   minAge             Int?
   maxAge             Int?
-
+  requiresPromoCode  Boolean             @default(false)
   // Relations
-  eventGroup       EventGroup          @relation(fields: [eventGroupId], references: [id])
-  eventGroupId     String
-  venue            Venue?              @relation(fields: [venueId], references: [id])
-  venueId          String?
-  sponsors         Sponsor[]
-  tickets          Ticket[]
-  schedule         ScheduleItem[]
-  promoCodes       PromoCode[]
-  interestedEmails MailingListMember[]
+  eventGroup         EventGroup          @relation(fields: [eventGroupId], references: [id])
+  eventGroupId       String
+  venue              Venue?              @relation(fields: [venueId], references: [id])
+  venueId            String?
+  sponsors           Sponsor[]
+  tickets            Ticket[]
+  schedule           ScheduleItem[]
+  promoCodes         PromoCode[]
+  interestedEmails   MailingListMember[]
 }
 
 model Venue {
