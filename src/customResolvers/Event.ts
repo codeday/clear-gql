@@ -317,6 +317,10 @@ export class CustomEventResolver {
         const promo = await this.fetchPromo(prisma, event, promoCode);
         const price = this.calculatePriceWithPromo(event, promo);
 
+        if (event.requiresPromoCode && !promo) {
+            throw new Error('A code is required to register for this event.');
+        }
+
         let paymentId: string | null = null;
         let intent: PaymentIntent | null = null;
         if (price > 0) {
