@@ -26,7 +26,7 @@ model EventGroup {
   id                 String   @id @default(cuid())
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata           Json?
   // Data
   name               String
@@ -49,7 +49,7 @@ model Event {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -87,12 +87,14 @@ model Venue {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
   // Data
   name      String
   capacity  Int?
-  /// @TypeGraphQL.omit(output: true)
+
+  // address is a legacy field kept in the schema for backwards-compatibility
+  /// @TypeGraphQL.omit(output: true, input: true)
   address   String?
 
   addressLine1        String?
@@ -118,7 +120,7 @@ model Sponsor {
   id               String   @id @default(cuid())
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata         Json?
   // Data
   name             String
@@ -142,7 +144,7 @@ model Person {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -171,7 +173,7 @@ model Ticket {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
   // Data
   firstName String
@@ -206,7 +208,7 @@ model Payment {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -222,7 +224,7 @@ model ScheduleItem {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -258,7 +260,7 @@ model PromoCode {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -279,7 +281,7 @@ model MailingListMember {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -299,7 +301,7 @@ model EmailTemplate {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
@@ -329,7 +331,7 @@ model EventRestriction {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true)
+  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
   metadata  Json?
 
   // Data
