@@ -18,7 +18,7 @@ model Example {
   id                 String   @id @default(cuid())
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  /// @TypeGraphQL.omit(output: true, input: ["update", "where", "orderBy"])
+  /// @TypeGraphQL.omit(input: ["update", "where", "orderBy"])
   metadata           Json?
 }
 ```

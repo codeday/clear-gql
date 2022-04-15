@@ -184,6 +184,7 @@ type EmailTemplate {
   getMetadata(key: String!): String
   id: String!
   marketing: Boolean!
+  metadata: JSON
   name: String!
   previewEmailBody: String!
   replyTo: String!
@@ -240,7 +241,6 @@ input EmailTemplateCountOrderByAggregateInput {
   fromName: SortOrder
   id: SortOrder
   marketing: SortOrder
-  metadata: SortOrder
   name: SortOrder
   replyTo: SortOrder
   sendAfterEvent: SortOrder
@@ -485,7 +485,6 @@ input EmailTemplateOrderByWithAggregationInput {
   fromName: SortOrder
   id: SortOrder
   marketing: SortOrder
-  metadata: SortOrder
   name: SortOrder
   replyTo: SortOrder
   sendAfterEvent: SortOrder
@@ -510,7 +509,6 @@ input EmailTemplateOrderByWithRelationInput {
   fromName: SortOrder
   id: SortOrder
   marketing: SortOrder
-  metadata: SortOrder
   name: SortOrder
   replyTo: SortOrder
   sendAfterEvent: SortOrder
@@ -564,7 +562,6 @@ input EmailTemplateScalarWhereInput {
   fromName: StringFilter
   id: StringFilter
   marketing: BoolFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   replyTo: StringFilter
   sendAfterEvent: BoolFilter
@@ -592,7 +589,6 @@ input EmailTemplateScalarWhereWithAggregatesInput {
   fromName: StringWithAggregatesFilter
   id: StringWithAggregatesFilter
   marketing: BoolWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   replyTo: StringWithAggregatesFilter
   sendAfterEvent: BoolWithAggregatesFilter
@@ -617,7 +613,6 @@ input EmailTemplateUpdateInput {
   fromName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   marketing: BoolFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   replyTo: StringFieldUpdateOperationsInput
   sendAfterEvent: BoolFieldUpdateOperationsInput
@@ -643,7 +638,6 @@ input EmailTemplateUpdateManyMutationInput {
   fromName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   marketing: BoolFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   replyTo: StringFieldUpdateOperationsInput
   sendAfterEvent: BoolFieldUpdateOperationsInput
@@ -691,7 +685,6 @@ input EmailTemplateUpdateWithoutSentToInput {
   fromName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   marketing: BoolFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   replyTo: StringFieldUpdateOperationsInput
   sendAfterEvent: BoolFieldUpdateOperationsInput
@@ -725,7 +718,6 @@ input EmailTemplateWhereInput {
   fromName: StringFilter
   id: StringFilter
   marketing: BoolFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   replyTo: StringFilter
   sendAfterEvent: BoolFilter
@@ -825,6 +817,7 @@ type Event {
   contentfulWebname: String
   createdAt: DateTime!
   displayDate: String!
+  displayTime: String!
   earlyBirdCutoff: DateTime!
   earlyBirdPrice: Float!
   endDate: DateTime!
@@ -836,13 +829,15 @@ type Event {
   interestedEmails(cursor: MailingListMemberWhereUniqueInput, distinct: [MailingListMemberScalarFieldEnum!], orderBy: [MailingListMemberOrderByWithRelationInput!], skip: Int, take: Int, where: MailingListMemberWhereInput): [MailingListMember!]!
   majorityAge: Int!
   managers: [String!]!
-  maxAge: Float!
-  minAge: Float!
+  maxAge: Int
+  metadata: JSON
+  minAge: Int
   name: String!
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean!
   remainingTickets: Float
+  requiresPromoCode: Boolean!
   schedule(cursor: ScheduleItemWhereUniqueInput, distinct: [ScheduleItemScalarFieldEnum!], orderBy: [ScheduleItemOrderByWithRelationInput!], skip: Int, take: Int, where: ScheduleItemWhereInput): [ScheduleItem!]!
   showcaseId: String
   soldTickets(onlyStudents: Boolean = false): Float!
@@ -859,12 +854,16 @@ type Event {
 type EventAvgAggregate {
   earlyBirdPrice: Float
   majorityAge: Float
+  maxAge: Float
+  minAge: Float
   ticketPrice: Float
 }
 
 input EventAvgOrderByAggregateInput {
   earlyBirdPrice: SortOrder
   majorityAge: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   ticketPrice: SortOrder
 }
 
@@ -888,10 +887,13 @@ type EventCountAggregate {
   id: Int!
   majorityAge: Int!
   managers: Int!
+  maxAge: Int!
   metadata: Int!
+  minAge: Int!
   name: Int!
   registrationCutoff: Int!
   registrationsOpen: Int!
+  requiresPromoCode: Int!
   showcaseId: Int!
   startDate: Int!
   ticketPrice: Int!
@@ -910,10 +912,12 @@ input EventCountOrderByAggregateInput {
   id: SortOrder
   majorityAge: SortOrder
   managers: SortOrder
-  metadata: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  requiresPromoCode: SortOrder
   showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
@@ -934,11 +938,14 @@ input EventCreateInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -958,11 +965,14 @@ input EventCreateManyEventGroupInput {
   endDate: DateTime!
   id: String
   majorityAge: Int
-  managers: EventCreateManymanagersInput
+  managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
@@ -985,11 +995,14 @@ input EventCreateManyInput {
   eventGroupId: String!
   id: String
   majorityAge: Int
-  managers: EventCreateManymanagersInput
+  managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
@@ -1007,11 +1020,14 @@ input EventCreateManyVenueInput {
   eventGroupId: String!
   id: String
   majorityAge: Int
-  managers: EventCreateManymanagersInput
+  managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
@@ -1022,10 +1038,6 @@ input EventCreateManyVenueInput {
 input EventCreateManyVenueInputEnvelope {
   data: [EventCreateManyVenueInput!]!
   skipDuplicates: Boolean
-}
-
-input EventCreateManymanagersInput {
-  set: [String!]!
 }
 
 input EventCreateNestedManyWithoutEventGroupInput {
@@ -1129,11 +1141,14 @@ input EventCreateWithoutEventGroupInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1156,11 +1171,14 @@ input EventCreateWithoutEventRestrictionsInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1183,11 +1201,14 @@ input EventCreateWithoutInterestedEmailsInput {
   id: String
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1211,10 +1232,13 @@ input EventCreateWithoutPromoCodesInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1238,11 +1262,14 @@ input EventCreateWithoutScheduleInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
   startDate: DateTime!
@@ -1265,11 +1292,14 @@ input EventCreateWithoutSponsorsInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   startDate: DateTime!
@@ -1292,11 +1322,14 @@ input EventCreateWithoutTicketsInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1319,11 +1352,14 @@ input EventCreateWithoutVenueInput {
   interestedEmails: MailingListMemberCreateNestedManyWithoutInterestedInEventsInput
   majorityAge: Int
   managers: EventCreatemanagersInput
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   promoCodes: PromoCodeCreateNestedManyWithoutEventInput
   registrationCutoff: DateTime!
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   schedule: ScheduleItemCreateNestedManyWithoutEventInput
   showcaseId: String
   sponsors: SponsorCreateNestedManyWithoutEventInput
@@ -1348,6 +1384,7 @@ type EventGroup {
   events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
   getMetadata(key: String!): String
   id: String!
+  metadata: JSON
   name: String!
   promoCodes(cursor: PromoCodeWhereUniqueInput, distinct: [PromoCodeScalarFieldEnum!], orderBy: [PromoCodeOrderByWithRelationInput!], skip: Int, take: Int, where: PromoCodeWhereInput): [PromoCode!]!
   registrationCutoff: DateTime!
@@ -1383,10 +1420,13 @@ type EventGroupBy {
   id: String!
   majorityAge: Int!
   managers: [String!]
+  maxAge: Int
   metadata: JSON
+  minAge: Int
   name: String!
   registrationCutoff: DateTime!
   registrationsOpen: Boolean!
+  requiresPromoCode: Boolean!
   showcaseId: String
   startDate: DateTime!
   ticketPrice: Float!
@@ -1423,7 +1463,6 @@ input EventGroupCountOrderByAggregateInput {
   earlyBirdPrice: SortOrder
   endDate: SortOrder
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   showcaseId: SortOrder
@@ -1636,7 +1675,6 @@ input EventGroupOrderByWithAggregationInput {
   earlyBirdPrice: SortOrder
   endDate: SortOrder
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   showcaseId: SortOrder
@@ -1652,7 +1690,6 @@ input EventGroupOrderByWithRelationInput {
   endDate: SortOrder
   events: EventOrderByRelationAggregateInput
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   promoCodes: PromoCodeOrderByRelationAggregateInput
   registrationCutoff: SortOrder
@@ -1692,7 +1729,6 @@ input EventGroupScalarWhereWithAggregatesInput {
   earlyBirdPrice: FloatWithAggregatesFilter
   endDate: DateTimeWithAggregatesFilter
   id: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   registrationCutoff: DateTimeWithAggregatesFilter
   showcaseId: StringNullableWithAggregatesFilter
@@ -1718,7 +1754,6 @@ input EventGroupUpdateInput {
   endDate: DateTimeFieldUpdateOperationsInput
   events: EventUpdateManyWithoutEventGroupInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
@@ -1735,7 +1770,6 @@ input EventGroupUpdateManyMutationInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   showcaseId: NullableStringFieldUpdateOperationsInput
@@ -1778,7 +1812,6 @@ input EventGroupUpdateWithoutEventsInput {
   earlyBirdPrice: FloatFieldUpdateOperationsInput
   endDate: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
@@ -1796,7 +1829,6 @@ input EventGroupUpdateWithoutPromoCodesInput {
   endDate: DateTimeFieldUpdateOperationsInput
   events: EventUpdateManyWithoutEventGroupInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventGroupInput
@@ -1813,7 +1845,6 @@ input EventGroupUpdateWithoutScheduleInput {
   endDate: DateTimeFieldUpdateOperationsInput
   events: EventUpdateManyWithoutEventGroupInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventGroupInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
@@ -1848,7 +1879,6 @@ input EventGroupWhereInput {
   endDate: DateTimeFilter
   events: EventListRelationFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   promoCodes: PromoCodeListRelationFilter
   registrationCutoff: DateTimeFilter
@@ -1878,9 +1908,12 @@ type EventMaxAggregate {
   eventGroupId: String
   id: String
   majorityAge: Int
+  maxAge: Int
+  minAge: Int
   name: String
   registrationCutoff: DateTime
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   startDate: DateTime
   ticketPrice: Float
@@ -1898,9 +1931,12 @@ input EventMaxOrderByAggregateInput {
   eventGroupId: SortOrder
   id: SortOrder
   majorityAge: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  requiresPromoCode: SortOrder
   showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
@@ -1918,9 +1954,12 @@ type EventMinAggregate {
   eventGroupId: String
   id: String
   majorityAge: Int
+  maxAge: Int
+  minAge: Int
   name: String
   registrationCutoff: DateTime
   registrationsOpen: Boolean
+  requiresPromoCode: Boolean
   showcaseId: String
   startDate: DateTime
   ticketPrice: Float
@@ -1938,9 +1977,12 @@ input EventMinOrderByAggregateInput {
   eventGroupId: SortOrder
   id: SortOrder
   majorityAge: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  requiresPromoCode: SortOrder
   showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
@@ -1968,10 +2010,12 @@ input EventOrderByWithAggregationInput {
   id: SortOrder
   majorityAge: SortOrder
   managers: SortOrder
-  metadata: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   name: SortOrder
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  requiresPromoCode: SortOrder
   showcaseId: SortOrder
   startDate: SortOrder
   ticketPrice: SortOrder
@@ -1993,11 +2037,13 @@ input EventOrderByWithRelationInput {
   interestedEmails: MailingListMemberOrderByRelationAggregateInput
   majorityAge: SortOrder
   managers: SortOrder
-  metadata: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   name: SortOrder
   promoCodes: PromoCodeOrderByRelationAggregateInput
   registrationCutoff: SortOrder
   registrationsOpen: SortOrder
+  requiresPromoCode: SortOrder
   schedule: ScheduleItemOrderByRelationAggregateInput
   showcaseId: SortOrder
   sponsors: SponsorOrderByRelationAggregateInput
@@ -2023,6 +2069,7 @@ type EventRestriction {
   getMetadata(key: String!): String
   iconUri: String
   id: String!
+  metadata: JSON
   name: String!
   title: String!
   updatedAt: DateTime!
@@ -2049,7 +2096,6 @@ input EventRestrictionCountOrderByAggregateInput {
   details: SortOrder
   iconUri: SortOrder
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   title: SortOrder
   updatedAt: SortOrder
@@ -2172,7 +2218,6 @@ input EventRestrictionOrderByWithAggregationInput {
   details: SortOrder
   iconUri: SortOrder
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   title: SortOrder
   updatedAt: SortOrder
@@ -2184,7 +2229,6 @@ input EventRestrictionOrderByWithRelationInput {
   details: SortOrder
   iconUri: SortOrder
   id: SortOrder
-  metadata: SortOrder
   name: SortOrder
   title: SortOrder
   updatedAt: SortOrder
@@ -2209,7 +2253,6 @@ input EventRestrictionScalarWhereInput {
   details: StringNullableFilter
   iconUri: StringNullableFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   title: StringFilter
   updatedAt: DateTimeFilter
@@ -2223,7 +2266,6 @@ input EventRestrictionScalarWhereWithAggregatesInput {
   details: StringNullableWithAggregatesFilter
   iconUri: StringNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   title: StringWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
@@ -2235,7 +2277,6 @@ input EventRestrictionUpdateInput {
   details: NullableStringFieldUpdateOperationsInput
   iconUri: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -2246,7 +2287,6 @@ input EventRestrictionUpdateManyMutationInput {
   details: NullableStringFieldUpdateOperationsInput
   iconUri: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -2280,7 +2320,6 @@ input EventRestrictionUpdateWithoutEventsInput {
   details: NullableStringFieldUpdateOperationsInput
   iconUri: NullableStringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -2301,7 +2340,6 @@ input EventRestrictionWhereInput {
   details: StringNullableFilter
   iconUri: StringNullableFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   title: StringFilter
   updatedAt: DateTimeFilter
@@ -2321,10 +2359,13 @@ enum EventScalarFieldEnum {
   id
   majorityAge
   managers
+  maxAge
   metadata
+  minAge
   name
   registrationCutoff
   registrationsOpen
+  requiresPromoCode
   showcaseId
   startDate
   ticketPrice
@@ -2346,10 +2387,12 @@ input EventScalarWhereInput {
   id: StringFilter
   majorityAge: IntFilter
   managers: StringNullableListFilter
-  metadata: JsonNullableFilter
+  maxAge: IntNullableFilter
+  minAge: IntNullableFilter
   name: StringFilter
   registrationCutoff: DateTimeFilter
   registrationsOpen: BoolFilter
+  requiresPromoCode: BoolFilter
   showcaseId: StringNullableFilter
   startDate: DateTimeFilter
   ticketPrice: FloatFilter
@@ -2371,10 +2414,12 @@ input EventScalarWhereWithAggregatesInput {
   id: StringWithAggregatesFilter
   majorityAge: IntWithAggregatesFilter
   managers: StringNullableListFilter
-  metadata: JsonNullableWithAggregatesFilter
+  maxAge: IntNullableWithAggregatesFilter
+  minAge: IntNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   registrationCutoff: DateTimeWithAggregatesFilter
   registrationsOpen: BoolWithAggregatesFilter
+  requiresPromoCode: BoolWithAggregatesFilter
   showcaseId: StringNullableWithAggregatesFilter
   startDate: DateTimeWithAggregatesFilter
   ticketPrice: FloatWithAggregatesFilter
@@ -2386,12 +2431,16 @@ input EventScalarWhereWithAggregatesInput {
 type EventSumAggregate {
   earlyBirdPrice: Float
   majorityAge: Int
+  maxAge: Int
+  minAge: Int
   ticketPrice: Float
 }
 
 input EventSumOrderByAggregateInput {
   earlyBirdPrice: SortOrder
   majorityAge: SortOrder
+  maxAge: SortOrder
+  minAge: SortOrder
   ticketPrice: SortOrder
 }
 
@@ -2407,11 +2456,13 @@ input EventUpdateInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2432,10 +2483,12 @@ input EventUpdateManyMutationInput {
   id: StringFieldUpdateOperationsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
   ticketPrice: FloatFieldUpdateOperationsInput
@@ -2586,11 +2639,13 @@ input EventUpdateWithoutEventGroupInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2613,11 +2668,13 @@ input EventUpdateWithoutEventRestrictionsInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2640,11 +2697,13 @@ input EventUpdateWithoutInterestedEmailsInput {
   id: StringFieldUpdateOperationsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2668,10 +2727,12 @@ input EventUpdateWithoutPromoCodesInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2695,11 +2756,13 @@ input EventUpdateWithoutScheduleInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
   startDate: DateTimeFieldUpdateOperationsInput
@@ -2722,11 +2785,13 @@ input EventUpdateWithoutSponsorsInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   startDate: DateTimeFieldUpdateOperationsInput
@@ -2749,11 +2814,13 @@ input EventUpdateWithoutTicketsInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2776,11 +2843,13 @@ input EventUpdateWithoutVenueInput {
   interestedEmails: MailingListMemberUpdateManyWithoutInterestedInEventsInput
   majorityAge: IntFieldUpdateOperationsInput
   managers: EventUpdatemanagersInput
-  metadata: JSON
+  maxAge: NullableIntFieldUpdateOperationsInput
+  minAge: NullableIntFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
   promoCodes: PromoCodeUpdateManyWithoutEventInput
   registrationCutoff: DateTimeFieldUpdateOperationsInput
   registrationsOpen: BoolFieldUpdateOperationsInput
+  requiresPromoCode: BoolFieldUpdateOperationsInput
   schedule: ScheduleItemUpdateManyWithoutEventInput
   showcaseId: NullableStringFieldUpdateOperationsInput
   sponsors: SponsorUpdateManyWithoutEventInput
@@ -2856,11 +2925,13 @@ input EventWhereInput {
   interestedEmails: MailingListMemberListRelationFilter
   majorityAge: IntFilter
   managers: StringNullableListFilter
-  metadata: JsonNullableFilter
+  maxAge: IntNullableFilter
+  minAge: IntNullableFilter
   name: StringFilter
   promoCodes: PromoCodeListRelationFilter
   registrationCutoff: DateTimeFilter
   registrationsOpen: BoolFilter
+  requiresPromoCode: BoolFilter
   schedule: ScheduleItemListRelationFilter
   showcaseId: StringNullableFilter
   sponsors: SponsorListRelationFilter
@@ -3005,6 +3076,7 @@ type MailingListMember {
   id: String!
   interestedInEvents(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
   lastEmailed: DateTime
+  metadata: JSON
   updatedAt: DateTime!
 }
 
@@ -3027,7 +3099,6 @@ input MailingListMemberCountOrderByAggregateInput {
   email: SortOrder
   id: SortOrder
   lastEmailed: SortOrder
-  metadata: SortOrder
   updatedAt: SortOrder
 }
 
@@ -3132,7 +3203,6 @@ input MailingListMemberOrderByWithAggregationInput {
   email: SortOrder
   id: SortOrder
   lastEmailed: SortOrder
-  metadata: SortOrder
   updatedAt: SortOrder
 }
 
@@ -3142,7 +3212,6 @@ input MailingListMemberOrderByWithRelationInput {
   id: SortOrder
   interestedInEvents: EventOrderByRelationAggregateInput
   lastEmailed: SortOrder
-  metadata: SortOrder
   updatedAt: SortOrder
 }
 
@@ -3163,7 +3232,6 @@ input MailingListMemberScalarWhereInput {
   email: StringFilter
   id: StringFilter
   lastEmailed: DateTimeNullableFilter
-  metadata: JsonNullableFilter
   updatedAt: DateTimeFilter
 }
 
@@ -3175,7 +3243,6 @@ input MailingListMemberScalarWhereWithAggregatesInput {
   email: StringWithAggregatesFilter
   id: StringWithAggregatesFilter
   lastEmailed: DateTimeNullableWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
 }
 
@@ -3185,7 +3252,6 @@ input MailingListMemberUpdateInput {
   id: StringFieldUpdateOperationsInput
   interestedInEvents: EventUpdateManyWithoutInterestedEmailsInput
   lastEmailed: NullableDateTimeFieldUpdateOperationsInput
-  metadata: JSON
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -3194,7 +3260,6 @@ input MailingListMemberUpdateManyMutationInput {
   email: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastEmailed: NullableDateTimeFieldUpdateOperationsInput
-  metadata: JSON
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -3226,7 +3291,6 @@ input MailingListMemberUpdateWithoutInterestedInEventsInput {
   email: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastEmailed: NullableDateTimeFieldUpdateOperationsInput
-  metadata: JSON
   updatedAt: DateTimeFieldUpdateOperationsInput
 }
 
@@ -3245,7 +3309,6 @@ input MailingListMemberWhereInput {
   id: StringFilter
   interestedInEvents: EventListRelationFilter
   lastEmailed: DateTimeNullableFilter
-  metadata: JsonNullableFilter
   updatedAt: DateTimeFilter
 }
 
@@ -3255,6 +3318,8 @@ input MailingListMemberWhereUniqueInput {
 }
 
 type Mutation {
+  checkin(where: TicketWhereUniqueInput!): Ticket
+  checkout(where: TicketWhereUniqueInput!): Ticket
   createEmailTemplate(data: EmailTemplateCreateInput!): EmailTemplate!
   createEvent(data: EventCreateInput!): Event!
   createEventGroup(data: EventGroupCreateInput!): EventGroup!
@@ -3655,6 +3720,7 @@ type Payment {
   createdAt: DateTime!
   getMetadata(key: String!): String
   id: String!
+  metadata: JSON
   paymentProvider: String!
   stripePaymentIntentId: String!
   tickets(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
@@ -3680,7 +3746,6 @@ input PaymentCountOrderByAggregateInput {
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
-  metadata: SortOrder
   paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
@@ -3784,7 +3849,6 @@ input PaymentOrderByWithAggregationInput {
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
-  metadata: SortOrder
   paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   updatedAt: SortOrder
@@ -3794,7 +3858,6 @@ input PaymentOrderByWithRelationInput {
   complete: SortOrder
   createdAt: SortOrder
   id: SortOrder
-  metadata: SortOrder
   paymentProvider: SortOrder
   stripePaymentIntentId: SortOrder
   tickets: TicketOrderByRelationAggregateInput
@@ -3828,7 +3891,6 @@ input PaymentScalarWhereWithAggregatesInput {
   complete: BoolWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
   id: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   paymentProvider: StringWithAggregatesFilter
   stripePaymentIntentId: StringWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
@@ -3838,7 +3900,6 @@ input PaymentUpdateInput {
   complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   tickets: TicketUpdateManyWithoutPaymentInput
@@ -3849,7 +3910,6 @@ input PaymentUpdateManyMutationInput {
   complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -3869,7 +3929,6 @@ input PaymentUpdateWithoutTicketsInput {
   complete: BoolFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   paymentProvider: StringFieldUpdateOperationsInput
   stripePaymentIntentId: StringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -3887,7 +3946,6 @@ input PaymentWhereInput {
   complete: BoolFilter
   createdAt: DateTimeFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   paymentProvider: StringFilter
   stripePaymentIntentId: StringFilter
   tickets: TicketListRelationFilter
@@ -3908,6 +3966,7 @@ type Person {
   getMetadata(key: String!): String
   id: String!
   lastName: String!
+  metadata: JSON
   phone: String
   pronouns: String
   updatedAt: DateTime!
@@ -3948,7 +4007,6 @@ input PersonCountOrderByAggregateInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   phone: SortOrder
   pronouns: SortOrder
   updatedAt: SortOrder
@@ -4092,7 +4150,6 @@ input PersonOrderByWithAggregationInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   phone: SortOrder
   pronouns: SortOrder
   updatedAt: SortOrder
@@ -4107,7 +4164,6 @@ input PersonOrderByWithRelationInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   phone: SortOrder
   pronouns: SortOrder
   updatedAt: SortOrder
@@ -4143,7 +4199,6 @@ input PersonScalarWhereWithAggregatesInput {
   firstName: StringWithAggregatesFilter
   id: StringWithAggregatesFilter
   lastName: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   phone: StringNullableWithAggregatesFilter
   pronouns: StringNullableWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
@@ -4166,7 +4221,6 @@ input PersonUpdateInput {
   firstName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   pronouns: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4180,7 +4234,6 @@ input PersonUpdateManyMutationInput {
   firstName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   pronouns: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4204,7 +4257,6 @@ input PersonUpdateWithoutTicketInput {
   firstName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   pronouns: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4227,7 +4279,6 @@ input PersonWhereInput {
   firstName: StringFilter
   id: StringFilter
   lastName: StringFilter
-  metadata: JsonNullableFilter
   phone: StringNullableFilter
   pronouns: StringNullableFilter
   updatedAt: DateTimeFilter
@@ -4249,6 +4300,7 @@ type PromoCode {
   eventId: String
   getMetadata(key: String!): String
   id: String!
+  metadata: JSON
   tickets(cursor: TicketWhereUniqueInput, distinct: [TicketScalarFieldEnum!], orderBy: [TicketOrderByWithRelationInput!], skip: Int, take: Int, where: TicketWhereInput): [Ticket!]!
   type: DiscountType!
   updatedAt: DateTime!
@@ -4291,7 +4343,6 @@ input PromoCodeCountOrderByAggregateInput {
   eventGroupId: SortOrder
   eventId: SortOrder
   id: SortOrder
-  metadata: SortOrder
   type: SortOrder
   updatedAt: SortOrder
   uses: SortOrder
@@ -4520,7 +4571,6 @@ input PromoCodeOrderByWithAggregationInput {
   eventGroupId: SortOrder
   eventId: SortOrder
   id: SortOrder
-  metadata: SortOrder
   type: SortOrder
   updatedAt: SortOrder
   uses: SortOrder
@@ -4535,7 +4585,6 @@ input PromoCodeOrderByWithRelationInput {
   eventGroupId: SortOrder
   eventId: SortOrder
   id: SortOrder
-  metadata: SortOrder
   tickets: TicketOrderByRelationAggregateInput
   type: SortOrder
   updatedAt: SortOrder
@@ -4570,7 +4619,6 @@ input PromoCodeScalarWhereInput {
   eventGroupId: StringNullableFilter
   eventId: StringNullableFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   type: EnumDiscountTypeFilter
   updatedAt: DateTimeFilter
   uses: IntNullableFilter
@@ -4586,7 +4634,6 @@ input PromoCodeScalarWhereWithAggregatesInput {
   eventGroupId: StringNullableWithAggregatesFilter
   eventId: StringNullableWithAggregatesFilter
   id: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   type: EnumDiscountTypeWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
   uses: IntNullableWithAggregatesFilter
@@ -4609,7 +4656,6 @@ input PromoCodeUpdateInput {
   event: EventUpdateOneWithoutPromoCodesInput
   eventGroup: EventGroupUpdateOneWithoutPromoCodesInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   tickets: TicketUpdateManyWithoutPromoCodeInput
   type: EnumDiscountTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4621,7 +4667,6 @@ input PromoCodeUpdateManyMutationInput {
   code: StringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   type: EnumDiscountTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   uses: NullableIntFieldUpdateOperationsInput
@@ -4691,7 +4736,6 @@ input PromoCodeUpdateWithoutEventGroupInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   event: EventUpdateOneWithoutPromoCodesInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   tickets: TicketUpdateManyWithoutPromoCodeInput
   type: EnumDiscountTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4704,7 +4748,6 @@ input PromoCodeUpdateWithoutEventInput {
   createdAt: DateTimeFieldUpdateOperationsInput
   eventGroup: EventGroupUpdateOneWithoutPromoCodesInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   tickets: TicketUpdateManyWithoutPromoCodeInput
   type: EnumDiscountTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -4718,7 +4761,6 @@ input PromoCodeUpdateWithoutTicketsInput {
   event: EventUpdateOneWithoutPromoCodesInput
   eventGroup: EventGroupUpdateOneWithoutPromoCodesInput
   id: StringFieldUpdateOperationsInput
-  metadata: JSON
   type: EnumDiscountTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
   uses: NullableIntFieldUpdateOperationsInput
@@ -4753,7 +4795,6 @@ input PromoCodeWhereInput {
   eventGroupId: StringNullableFilter
   eventId: StringNullableFilter
   id: StringFilter
-  metadata: JsonNullableFilter
   tickets: TicketListRelationFilter
   type: EnumDiscountTypeFilter
   updatedAt: DateTimeFilter
@@ -4850,6 +4891,7 @@ type ScheduleItem {
   id: String!
   internal: Boolean!
   link: String
+  metadata: JSON
   name: String!
   organizerEmail: String
   organizerName: String
@@ -4896,7 +4938,6 @@ input ScheduleItemCountOrderByAggregateInput {
   id: SortOrder
   internal: SortOrder
   link: SortOrder
-  metadata: SortOrder
   name: SortOrder
   organizerEmail: SortOrder
   organizerName: SortOrder
@@ -5214,7 +5255,6 @@ input ScheduleItemOrderByWithAggregationInput {
   id: SortOrder
   internal: SortOrder
   link: SortOrder
-  metadata: SortOrder
   name: SortOrder
   organizerEmail: SortOrder
   organizerName: SortOrder
@@ -5239,7 +5279,6 @@ input ScheduleItemOrderByWithRelationInput {
   id: SortOrder
   internal: SortOrder
   link: SortOrder
-  metadata: SortOrder
   name: SortOrder
   organizerEmail: SortOrder
   organizerName: SortOrder
@@ -5288,7 +5327,6 @@ input ScheduleItemScalarWhereInput {
   id: StringFilter
   internal: BoolFilter
   link: StringNullableFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   organizerEmail: StringNullableFilter
   organizerName: StringNullableFilter
@@ -5314,7 +5352,6 @@ input ScheduleItemScalarWhereWithAggregatesInput {
   id: StringWithAggregatesFilter
   internal: BoolWithAggregatesFilter
   link: StringNullableWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   organizerEmail: StringNullableWithAggregatesFilter
   organizerName: StringNullableWithAggregatesFilter
@@ -5337,7 +5374,6 @@ input ScheduleItemUpdateInput {
   id: StringFieldUpdateOperationsInput
   internal: BoolFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   organizerEmail: NullableStringFieldUpdateOperationsInput
   organizerName: NullableStringFieldUpdateOperationsInput
@@ -5358,7 +5394,6 @@ input ScheduleItemUpdateManyMutationInput {
   id: StringFieldUpdateOperationsInput
   internal: BoolFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   organizerEmail: NullableStringFieldUpdateOperationsInput
   organizerName: NullableStringFieldUpdateOperationsInput
@@ -5428,7 +5463,6 @@ input ScheduleItemUpdateWithoutEventGroupInput {
   id: StringFieldUpdateOperationsInput
   internal: BoolFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   organizerEmail: NullableStringFieldUpdateOperationsInput
   organizerName: NullableStringFieldUpdateOperationsInput
@@ -5450,7 +5484,6 @@ input ScheduleItemUpdateWithoutEventInput {
   id: StringFieldUpdateOperationsInput
   internal: BoolFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   organizerEmail: NullableStringFieldUpdateOperationsInput
   organizerName: NullableStringFieldUpdateOperationsInput
@@ -5490,7 +5523,6 @@ input ScheduleItemWhereInput {
   id: StringFilter
   internal: BoolFilter
   link: StringNullableFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   organizerEmail: StringNullableFilter
   organizerName: StringNullableFilter
@@ -5523,6 +5555,7 @@ type Sponsor {
   id: String!
   link: String
   logoImageUri: String
+  metadata: JSON
   name: String!
   perks: String
   updatedAt: DateTime!
@@ -5567,7 +5600,6 @@ input SponsorCountOrderByAggregateInput {
   id: SortOrder
   link: SortOrder
   logoImageUri: SortOrder
-  metadata: SortOrder
   name: SortOrder
   perks: SortOrder
   updatedAt: SortOrder
@@ -5778,7 +5810,6 @@ input SponsorOrderByWithAggregationInput {
   id: SortOrder
   link: SortOrder
   logoImageUri: SortOrder
-  metadata: SortOrder
   name: SortOrder
   perks: SortOrder
   updatedAt: SortOrder
@@ -5797,7 +5828,6 @@ input SponsorOrderByWithRelationInput {
   id: SortOrder
   link: SortOrder
   logoImageUri: SortOrder
-  metadata: SortOrder
   name: SortOrder
   perks: SortOrder
   updatedAt: SortOrder
@@ -5836,7 +5866,6 @@ input SponsorScalarWhereInput {
   id: StringFilter
   link: StringNullableFilter
   logoImageUri: StringNullableFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   perks: StringNullableFilter
   updatedAt: DateTimeFilter
@@ -5857,7 +5886,6 @@ input SponsorScalarWhereWithAggregatesInput {
   id: StringWithAggregatesFilter
   link: StringNullableWithAggregatesFilter
   logoImageUri: StringNullableWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
   perks: StringNullableWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
@@ -5883,7 +5911,6 @@ input SponsorUpdateInput {
   id: StringFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   perks: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -5900,7 +5927,6 @@ input SponsorUpdateManyMutationInput {
   id: StringFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   perks: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -5941,7 +5967,6 @@ input SponsorUpdateWithoutEventInput {
   id: StringFieldUpdateOperationsInput
   link: NullableStringFieldUpdateOperationsInput
   logoImageUri: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
   perks: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -5969,7 +5994,6 @@ input SponsorWhereInput {
   id: StringFilter
   link: StringNullableFilter
   logoImageUri: StringNullableFilter
-  metadata: JsonNullableFilter
   name: StringFilter
   perks: StringNullableFilter
   updatedAt: DateTimeFilter
@@ -6060,6 +6084,8 @@ input StringWithAggregatesFilter {
 type Ticket {
   _count: TicketCount
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime!
   email: String
@@ -6070,6 +6096,7 @@ type Ticket {
   guardian: Person
   id: String!
   lastName: String!
+  metadata: JSON
   needsGuardian: Boolean!
   payment: Payment
   paymentId: String
@@ -6098,6 +6125,8 @@ type TicketCount {
 type TicketCountAggregate {
   _all: Int!
   age: Int!
+  checkedIn: Int!
+  checkedOut: Int!
   couponCode: Int!
   createdAt: Int!
   email: Int!
@@ -6117,6 +6146,8 @@ type TicketCountAggregate {
 
 input TicketCountOrderByAggregateInput {
   age: SortOrder
+  checkedIn: SortOrder
+  checkedOut: SortOrder
   couponCode: SortOrder
   createdAt: SortOrder
   email: SortOrder
@@ -6124,7 +6155,6 @@ input TicketCountOrderByAggregateInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
@@ -6136,6 +6166,8 @@ input TicketCountOrderByAggregateInput {
 
 input TicketCreateInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6156,6 +6188,8 @@ input TicketCreateInput {
 
 input TicketCreateManyEventInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6179,6 +6213,8 @@ input TicketCreateManyEventInputEnvelope {
 
 input TicketCreateManyGuardianInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6202,6 +6238,8 @@ input TicketCreateManyGuardianInputEnvelope {
 
 input TicketCreateManyInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6221,6 +6259,8 @@ input TicketCreateManyInput {
 
 input TicketCreateManyPaymentInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6244,6 +6284,8 @@ input TicketCreateManyPaymentInputEnvelope {
 
 input TicketCreateManyPromoCodeInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6326,6 +6368,8 @@ input TicketCreateOrConnectWithoutSentEmailsInput {
 
 input TicketCreateWithoutEventInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6345,6 +6389,8 @@ input TicketCreateWithoutEventInput {
 
 input TicketCreateWithoutGuardianInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6364,6 +6410,8 @@ input TicketCreateWithoutGuardianInput {
 
 input TicketCreateWithoutPaymentInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6383,6 +6431,8 @@ input TicketCreateWithoutPaymentInput {
 
 input TicketCreateWithoutPromoCodeInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6402,6 +6452,8 @@ input TicketCreateWithoutPromoCodeInput {
 
 input TicketCreateWithoutSentEmailsInput {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6426,6 +6478,8 @@ type TicketGroupBy {
   _min: TicketMinAggregate
   _sum: TicketSumAggregate
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime!
   email: String
@@ -6451,6 +6505,8 @@ input TicketListRelationFilter {
 
 type TicketMaxAggregate {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6469,6 +6525,8 @@ type TicketMaxAggregate {
 
 input TicketMaxOrderByAggregateInput {
   age: SortOrder
+  checkedIn: SortOrder
+  checkedOut: SortOrder
   couponCode: SortOrder
   createdAt: SortOrder
   email: SortOrder
@@ -6487,6 +6545,8 @@ input TicketMaxOrderByAggregateInput {
 
 type TicketMinAggregate {
   age: Int
+  checkedIn: DateTime
+  checkedOut: DateTime
   couponCode: String
   createdAt: DateTime
   email: String
@@ -6505,6 +6565,8 @@ type TicketMinAggregate {
 
 input TicketMinOrderByAggregateInput {
   age: SortOrder
+  checkedIn: SortOrder
+  checkedOut: SortOrder
   couponCode: SortOrder
   createdAt: SortOrder
   email: SortOrder
@@ -6532,6 +6594,8 @@ input TicketOrderByWithAggregationInput {
   _min: TicketMinOrderByAggregateInput
   _sum: TicketSumOrderByAggregateInput
   age: SortOrder
+  checkedIn: SortOrder
+  checkedOut: SortOrder
   couponCode: SortOrder
   createdAt: SortOrder
   email: SortOrder
@@ -6539,7 +6603,6 @@ input TicketOrderByWithAggregationInput {
   firstName: SortOrder
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   paymentId: SortOrder
   personId: SortOrder
   phone: SortOrder
@@ -6551,6 +6614,8 @@ input TicketOrderByWithAggregationInput {
 
 input TicketOrderByWithRelationInput {
   age: SortOrder
+  checkedIn: SortOrder
+  checkedOut: SortOrder
   couponCode: SortOrder
   createdAt: SortOrder
   email: SortOrder
@@ -6560,7 +6625,6 @@ input TicketOrderByWithRelationInput {
   guardian: PersonOrderByWithRelationInput
   id: SortOrder
   lastName: SortOrder
-  metadata: SortOrder
   payment: PaymentOrderByWithRelationInput
   paymentId: SortOrder
   personId: SortOrder
@@ -6575,6 +6639,8 @@ input TicketOrderByWithRelationInput {
 
 enum TicketScalarFieldEnum {
   age
+  checkedIn
+  checkedOut
   couponCode
   createdAt
   email
@@ -6597,6 +6663,8 @@ input TicketScalarWhereInput {
   NOT: [TicketScalarWhereInput!]
   OR: [TicketScalarWhereInput!]
   age: IntNullableFilter
+  checkedIn: DateTimeNullableFilter
+  checkedOut: DateTimeNullableFilter
   couponCode: StringNullableFilter
   createdAt: DateTimeFilter
   email: StringNullableFilter
@@ -6604,7 +6672,6 @@ input TicketScalarWhereInput {
   firstName: StringFilter
   id: StringFilter
   lastName: StringFilter
-  metadata: JsonNullableFilter
   paymentId: StringNullableFilter
   personId: StringNullableFilter
   phone: StringNullableFilter
@@ -6619,6 +6686,8 @@ input TicketScalarWhereWithAggregatesInput {
   NOT: [TicketScalarWhereWithAggregatesInput!]
   OR: [TicketScalarWhereWithAggregatesInput!]
   age: IntNullableWithAggregatesFilter
+  checkedIn: DateTimeNullableWithAggregatesFilter
+  checkedOut: DateTimeNullableWithAggregatesFilter
   couponCode: StringNullableWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
   email: StringNullableWithAggregatesFilter
@@ -6626,7 +6695,6 @@ input TicketScalarWhereWithAggregatesInput {
   firstName: StringWithAggregatesFilter
   id: StringWithAggregatesFilter
   lastName: StringWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   paymentId: StringNullableWithAggregatesFilter
   personId: StringNullableWithAggregatesFilter
   phone: StringNullableWithAggregatesFilter
@@ -6655,6 +6723,8 @@ enum TicketType {
 
 input TicketUpdateInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6663,7 +6733,6 @@ input TicketUpdateInput {
   guardian: PersonUpdateOneWithoutTicketInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
@@ -6675,13 +6744,14 @@ input TicketUpdateInput {
 
 input TicketUpdateManyMutationInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
   firstName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   type: EnumTicketTypeFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
@@ -6809,6 +6879,8 @@ input TicketUpdateWithWhereUniqueWithoutSentEmailsInput {
 
 input TicketUpdateWithoutEventInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6816,7 +6888,6 @@ input TicketUpdateWithoutEventInput {
   guardian: PersonUpdateOneWithoutTicketInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
@@ -6828,6 +6899,8 @@ input TicketUpdateWithoutEventInput {
 
 input TicketUpdateWithoutGuardianInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6835,7 +6908,6 @@ input TicketUpdateWithoutGuardianInput {
   firstName: StringFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
@@ -6847,6 +6919,8 @@ input TicketUpdateWithoutGuardianInput {
 
 input TicketUpdateWithoutPaymentInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6855,7 +6929,6 @@ input TicketUpdateWithoutPaymentInput {
   guardian: PersonUpdateOneWithoutTicketInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
   sentEmails: EmailTemplateUpdateManyWithoutSentToInput
@@ -6866,6 +6939,8 @@ input TicketUpdateWithoutPaymentInput {
 
 input TicketUpdateWithoutPromoCodeInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6874,7 +6949,6 @@ input TicketUpdateWithoutPromoCodeInput {
   guardian: PersonUpdateOneWithoutTicketInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   sentEmails: EmailTemplateUpdateManyWithoutSentToInput
@@ -6885,6 +6959,8 @@ input TicketUpdateWithoutPromoCodeInput {
 
 input TicketUpdateWithoutSentEmailsInput {
   age: NullableIntFieldUpdateOperationsInput
+  checkedIn: NullableDateTimeFieldUpdateOperationsInput
+  checkedOut: NullableDateTimeFieldUpdateOperationsInput
   couponCode: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   email: NullableStringFieldUpdateOperationsInput
@@ -6893,7 +6969,6 @@ input TicketUpdateWithoutSentEmailsInput {
   guardian: PersonUpdateOneWithoutTicketInput
   id: StringFieldUpdateOperationsInput
   lastName: StringFieldUpdateOperationsInput
-  metadata: JSON
   payment: PaymentUpdateOneWithoutTicketsInput
   phone: NullableStringFieldUpdateOperationsInput
   promoCode: PromoCodeUpdateOneWithoutTicketsInput
@@ -6937,6 +7012,8 @@ input TicketWhereInput {
   NOT: [TicketWhereInput!]
   OR: [TicketWhereInput!]
   age: IntNullableFilter
+  checkedIn: DateTimeNullableFilter
+  checkedOut: DateTimeNullableFilter
   couponCode: StringNullableFilter
   createdAt: DateTimeFilter
   email: StringNullableFilter
@@ -6946,7 +7023,6 @@ input TicketWhereInput {
   guardian: PersonRelationFilter
   id: StringFilter
   lastName: StringFilter
-  metadata: JsonNullableFilter
   payment: PaymentRelationFilter
   paymentId: StringNullableFilter
   personId: StringNullableFilter
@@ -6970,16 +7046,21 @@ type Venue {
   _count: VenueCount
   address: String
   addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
   city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime!
   events(cursor: EventWhereUniqueInput, distinct: [EventScalarFieldEnum!], orderBy: [EventOrderByWithRelationInput!], skip: Int, take: Int, where: EventWhereInput): [Event!]!
   getMetadata(key: String!): String
   id: String!
   mapLink: String
+  metadata: JSON
   name: String!
   state: String
   stateAbbreviation: String
@@ -7002,59 +7083,91 @@ type VenueCount {
 type VenueCountAggregate {
   _all: Int!
   address: Int!
+  addressLine1: Int!
+  addressLine2: Int!
+  addressLine3: Int!
   capacity: Int!
+  city: Int!
   contactEmail: Int!
   contactName: Int!
   contactPhone: Int!
+  country: Int!
+  countryAbbreviation: Int!
   createdAt: Int!
   id: Int!
   mapLink: Int!
   metadata: Int!
   name: Int!
+  state: Int!
+  stateAbbreviation: Int!
   updatedAt: Int!
+  zipCode: Int!
 }
 
 input VenueCountOrderByAggregateInput {
-  address: SortOrder
+  addressLine1: SortOrder
+  addressLine2: SortOrder
+  addressLine3: SortOrder
   capacity: SortOrder
+  city: SortOrder
   contactEmail: SortOrder
   contactName: SortOrder
   contactPhone: SortOrder
+  country: SortOrder
+  countryAbbreviation: SortOrder
   createdAt: SortOrder
   id: SortOrder
   mapLink: SortOrder
-  metadata: SortOrder
   name: SortOrder
+  state: SortOrder
+  stateAbbreviation: SortOrder
   updatedAt: SortOrder
+  zipCode: SortOrder
 }
 
 input VenueCreateInput {
-  address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime
   events: EventCreateNestedManyWithoutVenueInput
   id: String
   mapLink: String
   metadata: JSON
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime
+  zipCode: String
 }
 
 input VenueCreateManyInput {
-  address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime
   id: String
   mapLink: String
   metadata: JSON
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime
+  zipCode: String
 }
 
 input VenueCreateNestedOneWithoutEventsInput {
@@ -7069,17 +7182,25 @@ input VenueCreateOrConnectWithoutEventsInput {
 }
 
 input VenueCreateWithoutEventsInput {
-  address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime
   id: String
   mapLink: String
   metadata: JSON
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime
+  zipCode: String
 }
 
 type VenueGroupBy {
@@ -7089,68 +7210,111 @@ type VenueGroupBy {
   _min: VenueMinAggregate
   _sum: VenueSumAggregate
   address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime!
   id: String!
   mapLink: String
   metadata: JSON
   name: String!
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime!
+  zipCode: String
 }
 
 type VenueMaxAggregate {
   address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime
   id: String
   mapLink: String
   name: String
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime
+  zipCode: String
 }
 
 input VenueMaxOrderByAggregateInput {
-  address: SortOrder
+  addressLine1: SortOrder
+  addressLine2: SortOrder
+  addressLine3: SortOrder
   capacity: SortOrder
+  city: SortOrder
   contactEmail: SortOrder
   contactName: SortOrder
   contactPhone: SortOrder
+  country: SortOrder
+  countryAbbreviation: SortOrder
   createdAt: SortOrder
   id: SortOrder
   mapLink: SortOrder
   name: SortOrder
+  state: SortOrder
+  stateAbbreviation: SortOrder
   updatedAt: SortOrder
+  zipCode: SortOrder
 }
 
 type VenueMinAggregate {
   address: String
+  addressLine1: String
+  addressLine2: String
+  addressLine3: String
   capacity: Int
+  city: String
   contactEmail: String
   contactName: String
   contactPhone: String
+  country: String
+  countryAbbreviation: String
   createdAt: DateTime
   id: String
   mapLink: String
   name: String
+  state: String
+  stateAbbreviation: String
   updatedAt: DateTime
+  zipCode: String
 }
 
 input VenueMinOrderByAggregateInput {
-  address: SortOrder
+  addressLine1: SortOrder
+  addressLine2: SortOrder
+  addressLine3: SortOrder
   capacity: SortOrder
+  city: SortOrder
   contactEmail: SortOrder
   contactName: SortOrder
   contactPhone: SortOrder
+  country: SortOrder
+  countryAbbreviation: SortOrder
   createdAt: SortOrder
   id: SortOrder
   mapLink: SortOrder
   name: SortOrder
+  state: SortOrder
+  stateAbbreviation: SortOrder
   updatedAt: SortOrder
+  zipCode: SortOrder
 }
 
 input VenueOrderByWithAggregationInput {
@@ -7159,32 +7323,46 @@ input VenueOrderByWithAggregationInput {
   _max: VenueMaxOrderByAggregateInput
   _min: VenueMinOrderByAggregateInput
   _sum: VenueSumOrderByAggregateInput
-  address: SortOrder
+  addressLine1: SortOrder
+  addressLine2: SortOrder
+  addressLine3: SortOrder
   capacity: SortOrder
+  city: SortOrder
   contactEmail: SortOrder
   contactName: SortOrder
   contactPhone: SortOrder
+  country: SortOrder
+  countryAbbreviation: SortOrder
   createdAt: SortOrder
   id: SortOrder
   mapLink: SortOrder
-  metadata: SortOrder
   name: SortOrder
+  state: SortOrder
+  stateAbbreviation: SortOrder
   updatedAt: SortOrder
+  zipCode: SortOrder
 }
 
 input VenueOrderByWithRelationInput {
-  address: SortOrder
+  addressLine1: SortOrder
+  addressLine2: SortOrder
+  addressLine3: SortOrder
   capacity: SortOrder
+  city: SortOrder
   contactEmail: SortOrder
   contactName: SortOrder
   contactPhone: SortOrder
+  country: SortOrder
+  countryAbbreviation: SortOrder
   createdAt: SortOrder
   events: EventOrderByRelationAggregateInput
   id: SortOrder
   mapLink: SortOrder
-  metadata: SortOrder
   name: SortOrder
+  state: SortOrder
+  stateAbbreviation: SortOrder
   updatedAt: SortOrder
+  zipCode: SortOrder
 }
 
 input VenueRelationFilter {
@@ -7194,33 +7372,49 @@ input VenueRelationFilter {
 
 enum VenueScalarFieldEnum {
   address
+  addressLine1
+  addressLine2
+  addressLine3
   capacity
+  city
   contactEmail
   contactName
   contactPhone
+  country
+  countryAbbreviation
   createdAt
   id
   mapLink
   metadata
   name
+  state
+  stateAbbreviation
   updatedAt
+  zipCode
 }
 
 input VenueScalarWhereWithAggregatesInput {
   AND: [VenueScalarWhereWithAggregatesInput!]
   NOT: [VenueScalarWhereWithAggregatesInput!]
   OR: [VenueScalarWhereWithAggregatesInput!]
-  address: StringNullableWithAggregatesFilter
+  addressLine1: StringNullableWithAggregatesFilter
+  addressLine2: StringNullableWithAggregatesFilter
+  addressLine3: StringNullableWithAggregatesFilter
   capacity: IntNullableWithAggregatesFilter
+  city: StringNullableWithAggregatesFilter
   contactEmail: StringNullableWithAggregatesFilter
   contactName: StringNullableWithAggregatesFilter
   contactPhone: StringNullableWithAggregatesFilter
+  country: StringNullableWithAggregatesFilter
+  countryAbbreviation: StringNullableWithAggregatesFilter
   createdAt: DateTimeWithAggregatesFilter
   id: StringWithAggregatesFilter
   mapLink: StringNullableWithAggregatesFilter
-  metadata: JsonNullableWithAggregatesFilter
   name: StringWithAggregatesFilter
+  state: StringNullableWithAggregatesFilter
+  stateAbbreviation: StringNullableWithAggregatesFilter
   updatedAt: DateTimeWithAggregatesFilter
+  zipCode: StringNullableWithAggregatesFilter
 }
 
 type VenueSumAggregate {
@@ -7232,32 +7426,46 @@ input VenueSumOrderByAggregateInput {
 }
 
 input VenueUpdateInput {
-  address: NullableStringFieldUpdateOperationsInput
+  addressLine1: NullableStringFieldUpdateOperationsInput
+  addressLine2: NullableStringFieldUpdateOperationsInput
+  addressLine3: NullableStringFieldUpdateOperationsInput
   capacity: NullableIntFieldUpdateOperationsInput
+  city: NullableStringFieldUpdateOperationsInput
   contactEmail: NullableStringFieldUpdateOperationsInput
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
+  country: NullableStringFieldUpdateOperationsInput
+  countryAbbreviation: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   events: EventUpdateManyWithoutVenueInput
   id: StringFieldUpdateOperationsInput
   mapLink: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
+  state: NullableStringFieldUpdateOperationsInput
+  stateAbbreviation: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
+  zipCode: NullableStringFieldUpdateOperationsInput
 }
 
 input VenueUpdateManyMutationInput {
-  address: NullableStringFieldUpdateOperationsInput
+  addressLine1: NullableStringFieldUpdateOperationsInput
+  addressLine2: NullableStringFieldUpdateOperationsInput
+  addressLine3: NullableStringFieldUpdateOperationsInput
   capacity: NullableIntFieldUpdateOperationsInput
+  city: NullableStringFieldUpdateOperationsInput
   contactEmail: NullableStringFieldUpdateOperationsInput
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
+  country: NullableStringFieldUpdateOperationsInput
+  countryAbbreviation: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   mapLink: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
+  state: NullableStringFieldUpdateOperationsInput
+  stateAbbreviation: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
+  zipCode: NullableStringFieldUpdateOperationsInput
 }
 
 input VenueUpdateOneWithoutEventsInput {
@@ -7271,17 +7479,24 @@ input VenueUpdateOneWithoutEventsInput {
 }
 
 input VenueUpdateWithoutEventsInput {
-  address: NullableStringFieldUpdateOperationsInput
+  addressLine1: NullableStringFieldUpdateOperationsInput
+  addressLine2: NullableStringFieldUpdateOperationsInput
+  addressLine3: NullableStringFieldUpdateOperationsInput
   capacity: NullableIntFieldUpdateOperationsInput
+  city: NullableStringFieldUpdateOperationsInput
   contactEmail: NullableStringFieldUpdateOperationsInput
   contactName: NullableStringFieldUpdateOperationsInput
   contactPhone: NullableStringFieldUpdateOperationsInput
+  country: NullableStringFieldUpdateOperationsInput
+  countryAbbreviation: NullableStringFieldUpdateOperationsInput
   createdAt: DateTimeFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   mapLink: NullableStringFieldUpdateOperationsInput
-  metadata: JSON
   name: StringFieldUpdateOperationsInput
+  state: NullableStringFieldUpdateOperationsInput
+  stateAbbreviation: NullableStringFieldUpdateOperationsInput
   updatedAt: DateTimeFieldUpdateOperationsInput
+  zipCode: NullableStringFieldUpdateOperationsInput
 }
 
 input VenueUpsertWithoutEventsInput {
@@ -7293,18 +7508,25 @@ input VenueWhereInput {
   AND: [VenueWhereInput!]
   NOT: [VenueWhereInput!]
   OR: [VenueWhereInput!]
-  address: StringNullableFilter
+  addressLine1: StringNullableFilter
+  addressLine2: StringNullableFilter
+  addressLine3: StringNullableFilter
   capacity: IntNullableFilter
+  city: StringNullableFilter
   contactEmail: StringNullableFilter
   contactName: StringNullableFilter
   contactPhone: StringNullableFilter
+  country: StringNullableFilter
+  countryAbbreviation: StringNullableFilter
   createdAt: DateTimeFilter
   events: EventListRelationFilter
   id: StringFilter
   mapLink: StringNullableFilter
-  metadata: JsonNullableFilter
   name: StringFilter
+  state: StringNullableFilter
+  stateAbbreviation: StringNullableFilter
   updatedAt: DateTimeFilter
+  zipCode: StringNullableFilter
 }
 
 input VenueWhereUniqueInput {
