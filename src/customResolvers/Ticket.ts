@@ -1,6 +1,7 @@
 import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
 import {FindUniqueTicketArgs, Person, Ticket} from "../generated/typegraphql-prisma";
 import { Prisma } from "@prisma/client"
+import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 
 
