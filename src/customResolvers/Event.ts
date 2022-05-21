@@ -8,6 +8,7 @@ import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import { roundDecimal } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
+import { sendWaiverReminder } from '../waivers';
 import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
 
@@ -261,14 +262,6 @@ export class CustomEventResolver {
         return errors;
     }
 
-    createStripePaymentIntent() {
-
-    }
-
-    createPaymentIntent() {
-
-    }
-
     @Mutation(_returns => String, { nullable: true }) // returns stripe payment intent secret key
     async registerForEvent(
         @Ctx() { prisma }: Context,
@@ -342,7 +335,7 @@ export class CustomEventResolver {
             guardianId = _guardianId;
         }
 
-        await prisma.$transaction(tickets.map((ticket) => {
+        const dbTickets = await prisma.$transaction(tickets.map((ticket) => {
             const isMinor = ticket.age! < this.majorityAge(event);
 
             return prisma.ticket.create({data: {
@@ -354,6 +347,12 @@ export class CustomEventResolver {
             }});
         }));
 
+        // If no payment is required, the finalizePayment mutation will not be called, so send waivers now.
+        if (price === 0) {
+          for (const ticket of tickets) {
+            await sendWaiverReminder(ticket);
+          }
+        }
 
         return intent?.clientData || null;
     }
@@ -375,8 +374,13 @@ export class CustomEventResolver {
 
         const tickets = await prisma.ticket.findMany({
             where: { payment: { stripePaymentIntentId: paymentIntentId } },
-            select: { id: true },
+            include: { event: true, guardian: true },
         });
+
+        // For paid tickets, waivers are not sent initially, so we send them now:
+        for (const ticket of tickets) {
+          await sendWaiverReminder(ticket);
+        }
 
         return tickets.map(ticket => ticket.id);
     }
