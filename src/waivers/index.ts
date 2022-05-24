@@ -62,7 +62,7 @@ export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardi
     await twilio.messages.create({
       from: config.twilio.number,
       to: phoneTo,
-      body: `Please sign the CodeDay waiver${adult ? ` for ${ticket.firstName}` : ''}: ${signingUrl}`,
+      body: `Please sign the CodeDay waiver${adult ? '' : ` for ${ticket.firstName}`}: ${signingUrl}`,
     });
   }
 
