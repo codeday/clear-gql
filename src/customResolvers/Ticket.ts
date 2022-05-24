@@ -2,6 +2,7 @@ import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} fro
 import {FindUniqueTicketArgs, Person, Ticket} from "../generated/typegraphql-prisma";
 import { Prisma } from "@prisma/client"
 import dot from "dot-object";
+import { sendWaiverReminder } from '../waivers';
 import {AuthRole, Context} from "../context";
 
 
@@ -44,6 +45,21 @@ export class CustomTicketResolver {
                 checkedOut: new Date(),
             }
         })) || null;
+    }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @Mutation(_returns => Boolean, { nullable: true })
+    async sendWaiverReminder(
+        @Args() args: FindUniqueTicketArgs,
+        @Ctx() { prisma }: Context,
+    ): Promise<boolean> {
+      const ticket = await prisma.ticket.findUnique({
+        ...args,
+        include: { event: true, guardian: true },
+        rejectOnNotFound: true,
+      });
+      await sendWaiverReminder(ticket);
+      return true;
     }
 }
 

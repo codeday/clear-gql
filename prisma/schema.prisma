@@ -185,11 +185,11 @@ model Ticket {
   age       Int?
 
   waiverTrackingId String?
-  waiverUrl String?
-  waiverSigned Boolean   @default(false)
-  waiverSignedId String?
-  checkedIn    DateTime?
-  checkedOut   DateTime?
+  waiverUrl        String?
+  waiverSigned     Boolean   @default(false)
+  waiverSignedId   String?
+  checkedIn        DateTime?
+  checkedOut       DateTime?
 
   couponCode String?
   type       TicketType @default(STUDENT)
