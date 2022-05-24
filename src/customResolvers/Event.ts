@@ -338,18 +338,21 @@ export class CustomEventResolver {
         const dbTickets = await prisma.$transaction(tickets.map((ticket) => {
             const isMinor = ticket.age! < this.majorityAge(event);
 
-            return prisma.ticket.create({data: {
-                ...ticket,
-                event: { connect: { id: event.id } },
-                guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
-                payment: paymentId ? { connect: { id: paymentId } } : undefined,
-                promoCode: promo ? { connect: { id: promo.id } } : undefined,
-            }});
+            return prisma.ticket.create({
+                data: {
+                  ...ticket,
+                  event: { connect: { id: event.id } },
+                  guardian: isMinor && guardianId ? { connect: { id: guardianId } } : undefined,
+                  payment: paymentId ? { connect: { id: paymentId } } : undefined,
+                  promoCode: promo ? { connect: { id: promo.id } } : undefined,
+                },
+                include: { event: true, guardian: true },
+            });
         }));
 
         // If no payment is required, the finalizePayment mutation will not be called, so send waivers now.
         if (price === 0) {
-          for (const ticket of tickets) {
+          for (const ticket of dbTickets) {
             await sendWaiverReminder(ticket);
           }
         }
