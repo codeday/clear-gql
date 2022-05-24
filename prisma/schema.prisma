@@ -64,6 +64,8 @@ model Event {
   registrationsOpen  Boolean             @default(false)
   contentfulWebname  String?
   showcaseId         String?
+  minorWaiverId      String?
+  adultWaiverId      String?
   eventRestrictions  EventRestriction[]
   timezone           String?
   majorityAge        Int                 @default(18)
@@ -182,9 +184,12 @@ model Ticket {
   phone     String?
   age       Int?
 
-  waiverSigned Boolean   @default(false)
-  checkedIn    DateTime?
-  checkedOut   DateTime?
+  waiverTrackingId String?
+  waiverUrl        String?
+  waiverSigned     Boolean   @default(false)
+  waiverSignedId   String?
+  checkedIn        DateTime?
+  checkedOut       DateTime?
 
   couponCode String?
   type       TicketType @default(STUDENT)

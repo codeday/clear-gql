@@ -1,17 +1,13 @@
-import {PrismaClient} from '@prisma/client';
 import {mintWaiverLink} from "./waiver";
-import {Message, ServerClient} from "postmark"
+import {Message} from "postmark"
 import config from "../config";
 import {marked} from "marked";
-import {Twilio} from "twilio";
 import ms from 'ms';
 import * as handlebars from "handlebars";
 import {DateTime} from 'luxon';
+import { postmark, prisma, twilio } from '../services';
 import {EmailTemplate, Event, Person, Ticket, Venue} from "../generated/typegraphql-prisma";
 
-const prisma = new PrismaClient()
-const postmark = new ServerClient(config.postmark.serverToken || '');
-const twilio = new Twilio(config.twilio.sid, config.twilio.token);
 const emailQueue: Message[] | { To: string; ReplyTo: string; From: string; HtmlBody: string; Subject: string; MessageStream: string; }[] = []
 
 
