@@ -3,7 +3,6 @@ import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoC
 import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
-import {GraphQLJSONObject} from "graphql-scalars";
 import fetch from 'node-fetch';
 import {Prisma, PrismaClient, Ticket} from "@prisma/client";
 import dot from "dot-object";
