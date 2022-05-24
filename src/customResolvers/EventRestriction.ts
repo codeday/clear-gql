@@ -9,9 +9,7 @@ import {
 import {AuthRole, Context} from "../context";
 import dot from "dot-object";
 import {FileUpload, GraphQLUpload} from "graphql-upload";
-// @ts-ignore
-import Uploader from '@codeday/uploader-node';
-const uploader = new Uploader(process.env.UPLOADER_URL, process.env.UPLOADER_SECRET);
+import { uploader } from '../services';
 
 
 @Resolver(of => EventRestriction)

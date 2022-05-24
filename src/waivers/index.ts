@@ -2,7 +2,9 @@ import { Ticket, Event, Person } from '@prisma/client';
 import { DateTime } from 'luxon';
 import fetch from 'node-fetch';
 import config from '../config';
-import { prisma, postmark, twilio } from '../services';
+import { prisma, postmark, twilio, uploader } from '../services';
+import { streamToBuffer } from '../utils';
+import schedule from "node-schedule";
 
 export * from './server';
 
@@ -76,3 +78,37 @@ export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardi
   }
 }
 
+async function syncWaiverPdf(ticket: Pick<Ticket, 'id' | 'waiverSignedId'>): Promise<void> {
+  if (!ticket.waiverSignedId) return;
+  console.log(`Syncing waiver for ${ticket.id}...`);
+  const response = await fetch(`${WAIVERFOREVER_API_BASE}/waiver/${ticket.waiverSignedId}/pdf`, {
+      headers: {
+        Accept: '*.*',
+        'X-Api-Key': config.waiver.apiKey,
+      },
+      redirect: 'follow',
+  });
+  if (!response.redirected) return;
+  console.log(`...fetched waiver from waiverforever`);
+
+  const { url } = await uploader.file(await streamToBuffer(response.body), 'file.pdf');
+  console.log(`...uploaded at ${url}`);
+  await prisma.ticket.update({ where: { id: ticket.id }, data: { waiverPdfUrl: url } });
+}
+
+export async function syncAllWaiverPdfs() {
+  const needsSync = await prisma.ticket.findMany({
+    where: { waiverSignedId: { not: null }, waiverPdfUrl: null },
+    select: { id: true, waiverSignedId: true },
+  });
+  for (const ticket of needsSync) {
+    try {
+      await syncWaiverPdf(ticket);
+    } catch (ex) { console.error(ex); }
+  }
+}
+
+export async function automaticWaivers(): Promise<void> {
+    const job = schedule.scheduleJob('*/5 * * * *', syncAllWaiverPdfs);
+    job.invoke();
+}

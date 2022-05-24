@@ -3,11 +3,8 @@ import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Resolver, Root} fro
 import {FindUniqueSponsorArgs, Sponsor} from "../generated/typegraphql-prisma";
 import {AuthRole, Context} from "../context";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-// @ts-ignore
-import Uploader from '@codeday/uploader-node';
+import { uploader } from '../services';
 import dot from "dot-object";
-
-const uploader = new Uploader(process.env.UPLOADER_URL, process.env.UPLOADER_SECRET);
 
 @Resolver(of => Sponsor)
 export class CustomSponsorResolver {

@@ -186,6 +186,7 @@ model Ticket {
 
   waiverTrackingId String?
   waiverUrl        String?
+  waiverPdfUrl     String?
   waiverSigned     Boolean   @default(false)
   waiverSignedId   String?
   checkedIn        DateTime?

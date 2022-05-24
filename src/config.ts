@@ -17,6 +17,8 @@ loadEnv();
     'WAIVER_API_KEY',
     'WAIVER_SIGNED_PORT',
     'WAIVER_SIGNED_SECRET',
+    'UPLOADER_URL',
+    'GOTENBERG_BASE',
 ].forEach((req) => { if (!process.env[req]) throw Error(`The ${req} environment variable is required.`); });
 
 const config = {
@@ -41,6 +43,13 @@ const config = {
         signedPort: Number.parseInt(process.env.WAIVER_SIGNED_PORT!, 10) || 8090,
         signedSecret: process.env.WAIVER_SIGNED_SECRET!,
     },
+    uploader: {
+      url: process.env.UPLOADER_URL!,
+      secret: process.env.UPLOADER_SECRET,
+    },
+    gotenberg: {
+      base: process.env.GOTENBERG_BASE!,
+    }
 };
 
 export default config;

@@ -16,9 +16,14 @@
         "experimentalDecorators": true,
         "esModuleInterop": true,
         "emitDecoratorMetadata": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "typeRoots": [
+          "node_modules/@types",
+          "src/@types",
+        ]
     },
     "include": [
         "src",
+        "src/@types"
     ]
 }

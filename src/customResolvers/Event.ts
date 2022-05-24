@@ -7,11 +7,12 @@ import fetch from 'node-fetch';
 import {Prisma, PrismaClient, Ticket} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
-import { roundDecimal } from '../utils';
+import { mergePdfs, roundDecimal, streamToBuffer } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
 import { sendWaiverReminder } from '../waivers';
 import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
+import { uploader } from "../services";
 
 type GetPaymentInfoQueryResponse = { data: { cms: { regions: { items: { paymentProvider: string | null, currency: string | null }[] } } } };
 const GET_PAYMENT_INFO_QUERY = `
@@ -129,6 +130,26 @@ export class CustomEventResolver {
     ) : Promise<Event[]> {
         if(auth.username && editable) return await prisma.event.findMany({where: {managers: {has: auth.username || null}}})
         return await prisma.event.findMany({...args})
+    }
+
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @FieldResolver(_returns => String)
+    async waiverBook(
+      @Root() event: Event,
+      @Ctx() { prisma }: Context,
+    ): Promise<string> {
+      const allProfiles = await prisma.ticket.findMany({
+        where: { eventId: event.id, waiverPdfUrl: { not: null } },
+        select: { waiverPdfUrl: true }
+      });
+
+      const allPages = await Promise.all(allProfiles.map(async (p) => {
+        return await streamToBuffer((await fetch(p.waiverPdfUrl!)).body);
+      }));
+
+      const merged = await mergePdfs(allPages);
+      const { url } = await uploader.file(merged, 'file.pdf');
+      return url;
     }
 
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
