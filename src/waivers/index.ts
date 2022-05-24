@@ -71,7 +71,7 @@ export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardi
       To: emailTo,
       From: '"CodeDay" <legal@codeday.org>',
       Subject: '[Action Required] Sign Your CodeDay Waiver',
-      TextBody: `${adult ? `You're` : `${ticket.firstName} is`} registered for CodeDay. To check-in, you must sign a waiver. E-sign ${adult ? `${ticket.firstName}'s` : 'your'} waiver now at: ${signingUrl}`
+      TextBody: `${adult ? `You're` : `${ticket.firstName} is`} registered for CodeDay. To check-in, you must sign a waiver. E-sign ${adult ? 'your' : `${ticket.firstName}'s`} waiver now at: ${signingUrl}`
     });
   }
 }
