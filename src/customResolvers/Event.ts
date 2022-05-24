@@ -3,6 +3,8 @@ import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoC
 import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
+import {GraphQLJSONObject} from "graphql-scalars";
+import fetch from 'node-fetch';
 import {Prisma, PrismaClient, Ticket} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
@@ -11,6 +13,20 @@ import {GraphQLJSONObject} from "graphql-scalars";
 import { sendWaiverReminder } from '../waivers';
 import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
+
+type GetPaymentInfoQueryResponse = { data: { cms: { regions: { items: { paymentProvider: string | null, currency: string | null }[] } } } };
+const GET_PAYMENT_INFO_QUERY = `
+query GetPaymentInfoQuery($webname: String!) {
+  cms {
+    regions(where:{webname:$webname}, limit:1) {
+      items {
+        paymentProvider
+        currency
+      }
+    }
+  }
+}
+`;
 
 export const MAJORITY_AGE = 18;
 export const MIN_AGE = 12;
@@ -317,8 +333,22 @@ export class CustomEventResolver {
         let paymentId: string | null = null;
         let intent: PaymentIntent | null = null;
         if (price > 0) {
+
+          const res = await fetch('https://graph.codeday.org/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ query: GET_PAYMENT_INFO_QUERY, variables: { webname: event.contentfulWebname } }),
+          });
+          const { data: { cms } } = <GetPaymentInfoQueryResponse> await res.json();
+          if (paymentProvider !== (cms.regions.items[0].paymentProvider || 'stripe')) {
+            throw new Error(`Incorrect payment provider.`);
+          }
+          const currency = cms.regions.items[0].currency || (paymentProvider === 'razorpay' ? 'inr' : 'usd');
+
           const providerInstance = getPaymentProvider(paymentProvider);
-          intent = await providerInstance.createIntent(price, tickets.length, event);
+          intent = await providerInstance.createIntent(price, currency, tickets.length, event);
 
           const { id: _paymentId } = await prisma.payment.create({
             data: { paymentProvider, stripePaymentIntentId: intent.id },

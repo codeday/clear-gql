@@ -6,10 +6,10 @@ import { PaymentProvider } from './PaymentProvider';
 const razorpay =  new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_SECRET });
 
 export const razorpayPaymentProvider: PaymentProvider = {
-  async createIntent(itemPrice: number, quantity: number, event: Event): Promise<PaymentIntent> {
+  async createIntent(itemPrice: number, currency: string, quantity: number, event: Event): Promise<PaymentIntent> {
     const intent = await razorpay.orders.create({
       amount: Math.round(itemPrice * 100) * quantity,
-      currency: 'INR',
+      currency: currency.toUpperCase(),
       notes: { eventId: event.id, region: event.contentfulWebname },
     });
     return {
