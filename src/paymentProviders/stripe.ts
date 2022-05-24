@@ -6,10 +6,10 @@ import { PaymentProvider } from './PaymentProvider';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {apiVersion: "2020-08-27"});
 
 export const stripePaymentProvider: PaymentProvider = {
-  async createIntent(itemPrice: number, quantity: number, event: Event): Promise<PaymentIntent> {
+  async createIntent(itemPrice: number, currency: string, quantity: number, event: Event): Promise<PaymentIntent> {
     const stripePaymentIntent = await stripe.paymentIntents?.create({
         amount: Math.round(itemPrice * 100) * quantity,
-        currency: 'usd',
+        currency: currency.toLowerCase(),
         statement_descriptor: `CodeDay ${event.name}`,
         metadata: { eventId: event.id, region: event.contentfulWebname },
     });
