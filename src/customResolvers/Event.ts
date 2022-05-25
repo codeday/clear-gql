@@ -185,7 +185,7 @@ export class CustomEventResolver {
       // Publicly report the approximate capacity if more than 10 tickets remain, so that it's harder for people
       // to gather ticket speed statistics.
       if (remaining <= 10 || auth.isAdmin || auth.isManager || auth.isVolunteer) return remaining;
-      else return Math.floor(remaining / 10) * 10;
+      else return Math.floor(remaining / 5) * 5;
     }
 
     async fetchPromo(
