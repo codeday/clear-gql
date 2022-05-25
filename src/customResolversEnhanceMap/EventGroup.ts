@@ -6,5 +6,7 @@ let defaultPerms: {[key: string]: MethodDecorator[]} = {};
 Object.getOwnPropertyNames(EventGroupCrudResolver.prototype).forEach((value: string) => defaultPerms[value] = [Authorized(AuthRole.ADMIN)])
 
 export const eventgroupEnhanceConfig: ResolverActionsConfig<"EventGroup"> = {
-    ...defaultPerms
+    ...defaultPerms,
+    eventGroups: [],
+    eventGroup: [],
 }
