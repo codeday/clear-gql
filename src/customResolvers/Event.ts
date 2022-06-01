@@ -272,7 +272,7 @@ export class CustomEventResolver {
         else if (ticket.age > maxAge) errors.push(`You must be under ${maxAge} to participate.`);
 
         if (!ticket.firstName || !ticket.lastName) errors.push('Name is required.');
-        if (!ticket.email && !ticket.phone) errors.push('Email or phone is required.');
+        if (!ticket.email && !ticket.phone && !ticket.whatsApp) errors.push('Email or phone is required.');
         if (ticket.email && !emailValidator.validate(ticket.email)) {
             errors.push(`${ticket.email} is not a valid email.`)
         }
@@ -290,7 +290,9 @@ export class CustomEventResolver {
         const errors: string[] = [];
 
         if (!guardianData.firstName || !guardianData.lastName) errors.push('Guardian name is required.');
-        if (!guardianData.email && !guardianData.phone) errors.push('Guardian email or phone is required.');
+        if (!guardianData.email && !guardianData.phone && !guardianData.whatsApp) {
+            errors.push('Guardian email or phone is required.');
+        }
         if (guardianData.email && !emailValidator.validate(guardianData.email)) {
             errors.push(`${guardianData.email} is not a valid email.`);
         }
