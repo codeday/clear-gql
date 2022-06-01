@@ -59,12 +59,20 @@ export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardi
   const adult = isAdult(ticket);
   const emailTo = adult ? ticket.email : ticket.guardian?.email;
   const phoneTo = adult ? ticket.phone : ticket.guardian?.phone;
+  const whatsAppTo = adult ? ticket.whatsApp : ticket.guardian?.whatsApp;
+  const phoneWhatsAppBody = `Please sign the CodeDay waiver${adult ? '' : ` for ${ticket.firstName}`}: ${signingUrl}`;
 
-  if (phoneTo) {
+  if (whatsAppTo) {
     await twilio.messages.create({
-      from: config.twilio.number,
+      to: `whatsapp:${whatsAppTo}`,
+      body: phoneWhatsAppBody,
+      messagingServiceSid: config.twilio.service,
+    });
+  } else if (phoneTo) {
+    await twilio.messages.create({
       to: phoneTo,
-      body: `Please sign the CodeDay waiver${adult ? '' : ` for ${ticket.firstName}`}: ${signingUrl}`,
+      body: phoneWhatsAppBody,
+      messagingServiceSid: config.twilio.service,
     });
   }
 

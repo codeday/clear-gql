@@ -10,6 +10,7 @@ loadEnv();
     'TWILIO_SID',
     'TWILIO_TOKEN',
     'TWILIO_TEXT_NUMBER',
+    'TWILIO_SERVICE',
     'RAZORPAY_KEY_ID',
     'RAZORPAY_SECRET',
     'WAIVER_MINOR_ID',
@@ -35,6 +36,7 @@ const config = {
         sid: process.env.TWILIO_SID!,
         token: process.env.TWILIO_TOKEN!,
         number: process.env.TWILIO_TEXT_NUMBER!,
+        service: process.env.TWILIO_SERVICE!,
     },
     waiver: {
         minorId: process.env.WAIVER_MINOR_ID!,

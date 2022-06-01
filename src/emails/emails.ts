@@ -93,7 +93,7 @@ export function WouldSendLate(event: Event, ticket: Ticket, template: EmailTempl
 }
 
 export async function ProcessTicket(template: EmailTemplate,
-                                    ticket: Ticket,
+                                    ticket: Ticket & { guardian: Person | null, event: Event & { venue: Venue | null } | null },
                                     smsBodyTemplate: Handlebars.TemplateDelegate,
                                     emailSubjectTemplate: Handlebars.TemplateDelegate,
                                     emailBodyTemplate: Handlebars.TemplateDelegate,
@@ -114,14 +114,18 @@ export async function ProcessTicket(template: EmailTemplate,
     if(!template.sendLate && WouldSendLate(event, ticket, template)) return
 
     if(template.sendParent) {
-        if(!guardian) return
-        if(template.sendText && guardian.phone) {
+        if (!guardian) return
+        if (template.sendText && guardian.whatsApp) {
+            await SendWhatsApp(guardian.whatsApp, smsBodyTemplate, data)
+        } else if(template.sendText && guardian.phone) {
             await SendText(guardian.phone, smsBodyTemplate, data)
         } else if(guardian.email) {
             await QueueEmail(guardian.email, template, emailSubjectTemplate, emailBodyTemplate, data)
         }
     } else {
-        if(template.sendText && ticket.phone) {
+        if (template.sendText && ticket.whatsApp) {
+            await SendWhatsApp(ticket.whatsApp, smsBodyTemplate, data)
+        } else if (template.sendText && ticket.phone) {
             await SendText(ticket.phone, smsBodyTemplate, data)
         } else if(ticket.email) {
             await QueueEmail(ticket.email, template, emailSubjectTemplate, emailBodyTemplate, data)
@@ -226,7 +230,22 @@ export async function SendText(sendTo: string,
                         smsBodyTemplate: Handlebars.TemplateDelegate,
                         data: TemplateData
 ): Promise<void> {
-    await twilio.messages.create({from: config.twilio.number, to: sendTo, body: smsBodyTemplate(data)})
+    await twilio.messages.create({
+        to: sendTo,
+        body: smsBodyTemplate(data),
+        messagingServiceSid: config.twilio.service,
+    });
+}
+
+export async function SendWhatsApp(sendTo: string,
+                        smsBodyTemplate: Handlebars.TemplateDelegate,
+                        data: TemplateData
+): Promise<void> {
+    await twilio.messages.create({
+        to: `whatsapp:${sendTo}`,
+        body: smsBodyTemplate(data),
+        messagingServiceSid: config.twilio.service,
+    });
 }
 
 export default async function emails(): Promise<void> {

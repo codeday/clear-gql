@@ -279,6 +279,9 @@ export class CustomEventResolver {
         if (ticket.phone && !phone(ticket.phone).isValid) {
             errors.push(`${ticket.phone} is not a valid phone number.`);
         }
+        if (ticket.whatsApp && !phone(ticket.whatsApp).isValid) {
+            errors.push(`${ticket.whatsApp} is not a valid phone number.`);
+        }
 
         return errors;
     }
@@ -293,6 +296,9 @@ export class CustomEventResolver {
         }
         if (guardianData.phone && !phone(guardianData.phone).isValid) {
             errors.push(`${guardianData.phone} is not a valid phone number.`);
+        }
+        if (guardianData.whatsApp && !phone(guardianData.whatsApp).isValid) {
+            errors.push(`${guardianData.whatsApp} is not a valid phone number.`);
         }
 
         return errors;
@@ -432,7 +438,11 @@ export class CustomEventResolver {
 
         // For paid tickets, waivers are not sent initially, so we send them now:
         for (const ticket of tickets) {
-          await sendWaiverReminder(ticket);
+          try {
+            await sendWaiverReminder(ticket);
+          } catch (ex) {
+            console.error(ex);
+          }
         }
 
         return tickets.map(ticket => ticket.id);

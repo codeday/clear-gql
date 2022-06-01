@@ -154,6 +154,7 @@ model Person {
   lastName  String
   email     String?
   phone     String?
+  whatsApp  String?
   age       Int?
   username  String?
   pronouns  String?
@@ -182,6 +183,7 @@ model Ticket {
   lastName  String
   email     String?
   phone     String?
+  whatsApp  String?
   age       Int?
 
   waiverTrackingId String?
