@@ -2,12 +2,12 @@ import "reflect-metadata";
 import config from './config'
 
 import server from './server'
-import leaderboard from "./leaderboard";
+import { automaticDigests } from './webhooks';
 import automaticEmails from "./emails";
 import { automaticWaivers, waiverServer } from "./waivers";
 
 server();
-leaderboard();
 automaticEmails();
 waiverServer();
 automaticWaivers();
+automaticDigests();

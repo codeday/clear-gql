@@ -13,6 +13,7 @@ import { sendWaiverReminder } from '../waivers';
 import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
 import { uploader } from "../services";
+import { sendTicketWebhook } from "../webhooks";
 
 type GetPaymentInfoQueryResponse = { data: { cms: { regions: { items: { paymentProvider: string | null, currency: string | null }[] } } } };
 const GET_PAYMENT_INFO_QUERY = `
@@ -411,7 +412,12 @@ export class CustomEventResolver {
         // If no payment is required, the finalizePayment mutation will not be called, so send waivers now.
         if (price === 0) {
           for (const ticket of dbTickets) {
-            await sendWaiverReminder(ticket);
+            try {
+              await sendWaiverReminder(ticket);
+            } catch (ex) { console.error(ex); }
+            try {
+              await sendTicketWebhook(ticket);
+            } catch (ex) { console.error(ex); }
           }
         }
 
@@ -442,9 +448,10 @@ export class CustomEventResolver {
         for (const ticket of tickets) {
           try {
             await sendWaiverReminder(ticket);
-          } catch (ex) {
-            console.error(ex);
-          }
+          } catch (ex) { console.error(ex); }
+          try {
+            await sendTicketWebhook(ticket);
+          } catch (ex) { console.error(ex); }
         }
 
         return tickets.map(ticket => ticket.id);

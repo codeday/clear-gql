@@ -1,16 +1,18 @@
 import { DateTime } from "luxon";
-import { PrismaClient } from "@prisma/client"
-const prisma = new PrismaClient()
+import { EventGroup } from "@prisma/client"
+import { WebhookPayload } from './sendWebhook';
+import { prisma } from '../services';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
 
-export default async function makeLeaderboard(): Promise<string | null> {
+export async function makeLeaderboard(eventGroup: EventGroup): Promise<WebhookPayload> {
     const now = DateTime.now()
 
     const openEvents = await prisma.event.findMany({
         where: {
             registrationsOpen: true,
-            startDate: { gt: now.toJSDate() }
+            startDate: { gt: now.toJSDate() },
+            eventGroup: { id: eventGroup.id },
         },
         select: {
             name: true,
@@ -20,8 +22,8 @@ export default async function makeLeaderboard(): Promise<string | null> {
 
     if (openEvents.length === 0) return null;
 
-    const leaderboardHead = `🏆 Registration leaderboard for ${now.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}:\n`;
-    const leaderboard = openEvents
+    const title = `🏆 ${eventGroup.name} leaderboard for ${now.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY)}`;
+    const message = openEvents
         .sort((a,b) => (a.tickets.length > b.tickets.length) ? -1 : 1)
         .map((event, idx) => {
             const registeredToday = event.tickets.filter(
@@ -31,5 +33,5 @@ export default async function makeLeaderboard(): Promise<string | null> {
             return `${medal}${event.name} ${event.tickets.length} (+${registeredToday})`
         })
         .join(`\n`);
-    return leaderboardHead + leaderboard;
+    return { title, message };
 }

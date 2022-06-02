@@ -42,6 +42,7 @@ model EventGroup {
   events     Event[]
   schedule   ScheduleItem[]
   promoCodes PromoCode[]
+  webhooks Webhook[]
 }
 
 model Event {
@@ -82,6 +83,31 @@ model Event {
   schedule           ScheduleItem[]
   promoCodes         PromoCode[]
   interestedEmails   MailingListMember[]
+  webhooks           Webhook[]
+}
+
+enum WebhookService {
+  DISCORD
+  EMAIL
+}
+
+enum WebhookType {
+  ALL
+  DIGEST
+}
+
+model Webhook {
+  id String @id @default(cuid())
+
+  service WebhookService
+  type WebhookType
+  sink String
+
+  event Event? @relation(fields: [eventId], references: [id])
+  eventId String?
+
+  eventGroup EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroupId String?
 }
 
 model Venue {

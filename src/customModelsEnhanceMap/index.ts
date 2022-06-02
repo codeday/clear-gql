@@ -11,6 +11,7 @@ import {promocodeEnhanceConfig} from "./PromoCode";
 import {mailinglistmemberEnhanceConfig} from "./MailingListMember";
 import {eventRestrictionEnhanceConfig} from "./EventRestriction";
 import {emailTemplateEnhanceConfig} from "./EmailTemplate";
+import { webhookEnhanceConfig } from './Webhook';
 
 const customModelsEnhanceMap: ModelsEnhanceMap =
     {
@@ -26,6 +27,7 @@ const customModelsEnhanceMap: ModelsEnhanceMap =
         MailingListMember: mailinglistmemberEnhanceConfig,
         EventRestriction: eventRestrictionEnhanceConfig,
         EmailTemplate: emailTemplateEnhanceConfig,
+        Webhook: webhookEnhanceConfig,
     }
 
 export default customModelsEnhanceMap

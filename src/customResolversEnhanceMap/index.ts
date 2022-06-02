@@ -11,6 +11,7 @@ import {promocodeEnhanceConfig} from "./PromoCode";
 import {mailinglistmemberEnhanceConfig} from "./MailingListMember";
 import {eventRestrictionEnhanceConfig} from "./EventRestriction";
 import {emailtemplateEnhanceConfig} from "./EmailTemplate";
+import {webhookEnhanceConfig} from './Webhook';
 
 const customResolversEnhanceMap: ResolversEnhanceMap =
     {
@@ -26,6 +27,7 @@ const customResolversEnhanceMap: ResolversEnhanceMap =
         MailingListMember: mailinglistmemberEnhanceConfig,
         EventRestriction: eventRestrictionEnhanceConfig,
         EmailTemplate: emailtemplateEnhanceConfig,
+        Webhook: webhookEnhanceConfig,
     }
 
 export default customResolversEnhanceMap
