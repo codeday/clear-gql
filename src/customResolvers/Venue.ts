@@ -66,4 +66,14 @@ export class VenueAddressResolver {
     \n ${venue.city || ``}${venue.state? `${venue.city? `, `: ``} ${venue.state}`: ``}
     ${venue.zipCode || ``}`
   }
+  @FieldResolver((_returns) => String, { nullable: true })
+  addressInline(@Root() venue: Venue): String | null {
+    return [
+      venue.addressLine1,
+      venue.addressLine2,
+      venue.addressLine3,
+      [venue.city, venue.state].filter(Boolean).join(', ') + (venue.zipCode ? `  ${venue.zipCode}` : ''),
+    ].filter(Boolean).join(', ');
+  }
+
 }
