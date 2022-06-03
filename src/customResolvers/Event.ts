@@ -35,10 +35,11 @@ export const MAX_AGE = 25;
 
 interface CheckPromoCodeResult {
     valid: boolean;
-    displayDiscountName: string | null;
-    displayDiscountAmount: string | null;
-    effectivePrice: number | null;
-    remainingUses: number | null;
+    displayDiscountName: string | null | undefined;
+    displayDiscountAmount: string | null | undefined;
+    effectivePrice: number | null | undefined;
+    remainingUses: number | null | undefined;
+    metadata: Prisma.JsonValue | null | undefined;
 }
 
 @Resolver(of => Event)
@@ -249,6 +250,7 @@ export class CustomEventResolver {
                 displayDiscountName: null,
                 remainingUses: null,
                 effectivePrice: activeTicketPrice,
+                metadata: {},
             }
         } else {
             return {
@@ -259,6 +261,7 @@ export class CustomEventResolver {
                   ? promo.uses - promo?.tickets.length
                   : null,
                 effectivePrice: this.calculatePriceWithPromo(event, promo),
+                metadata: promo.metadata,
             }
         }
     }
