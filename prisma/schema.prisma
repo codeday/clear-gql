@@ -35,6 +35,7 @@ model EventGroup {
   ticketPrice        Float
   earlyBirdPrice     Float
   earlyBirdCutoff    DateTime
+  groupPrice         Float?
   registrationCutoff DateTime
   showcaseId         String?
 
@@ -60,6 +61,7 @@ model Event {
   ticketPrice        Float
   earlyBirdPrice     Float
   earlyBirdCutoff    DateTime
+  groupPrice         Float?
   registrationCutoff DateTime
   managers           String[] // codeday account usernames
   registrationsOpen  Boolean             @default(false)
