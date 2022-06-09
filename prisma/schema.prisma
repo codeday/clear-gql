@@ -72,7 +72,7 @@ model Event {
   eventRestrictions  EventRestriction[]
   timezone           String?
   majorityAge        Int                 @default(18)
-  overnightMinAge    Int                 @default(14)
+  overnightMinAge    Int?
   minAge             Int?
   maxAge             Int?
   requiresPromoCode  Boolean             @default(false)

@@ -22,6 +22,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         eventRestrictions: [],
         timezone: [],
         majorityAge: [],
+        overnightMinAge: [],
         minAge: [],
         maxAge: [],
         requiresPromoCode: [],
