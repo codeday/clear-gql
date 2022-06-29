@@ -8,7 +8,7 @@ export async function makeEventDigest(event: Event): Promise<WebhookPayload> {
     const tickets = await prisma.ticket.findMany({
         where: {
             type: TicketType.STUDENT,
-	    event: { id: event.id },
+            event: { id: event.id },
             createdAt: {
               gt: now.minus({ days: 1 }).toJSDate(),
             },

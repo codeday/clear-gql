@@ -43,7 +43,7 @@ model EventGroup {
   events     Event[]
   schedule   ScheduleItem[]
   promoCodes PromoCode[]
-  webhooks Webhook[]
+  webhooks   Webhook[]
 }
 
 model Event {
@@ -103,13 +103,13 @@ model Webhook {
   id String @id @default(cuid())
 
   service WebhookService
-  type WebhookType
-  sink String
+  type    WebhookType
+  sink    String
 
-  event Event? @relation(fields: [eventId], references: [id])
+  event   Event?  @relation(fields: [eventId], references: [id])
   eventId String?
 
-  eventGroup EventGroup? @relation(fields: [eventGroupId], references: [id])
+  eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?
 }
 
