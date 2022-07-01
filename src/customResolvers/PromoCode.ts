@@ -8,12 +8,19 @@ import {AuthRole, Context} from "../context";
 export class CustomPromoCodeResolver {
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @FieldResolver(type => Number, {nullable: true})
-    usesRemaining(
+    async usesRemaining(
         @Root() promoCode: PromoCode,
-    ): Number | null {
-        if(!promoCode.uses) return null
-        if(!promoCode.tickets) return promoCode.uses
-        return promoCode.uses - promoCode.tickets.length
+        @Ctx() { prisma }: Context,
+    ): Promise<Number | null> {
+        if(!promoCode.uses) return null;
+        return promoCode.uses - (await prisma.ticket.count({ where: { promoCode: { id: promoCode.id } } }));
+    }
+
+    async usesCount(
+        @Root() promoCode: PromoCode,
+        @Ctx() { prisma }: Context,
+    ): Promise<Number | null> {
+        return await prisma.ticket.count({ where: { promoCode: { id: promoCode.id } } });
     }
 }
 
