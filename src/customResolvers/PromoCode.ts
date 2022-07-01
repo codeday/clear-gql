@@ -16,10 +16,12 @@ export class CustomPromoCodeResolver {
         return promoCode.uses - (await prisma.ticket.count({ where: { promoCode: { id: promoCode.id } } }));
     }
 
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
+    @FieldResolver(type => Number)
     async usesCount(
         @Root() promoCode: PromoCode,
         @Ctx() { prisma }: Context,
-    ): Promise<Number | null> {
+    ): Promise<Number> {
         return await prisma.ticket.count({ where: { promoCode: { id: promoCode.id } } });
     }
 }
