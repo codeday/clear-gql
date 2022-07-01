@@ -29,10 +29,9 @@ export async function requestWaiver(ticket: Ticket & { event: Event }): Promise<
   const waiverId = isAdult(ticket)
     ? (ticket.event.adultWaiverId || config.waiver.adultId)
     : (ticket.event.minorWaiverId || config.waiver.minorId);
-  const ttl = Math.ceil(Math.max(Math.abs(DateTime.fromJSDate(ticket.event.endDate).diffNow().as('seconds')), 86400));
 
   const waiverRequestResult: WaiverForeverApiResult = await (await fetch(
-    WAIVERFOREVER_API_BASE + `/template/${waiverId}/requestWaiver?ttl=${ttl}`,
+    WAIVERFOREVER_API_BASE + `/template/${waiverId}/requestWaiver?ttl=7257600`,
     {
       headers: {
         Accept: 'application/json',
