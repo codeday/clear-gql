@@ -1,5 +1,5 @@
 import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
-import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoCode, TicketCreateWithoutEventInput} from "../generated/typegraphql-prisma";
+import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoCode, TicketCreateWithoutEventInput, EventWhereUniqueInput} from "../generated/typegraphql-prisma";
 import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
@@ -9,11 +9,16 @@ import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import { mergePdfs, roundDecimal, streamToBuffer } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
+import { postmark, twilio } from '../services';
+import {marked} from "marked";
+import * as handlebars from "handlebars";
 import { sendWaiverReminder } from '../waivers';
 import {PaymentProvider, RegisterForEventArgs} from "../args/RegisterForEventArgs";
 import { getPaymentProvider, PaymentIntent } from '../paymentProviders';
 import { uploader } from "../services";
 import { sendTicketWebhook } from "../webhooks";
+import config from '../config';
+import { Message } from "postmark";
 
 type GetPaymentInfoQueryResponse = { data: { cms: { regions: { items: { paymentProvider: string | null, currency: string | null }[] } } } };
 const GET_PAYMENT_INFO_QUERY = `
@@ -477,6 +482,74 @@ export class CustomEventResolver {
         return true;
     }
 
+    @Mutation(_returns => Boolean)
+    async sendNotification(
+        @Ctx() { prisma }: Context,
+        @Arg('eventWhere', () => EventWhereUniqueInput) eventWhere: EventWhereUniqueInput,
+        @Arg('guardian', () => Boolean, { defaultValue: false }) guardian: boolean,
+        @Arg('emailSubject', () => String, { nullable: true }) emailSubject?: string,
+        @Arg('emailBody', () => String, { nullable: true }) emailBody?: string,
+        @Arg('smsBody', () => String, { nullable: true }) smsBody?: string,
+    ): Promise<Boolean> {
+        const [event, tickets] = await Promise.all([
+            prisma.event.findUnique({
+                rejectOnNotFound: true,
+                where: eventWhere,
+                include: { venue: true },
+            }),
+            prisma.ticket.findMany({
+              where: {
+                event: eventWhere,
+                OR: [{ payment: { complete: true } }, { payment: null }],
+              },
+              include: { guardian: true },
+            }),
+        ]);
+
+        const emailSubjectTemplate = emailSubject && handlebars.compile(emailSubject);
+        const emailBodyTemplate = emailBody && handlebars.compile(emailBody);
+        const smsBodyTemplate = smsBody && handlebars.compile(smsBody);
+
+        (async () => {
+          const emailQueue: Message[] = [];
+          for (const ticket of tickets) {
+            try {
+              const to = guardian ? ticket.guardian : ticket;
+              if (!to) continue;
+              const data = { event, ticket, to };
+
+              if (emailSubjectTemplate && emailBodyTemplate && to.email) {
+                emailQueue.push({
+                  To: to.email,
+                  ReplyTo: `team@codeday.org`,
+                  From: `CodeDay <team@codeday.org>`,
+                  Subject: emailSubjectTemplate(data),
+                  HtmlBody: marked.parse(emailBodyTemplate(data)),
+                  MessageStream: "outbound"
+                })
+              }
+              if (smsBodyTemplate && to.phone) {
+                await twilio.messages.create({
+                  to: to.phone,
+                  body: marked.parse(smsBodyTemplate(data)),
+                  messagingServiceSid: config.twilio.service,
+                });
+              }
+              if (smsBodyTemplate && to.whatsApp) {
+                await twilio.messages.create({
+                  to: `whatsapp:${to.whatsApp}`,
+                  body: marked.parse(smsBodyTemplate(data)),
+                  messagingServiceSid: config.twilio.service,
+                });
+              }
+            } catch (ex) { console.error(ex); }
+          }
+
+          try { await postmark.sendEmailBatch(emailQueue); } catch (ex) { console.error(ex); }
+        })();
+
+        return true;
+    }
 }
 
 @Resolver(of => Event)
