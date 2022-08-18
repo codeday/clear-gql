@@ -531,14 +531,14 @@ export class CustomEventResolver {
               if (smsBodyTemplate && to.phone) {
                 await twilio.messages.create({
                   to: to.phone,
-                  body: marked.parse(smsBodyTemplate(data)),
+                  body: smsBodyTemplate(data),
                   messagingServiceSid: config.twilio.service,
                 });
               }
               if (smsBodyTemplate && to.whatsApp) {
                 await twilio.messages.create({
                   to: `whatsapp:${to.whatsApp}`,
-                  body: marked.parse(smsBodyTemplate(data)),
+                  body: smsBodyTemplate(data),
                   messagingServiceSid: config.twilio.service,
                 });
               }
