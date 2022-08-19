@@ -537,7 +537,7 @@ export class CustomEventResolver {
               }
               if (smsBodyTemplate && to.whatsApp) {
                 await twilio.messages.create({
-                  to: `whatsapp:${to.whatsApp}`,
+                  to: to.whatsApp,
                   body: smsBodyTemplate(data),
                   messagingServiceSid: config.twilio.service,
                 });
