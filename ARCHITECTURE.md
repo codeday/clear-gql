@@ -2,7 +2,8 @@
 clear-gql was built in TypeScript, using [TypeGraphQL](https://typegraphql.com/) and [TypeGraphQL-Prisma](https://prisma.typegraphql.com/).
 
 the final product is the result of 3 key components, visualized here:
-![clear-gql architecture diagram](architecture.svg)
+![clear-gql architecture diagram](architecture_light.svg#gh-light-mode-only)
+![clear-gql architecture diagram](architecture_dark.svg#gh-dark-mode-only)
 
 ## schema.prisma
 `schema.prisma` is the one singular source of truth for clear-gql's overall data structure and types.
