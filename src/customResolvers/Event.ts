@@ -550,6 +550,58 @@ export class CustomEventResolver {
 
         return true;
     }
+
+    @Mutation(_returns => Boolean)
+    async sendInterestedEmail(
+        @Ctx() { prisma }: Context,
+        @Arg('eventWhere', () => EventWhereUniqueInput) eventWhere: EventWhereUniqueInput,
+        @Arg('subject', () => String, { nullable: true }) subject?: string,
+        @Arg('body', () => String, { nullable: true }) body?: string,
+    ): Promise<Boolean> {
+        const [event, tickets] = await Promise.all([
+            prisma.event.findUnique({
+                rejectOnNotFound: true,
+                where: eventWhere,
+                include: { venue: true },
+            }),
+            prisma.ticket.findMany({
+              where: {
+                event: eventWhere,
+                OR: [{ payment: { complete: true } }, { payment: null }],
+              },
+              select: { email: true, guardian: { select: { email: true } } },
+            }),
+        ]);
+
+        const alreadyRegisteredEmails: string[] = tickets.flatMap((e) => [e.email, e.guardian?.email]).filter(Boolean) as string[];
+
+
+        const interestedNotRegistered = await prisma.mailingListMember.findMany({
+          where: {
+            interestedInEvents: { some: eventWhere },
+            email: { notIn: alreadyRegisteredEmails },
+          },
+          select: { email: true },
+        });
+
+        const subjectCompiled = handlebars.compile(subject)({ event });
+        const bodyCompiled = marked.parse(handlebars.compile(body)({ event }));
+
+        const emailQueue: Message[] = [];
+        for (const to of interestedNotRegistered) {
+          emailQueue.push({
+            To: to.email,
+            ReplyTo: `team@codeday.org`,
+            From: `CodeDay <team@codeday.org>`,
+            Subject: subjectCompiled,
+            HtmlBody: bodyCompiled,
+            MessageStream: "outbound"
+          });
+        }
+
+        await postmark.sendEmailBatch(emailQueue);
+        return true;
+    }
 }
 
 @Resolver(of => Event)
