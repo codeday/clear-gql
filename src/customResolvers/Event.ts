@@ -19,6 +19,16 @@ import { uploader } from "../services";
 import { sendTicketWebhook } from "../webhooks";
 import config from '../config';
 import { Message } from "postmark";
+import { RequestScholarshipArgs, ScholarshipReason } from '../args/RequestScholarshipArgs';
+import { ticketEnhanceConfig } from '../customResolversEnhanceMap/Ticket';
+
+const SCHOLARSHIP_REASON_DISPOSITION: Record<ScholarshipReason, boolean | string> = {
+  [ScholarshipReason.CANT_AFFORD]: true,
+  [ScholarshipReason.FAMILY_CANT_AFFORD]: true,
+  [ScholarshipReason.FAMILY_UNSURE]: "we have a limited number of scholarship tickets and can't offer them unless you confirm you can't afford it.",
+  [ScholarshipReason.DONT_BELIEVE_PAY]: "we're a small nonprofit and don't have the budget to offer everyone free tickets.",
+  [ScholarshipReason.OTHER]: false,
+};
 
 type GetPaymentInfoQueryResponse = { data: { cms: { regions: { items: { paymentProvider: string | null, currency: string | null }[] } } } };
 const GET_PAYMENT_INFO_QUERY = `
@@ -319,6 +329,7 @@ export class CustomEventResolver {
     async registerForEvent(
         @Ctx() { prisma }: Context,
         @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode, paymentProvider }: RegisterForEventArgs,
+        skipPayment = false,
     ) : Promise<string | null> {
         if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
         const tickets = ticketsData ?? [ticketData];
@@ -361,7 +372,7 @@ export class CustomEventResolver {
         }
 
         const promo = await this.fetchPromo(prisma, event, promoCode);
-        const price = this.calculatePriceWithPromo(event, promo);
+        const price = skipPayment ? 0 : this.calculatePriceWithPromo(event, promo);
 
         if (event.requiresPromoCode && !promo) {
             throw new Error('A code is required to register for this event.');
@@ -431,6 +442,97 @@ export class CustomEventResolver {
 
         return intent?.clientData || null;
     }
+
+    private async requestScholarshipDisposition(
+      { scholarshipReason, scholarshipReasonOther, ...request }: RequestScholarshipArgs,
+      error: string,
+    ): Promise<void> {
+      const body = `<p>A scholarship was requested, but could not be automatically processed.</p>`
+        + `<p><strong>Scholarship Reason:</strong> ${scholarshipReason} ${scholarshipReasonOther}</p>`
+        + `<p><strong>Error:</strong></p>`
+        + `<p><pre>${error}</pre></p>`
+        + `<p><strong>Request:</strong></p>`
+        + `<p><pre>${JSON.stringify(request)}</pre></p>`;
+
+      await postmark.sendEmail({
+        To: '"CodeDay" <team@codeday.org>',
+        From: '"CodeDay" <no-reply@codeday.org>',
+        Subject: 'Scholarship Request',
+        HtmlBody: body,
+      });
+    }
+
+    private async sendStudentTicketMessage(ticket: TicketCreateWithoutEventInput, phoneBody: string, emailSubject: string, emailBody: string) {
+      if (ticket.whatsApp) {
+        await twilio.messages.create({
+          to: `whatsapp:${ticket.whatsApp}`,
+          body: phoneBody,
+          messagingServiceSid: config.twilio.service,
+        });
+      } else if (ticket.phone) {
+        await twilio.messages.create({
+          to: ticket.phone,
+          body: phoneBody,
+          messagingServiceSid: config.twilio.service,
+        });
+      }
+      if (ticket.email) {
+        await postmark.sendEmail({
+          To: ticket.email,
+          From: '"CodeDay" <team@codeday.org>',
+          Subject: emailSubject,
+          TextBody: emailBody,
+        });
+      }
+    }
+
+    @Mutation(_returns => Boolean) // returns stripe payment intent secret key
+    async requestEventScholarship(
+        @Ctx() ctx: Context,
+        @Args() args: RequestScholarshipArgs,
+    ) : Promise<boolean> {
+      const { ticketData, ticketsData, guardianData, eventWhere, scholarshipReason, scholarshipReasonOther } = args;
+      const tickets = ticketsData ? ticketsData : [ticketData];
+
+      if (
+        !(scholarshipReason in SCHOLARSHIP_REASON_DISPOSITION)
+        || SCHOLARSHIP_REASON_DISPOSITION[scholarshipReason] === false
+      ) { // We can't handle this automatically, so forward it to the team.
+        await this.requestScholarshipDisposition(args, `Could not automatically handle this scholarship type.`);
+        return true;
+      }
+
+      if (typeof SCHOLARSHIP_REASON_DISPOSITION[scholarshipReason] === 'string') { // We have a rejection reason.
+        setTimeout(async () => {
+          for (const t of tickets) {
+            const msg = `Unfortunately we aren't able to offer you a CodeDay scholarship because ${SCHOLARSHIP_REASON_DISPOSITION[scholarshipReason]}`;
+            await this.sendStudentTicketMessage(t, msg, 'CodeDay Scholarship Request', msg);
+          }
+        }, 1000 * 60 * 30 * (Math.random() + 1)); // Respond with rejection after a delay of 30-60min.
+        return true;
+      }
+
+      // 
+      // =====
+      // 
+      // We can automatically issue a ticket!
+
+      setTimeout(async () => {
+        try {
+          this.registerForEvent(ctx, { ...args, promoCode: undefined, paymentProvider: PaymentProvider.stripe }, true);
+          try {
+            for (const t of tickets) {
+              const msg = `We approved your CodeDay scholarship request. Your ticket information will be sent separately.`;
+              await this.sendStudentTicketMessage(t, msg, 'CodeDay Scholarship Request', msg);
+            }
+          } catch (ex) {}
+        } catch (ex) {
+          await this.requestScholarshipDisposition(args, (ex as Error).toString());
+        }
+      }, 1000 * 60 * 5 * (Math.random() + 1)); // Accept after 5-10 minutes.
+      return true;
+    }
+
 
     @Mutation(_returns => [String])
     async finalizePayment(
