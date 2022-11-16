@@ -452,7 +452,7 @@ export class CustomEventResolver {
         + `<p><strong>Error:</strong></p>`
         + `<p><pre>${error}</pre></p>`
         + `<p><strong>Request:</strong></p>`
-        + `<p><pre>${JSON.stringify(request)}</pre></p>`;
+        + `<p><pre>${JSON.stringify(request, null, 2)}</pre></p>`;
 
       await postmark.sendEmail({
         To: '"CodeDay" <team@codeday.org>',
