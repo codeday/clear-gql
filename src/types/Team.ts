@@ -9,6 +9,6 @@ export class Team {
   @Field(() => [PublicPerson])
   mentors: PublicPerson[];
 
-  @Field(() => String)
+  @Field(() => [PublicPerson])
   judges: PublicPerson[];
 }
