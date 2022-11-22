@@ -23,8 +23,9 @@ function isAdult(ticket: Ticket & { event: Event }): boolean {
   return (ticket.age && ticket.age >= ticket.event.majorityAge) || !ticket.personId;
 }
 
-export async function requestWaiver(ticket: Ticket & { event: Event }): Promise<string> {
-  if (ticket.waiverPdfUrl && ticket.waiverUrl) return ticket.waiverUrl;
+export async function requestWaiver(ticket: Ticket & { event: Event }, regenerate = false): Promise<string> {
+  if (ticket.waiverPdfUrl) return ticket.waiverPdfUrl;
+  if (!regenerate && ticket.waiverUrl) return ticket.waiverUrl;
 
   const waiverId = isAdult(ticket)
     ? (ticket.event.adultWaiverId || config.waiver.adultId)
@@ -53,8 +54,8 @@ export async function requestWaiver(ticket: Ticket & { event: Event }): Promise<
   return waiverRequestResult.data.request_waiver_url;
 }
 
-export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardian: Person | null }): Promise<void> {
-  const signingUrl = await requestWaiver(ticket);
+export async function sendWaiverReminder(ticket: Ticket & { event: Event, guardian: Person | null }, regenerate = false): Promise<void> {
+  const signingUrl = await requestWaiver(ticket, regenerate);
   const adult = isAdult(ticket);
   const emailTo = adult ? ticket.email : ticket.guardian?.email;
   const phoneTo = adult ? ticket.phone : ticket.guardian?.phone;

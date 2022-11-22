@@ -51,6 +51,7 @@ export class CustomTicketResolver {
     @Mutation(_returns => Boolean, { nullable: true })
     async sendWaiverReminder(
         @Args() args: FindUniqueTicketArgs,
+        @Arg('regenerate', () => Boolean, { defaultValue: false }) regenerate = false,
         @Ctx() { prisma }: Context,
     ): Promise<boolean> {
       const ticket = await prisma.ticket.findUnique({
@@ -58,7 +59,7 @@ export class CustomTicketResolver {
         include: { event: true, guardian: true },
         rejectOnNotFound: true,
       });
-      await sendWaiverReminder(ticket);
+      await sendWaiverReminder(ticket, regenerate);
       return true;
     }
 }
