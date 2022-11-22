@@ -187,6 +187,7 @@ model Person {
   age       Int?
   username  String?
   pronouns  String?
+  username  String?
 
   Ticket Ticket[]
 }
@@ -213,6 +214,7 @@ model Ticket {
   email     String?
   phone     String?
   whatsApp  String?
+  username  String?
   age       Int?
 
   waiverTrackingId String?

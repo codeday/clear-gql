@@ -4,7 +4,7 @@ import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
 import fetch from 'node-fetch';
-import {Prisma, PrismaClient, Ticket} from "@prisma/client";
+import {Prisma, PrismaClient, Ticket, TicketType} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import { mergePdfs, roundDecimal, streamToBuffer } from '../utils';
@@ -21,6 +21,8 @@ import config from '../config';
 import { Message } from "postmark";
 import { RequestScholarshipArgs, ScholarshipReason } from '../args/RequestScholarshipArgs';
 import { ticketEnhanceConfig } from '../customResolversEnhanceMap/Ticket';
+import { PublicPerson, Team } from '../types';
+import gravatar from 'gravatar';
 
 const SCHOLARSHIP_REASON_DISPOSITION: Record<ScholarshipReason, boolean | string> = {
   [ScholarshipReason.CANT_AFFORD]: true,
@@ -167,6 +169,29 @@ export class CustomEventResolver {
       const merged = await mergePdfs(allPages);
       const { url } = await uploader.file(merged, 'file.pdf');
       return url;
+    }
+
+
+    @FieldResolver(_returns => Team)
+    async team(
+      @Root() event: Event,
+      @Ctx() { prisma }: Context,
+    ): Promise<Team> {
+      const [staff, mentors, judges] = await Promise.all(
+        [TicketType.STAFF, TicketType.MENTOR, TicketType.JUDGE].map(type => prisma.ticket.findMany({
+          where: { type, eventId: event.id },
+          select: { firstName: true, lastName: true, email: true, username: true }
+        })),
+      );
+
+      const gravatarify = ((t: Omit<PublicPerson, 'avatarUrl'> & { email: string | null }): PublicPerson =>
+        ({ ...t, avatarUrl: gravatar.url(t.email || '', { s: '512', r: 'pg', d: 'retro' }) }));
+
+      return {
+        staff: staff.map(gravatarify),
+        mentors: mentors.map(gravatarify),
+        judges: judges.map(gravatarify),
+      };
     }
 
     @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
@@ -704,6 +729,7 @@ export class CustomEventResolver {
         await postmark.sendEmailBatch(emailQueue);
         return true;
     }
+
 }
 
 @Resolver(of => Event)
