@@ -9,7 +9,7 @@ export class PublicPerson {
   lastName: string;
 
   @Field(() => String, { nullable: true })
-  username?: string;
+  username: string | null;
 
   @Field(() => String)
   avatarUrl?: string;
