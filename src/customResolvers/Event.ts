@@ -609,6 +609,7 @@ export class CustomEventResolver {
         return true;
     }
 
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Boolean)
     async sendNotification(
         @Ctx() { prisma }: Context,
@@ -678,6 +679,7 @@ export class CustomEventResolver {
         return true;
     }
 
+    @Authorized(AuthRole.ADMIN, AuthRole.MANAGER)
     @Mutation(_returns => Boolean)
     async sendInterestedEmail(
         @Ctx() { prisma }: Context,
@@ -727,6 +729,31 @@ export class CustomEventResolver {
         }
 
         await postmark.sendEmailBatch(emailQueue);
+        return true;
+    }
+
+    @Mutation(_returns => Boolean)
+    async applyForWorkshop(
+        @Ctx() { prisma }: Context,
+        @Arg('eventWhere', () => EventWhereUniqueInput) eventWhere: EventWhereUniqueInput,
+        @Arg('firstName', () => String) firstName: string,
+        @Arg('lastName', () => String) lastName: string,
+        @Arg('email', () => String) email: string,
+        @Arg('description', () => String) description: string,
+        @Arg('bio', () => String) bio: string,
+    ): Promise<Boolean> {
+        const event = await prisma.event.findUnique({
+          rejectOnNotFound: true,
+          where: eventWhere,
+        });
+
+        await postmark.sendEmail({
+          To: event.managers.map(m => `${m}@codeday.org`).join(`, `),
+          ReplyTo: email,
+          From: `CodeDay <team@codeday.org>`,
+          Subject: `Workshop slot application from ${firstName} ${lastName}`,
+          TextBody: `Name: ${firstName} ${lastName}\nEmail: ${email}\nBio: ${bio}\nDescription:\n\n${description}`,
+        });
         return true;
     }
 
