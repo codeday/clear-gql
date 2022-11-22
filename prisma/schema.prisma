@@ -187,7 +187,6 @@ model Person {
   age       Int?
   username  String?
   pronouns  String?
-  username  String?
 
   Ticket Ticket[]
 }
