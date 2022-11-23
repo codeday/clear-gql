@@ -749,6 +749,7 @@ export class CustomEventResolver {
 
         await postmark.sendEmail({
           To: event.managers.map(m => `${m}@codeday.org`).join(`, `),
+          Cc: 'CodeDay Volunteers <volunteer@codeday.org>',
           ReplyTo: email,
           From: `CodeDay <team@codeday.org>`,
           Subject: `Workshop slot application from ${firstName} ${lastName}`,
