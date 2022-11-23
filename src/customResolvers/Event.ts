@@ -753,7 +753,7 @@ export class CustomEventResolver {
           ReplyTo: email,
           From: `CodeDay <team@codeday.org>`,
           Subject: `Workshop slot application from ${firstName} ${lastName}`,
-          TextBody: `Name: ${firstName} ${lastName}\nEmail: ${email}\nBio: ${bio}\nDescription:\n\n${description}`,
+          TextBody: `Event: ${event.name}\nName: ${firstName} ${lastName}\nEmail: ${email}\nBio: ${bio}\nDescription:\n${description}`,
         });
         return true;
     }
