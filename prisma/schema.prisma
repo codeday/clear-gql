@@ -38,6 +38,7 @@ model EventGroup {
   groupPrice         Float?
   registrationCutoff DateTime
   showcaseId         String?
+  contentfulId       String?
 
   // Relations
   events     Event[]
