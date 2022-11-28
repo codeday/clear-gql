@@ -177,18 +177,23 @@ export class CustomEventResolver {
       @Root() event: Event,
       @Ctx() { prisma }: Context,
     ): Promise<Team> {
-      const [staff, mentors, judges] = await Promise.all(
+      const [ticketStaff, mentors, judges] = await Promise.all(
         [TicketType.STAFF, TicketType.MENTOR, TicketType.JUDGE].map(type => prisma.ticket.findMany({
           where: { type, eventId: event.id },
           select: { firstName: true, lastName: true, email: true, username: true }
         })),
       );
 
+      const ticketStaffUsernames = ticketStaff.map((s) => s.username);
+      const managerStaff: PublicPerson[] = event.managers
+        .filter((u) => !ticketStaffUsernames.includes(u))
+        .map((u) => ({ firstName: u, lastName: '', avatarUrl: gravatar.url(''), username: u }));
+
       const gravatarify = ((t: Omit<PublicPerson, 'avatarUrl'> & { email: string | null }): PublicPerson =>
         ({ ...t, avatarUrl: gravatar.url(t.email || '', { s: '512', r: 'pg', d: 'retro' }) }));
 
       return {
-        staff: staff.map(gravatarify),
+        staff: [...managerStaff, ...ticketStaff.map(gravatarify)],
         mentors: mentors.map(gravatarify),
         judges: judges.map(gravatarify),
       };
