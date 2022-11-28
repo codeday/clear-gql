@@ -10,5 +10,6 @@ export const eventgroupEnhanceConfig: ModelConfig<"EventGroup"> = {
         ...defaultPerms,
         id: [],
         name: [],
+        contentfulId: [],
     }
 }
