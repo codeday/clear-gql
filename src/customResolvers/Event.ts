@@ -1,5 +1,14 @@
 import {Arg, Args, Authorized, Ctx, FieldResolver, Mutation, Query, Resolver, Root} from "type-graphql";
-import {Event, FindManyEventArgs, FindUniqueEventArgs, PersonCreateInput, PromoCode, TicketCreateWithoutEventInput, EventWhereUniqueInput} from "../generated/typegraphql-prisma";
+import {
+    Event,
+    FindManyEventArgs,
+    FindUniqueEventArgs,
+    PersonCreateInput,
+    PromoCode,
+    TicketCreateWithoutEventInput,
+    EventWhereUniqueInput,
+    DiscountType
+} from "../generated/typegraphql-prisma";
 import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
@@ -54,6 +63,8 @@ interface CheckPromoCodeResult {
     valid: boolean;
     displayDiscountName: string | null | undefined;
     displayDiscountAmount: string | null | undefined;
+    discountType: string | null | undefined;
+    discountAmount: number | null | undefined;
     effectivePrice: number | null | undefined;
     remainingUses: number | null | undefined;
     metadata: Prisma.JsonValue | null | undefined;
@@ -292,6 +303,8 @@ export class CustomEventResolver {
             return {
                 valid: false,
                 displayDiscountAmount: null,
+                discountAmount: null,
+                discountType: null,
                 displayDiscountName: null,
                 remainingUses: null,
                 effectivePrice: activeTicketPrice,
@@ -301,6 +314,8 @@ export class CustomEventResolver {
             return {
                 valid: true,
                 displayDiscountAmount: promo.type === 'PERCENT' ? promo.amount + '%' : '$' + promo.amount.toFixed(2),
+                discountType: promo.type,
+                discountAmount: promo.amount,
                 displayDiscountName: promo.code.toUpperCase(),
                 remainingUses: promo.uses !== null && typeof promo.uses !== 'undefined'
                   ? promo.uses - promo?.tickets.length
@@ -542,9 +557,9 @@ export class CustomEventResolver {
         return true;
       }
 
-      // 
+      //
       // =====
-      // 
+      //
       // We can automatically issue a ticket!
 
       setTimeout(async () => {
