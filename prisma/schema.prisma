@@ -188,6 +188,7 @@ model Person {
   age       Int?
   username  String?
   pronouns  String?
+  locale    String @default("en-US")
 
   Ticket Ticket[]
 }
@@ -215,6 +216,7 @@ model Ticket {
   phone     String?
   whatsApp  String?
   username  String?
+  locale    String @default("en-US")
   age       Int?
 
   waiverTrackingId String?
