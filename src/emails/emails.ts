@@ -27,6 +27,7 @@ export function previewTemplate(template: string) {
     const exampleData: TemplateData = {
         ticket: {
             id: "ticket_id",
+            locale: "en-US",
             createdAt: new Date(),
             updatedAt: new Date(),
             type: "STUDENT",
@@ -61,6 +62,7 @@ export function previewTemplate(template: string) {
         },
         guardian: {
             id: "guardian_id",
+            locale: "en-US",
             createdAt: new Date(Date.UTC(2022, 0, 0)),
             updatedAt: new Date(Date.UTC(2022, 0, 0)),
             firstName: "guardian_firstname",

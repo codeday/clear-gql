@@ -92,6 +92,7 @@ const EVENT_BASE: Event = {
 
 const TICKET_BASE: Ticket = {
     createdAt: new Date(Date.UTC(2022, 0, 0, 0, 0).valueOf()),
+    locale: "en-US",
     eventId: "event1",
     firstName: "",
     id: "",
@@ -307,6 +308,7 @@ describe("Prisma Integration Tests", () => {
             createdAt: opts.createdAt || new Date(Date.UTC(2022, 0, 0, 0, 0).valueOf()),
             firstName: opts.firstName || "Test Case First Name",
             lastName: opts.lastName || "Test Case Last Name",
+            locale: opts.locale || "en-US",
             type: opts.type || "STUDENT",
             email: opts.email || "ticket@email",
             phone: opts.phone || undefined,
@@ -329,6 +331,7 @@ describe("Prisma Integration Tests", () => {
         return {
             firstName: opts.firstName || "Test Case Guardian First Name",
             lastName: opts.lastName || "Test Case Guardian Last Name",
+            locale: opts.locale || "en-US",
             email: opts.email || "guardian@email",
             phone: opts.phone || undefined,
         }
