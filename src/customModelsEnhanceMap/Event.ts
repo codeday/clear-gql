@@ -15,6 +15,7 @@ export const eventEnhanceConfig: ModelConfig<"Event"> = {
         groupPrice: [],
         earlyBirdCutoff: [],
         contentfulWebname: [],
+        contentfulEventRestrictions: [],
         registrationCutoff: [],
         startDate: [],
         endDate: [],
