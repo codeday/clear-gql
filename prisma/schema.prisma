@@ -71,6 +71,7 @@ model Event {
   minorWaiverId      String?
   adultWaiverId      String?
   eventRestrictions  EventRestriction[]
+  contentfulEventRestrictions String[]
   timezone           String?
   majorityAge        Int                 @default(18)
   overnightMinAge    Int?
