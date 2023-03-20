@@ -13,7 +13,7 @@ import moment from 'moment'
 import emailValidator from 'email-validator';
 import {phone} from 'phone';
 import fetch from 'node-fetch';
-import {Prisma, PrismaClient, Ticket, TicketType} from "@prisma/client";
+import {prisma, Prisma, PrismaClient, Ticket, TicketType} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
 import { mergePdfs, roundDecimal, streamToBuffer } from '../utils';
@@ -578,6 +578,29 @@ export class CustomEventResolver {
       return true;
     }
 
+
+    @Mutation(_returns => Boolean) // returns stripe payment intent secret key
+    async contactEventOrganizers(
+        @Ctx() ctx: Context,
+        @Arg('eventWhere', () => EventWhereUniqueInput) eventWhere: EventWhereUniqueInput,
+        @Arg('subject', () => String) subject: string,
+        @Arg('body', () => String) body: string,
+        @Arg('replyTo', () => String, { nullable: true }) replyTo?: string,
+    ) : Promise<boolean> {
+      const { managers } = await ctx.prisma.event.findUnique({
+          rejectOnNotFound: true,
+          where: eventWhere,
+          select: { managers: true },
+      });
+      await postmark.sendEmail({
+        To: managers.map((username) => `${username}@codeday.org`).join(', '),
+        From: '"CodeDay" <team@codeday.org>',
+        ReplyTo: replyTo,
+        Subject: subject,
+        TextBody: body,
+      });
+      return true;
+    }
 
     @Mutation(_returns => [String])
     async finalizePayment(

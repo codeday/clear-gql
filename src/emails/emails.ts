@@ -37,6 +37,7 @@ export function previewTemplate(template: string) {
             eventId: "event_id"
         },
         event: {
+            contentfulEventRestrictions: [],
             requiresPromoCode: false,
             id: "event_id",
             createdAt: new Date(Date.UTC(2022, 0, 0)),

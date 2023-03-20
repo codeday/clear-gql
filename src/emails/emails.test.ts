@@ -74,6 +74,7 @@ const TEMPLATE_BASE:EmailTemplate = {
 
 const EVENT_BASE: Event = {
     requiresPromoCode: false,
+    contentfulEventRestrictions: [],
     createdAt: new Date(Date.UTC(2022, 0, 0, 0, 0,).valueOf()),
     earlyBirdCutoff: new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
     earlyBirdPrice: 0,
