@@ -8,6 +8,12 @@ import { TicketLookupResultPayment } from './TicketLookupResultPayment';
 @ObjectType()
 export class TicketLookupResult {
   @Field(() => String)
+  id: string;
+
+  @Field(() => String, { nullable: true })
+  privateKey: string | null;
+
+  @Field(() => String)
   firstName: string;
 
   @Field(() => String)
