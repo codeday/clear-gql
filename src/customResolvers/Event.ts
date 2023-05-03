@@ -30,7 +30,7 @@ import config from '../config';
 import { Message } from "postmark";
 import { RequestScholarshipArgs, ScholarshipReason } from '../args/RequestScholarshipArgs';
 import { ticketEnhanceConfig } from '../customResolversEnhanceMap/Ticket';
-import { PublicPerson, Team } from '../types';
+import { PublicPerson, RegistrationResponse, Team } from '../types';
 import gravatar from 'gravatar';
 
 const SCHOLARSHIP_REASON_DISPOSITION: Record<ScholarshipReason, boolean | string> = {
@@ -370,12 +370,12 @@ export class CustomEventResolver {
         return errors;
     }
 
-    @Mutation(_returns => String, { nullable: true }) // returns stripe payment intent secret key
+    @Mutation(_returns => RegistrationResponse, { nullable: true }) // returns stripe payment intent secret key
     async registerForEvent(
         @Ctx() { prisma }: Context,
         @Args() { ticketData, ticketsData, guardianData, eventWhere, promoCode, paymentProvider }: RegisterForEventArgs,
         skipPayment = false,
-    ) : Promise<string | null> {
+    ) : Promise<RegistrationResponse | null> {
         if (!ticketData && (!ticketsData || ticketsData.length === 0)) throw new Error('Must provide a ticket.');
         const tickets = ticketsData ?? [ticketData];
 
@@ -485,7 +485,10 @@ export class CustomEventResolver {
           }
         }
 
-        return intent?.clientData || null;
+        return {
+          paymentIntent: intent?.clientData,
+          tickets: dbTickets,
+        };
     }
 
     private async requestScholarshipDisposition(

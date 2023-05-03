@@ -62,6 +62,27 @@ export class CustomTicketResolver {
       await sendWaiverReminder(ticket, regenerate);
       return true;
     }
+
+    @Mutation(_returns => Boolean)
+    async trackSurveyResponse(
+        @Args() args: FindUniqueTicketArgs,
+        @Arg('privateKey', () => String) privateKey: string,
+        @Arg('key', () => String) key: string,
+        @Arg('value', () => String) value: string,
+        @Ctx() { prisma }: Context,
+    ): Promise<boolean> {
+        const ticket = await prisma.ticket.findFirst({
+            where: { ...args.where, AND: [{ privateKey }, { NOT: { privateKey: null }}, { NOT: { privateKey: '' }}] },
+            rejectOnNotFound: true,
+            select: { surveyResponses: true },
+        });
+        const newSurveyResponses = { ...((ticket.surveyResponses || {}) as Prisma.JsonObject), [key]: value };
+        await prisma.ticket.update({
+            where: { ...args.where },
+            data: { surveyResponses: newSurveyResponses },
+        });
+        return true;
+    }
 }
 
 @Resolver(of => Ticket)

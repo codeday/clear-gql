@@ -211,6 +211,7 @@ model Ticket {
   /// @TypeGraphQL.omit(input: ["update", "where", "orderBy"])
   metadata  Json?
   // Data
+  privateKey       String? @default(uuid())
   firstName String
   lastName  String
   email     String?
@@ -227,6 +228,8 @@ model Ticket {
   waiverSignedId   String?
   checkedIn        DateTime?
   checkedOut       DateTime?
+
+  surveyResponses  Json?
 
   couponCode String?
   type       TicketType @default(STUDENT)
