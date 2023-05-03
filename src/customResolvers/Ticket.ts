@@ -1,9 +1,10 @@
-import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized} from "type-graphql";
+import {FieldResolver, Resolver, Ctx, Root, Arg, Mutation, Args, Authorized, Query} from "type-graphql";
 import {FindUniqueTicketArgs, Person, Ticket} from "../generated/typegraphql-prisma";
 import { Prisma } from "@prisma/client"
 import dot from "dot-object";
 import { sendWaiverReminder } from '../waivers';
 import {AuthRole, Context} from "../context";
+import { TicketLookupResult } from "../types";
 
 
 @Resolver(of => Ticket)
@@ -82,6 +83,19 @@ export class CustomTicketResolver {
             data: { surveyResponses: newSurveyResponses },
         });
         return true;
+    }
+
+    @Query(_returns => TicketLookupResult)
+    async retrieveTicketInfo(
+        @Args() args: FindUniqueTicketArgs,
+        @Arg('privateKey', () => String) privateKey: string,
+        @Ctx() { prisma }: Context,
+    ): Promise<TicketLookupResult> {
+        return await prisma.ticket.findFirst({
+            where: { ...args.where, AND: [{ privateKey }, { NOT: { privateKey: null }}, { NOT: { privateKey: '' }}] },
+            rejectOnNotFound: true,
+            include: { event: true, guardian: true, payment: true },
+        })
     }
 }
 
