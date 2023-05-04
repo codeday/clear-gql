@@ -4,6 +4,7 @@ import { Prisma } from '@prisma/client';
 import { TicketLookupResultGuardian } from './TicketLookupResultGuardian';
 import { Event } from '../generated/typegraphql-prisma';
 import { TicketLookupResultPayment } from './TicketLookupResultPayment';
+import { TicketLookupResultPromoCode } from './TicketLookupResultPromoCode';
 
 @ObjectType()
 export class TicketLookupResult {
@@ -54,4 +55,7 @@ export class TicketLookupResult {
 
   @Field(() => String, { nullable: true })
   waiverPdfUrl: string | null;
+
+  @Field(() => TicketLookupResultPromoCode, { nullable: true })
+  promoCode: TicketLookupResultPromoCode | null;
 }

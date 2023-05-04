@@ -91,11 +91,22 @@ export class CustomTicketResolver {
         @Arg('privateKey', () => String) privateKey: string,
         @Ctx() { prisma }: Context,
     ): Promise<TicketLookupResult> {
-        return await prisma.ticket.findFirst({
+        const ticket = await prisma.ticket.findFirst({
             where: { ...args.where, AND: [{ privateKey }, { NOT: { privateKey: null }}, { NOT: { privateKey: '' }}] },
             rejectOnNotFound: true,
-            include: { event: true, guardian: true, payment: true },
-        })
+            include: { event: true, guardian: true, payment: true, promoCode: true },
+        });
+        const promo = ticket.promoCode;
+        return {
+            ...ticket,
+            promoCode: !promo ? null : {
+                displayDiscountAmount: promo.type === 'PERCENT' ? promo.amount + '%' : '$' + promo.amount.toFixed(2),
+                discountType: promo.type,
+                discountAmount: promo.amount,
+                displayDiscountName: promo.code.toUpperCase(),
+                metadata: promo.metadata,
+            }
+        }
     }
 }
 

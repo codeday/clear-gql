@@ -30,7 +30,7 @@ import config from '../config';
 import { Message } from "postmark";
 import { RequestScholarshipArgs, ScholarshipReason } from '../args/RequestScholarshipArgs';
 import { ticketEnhanceConfig } from '../customResolversEnhanceMap/Ticket';
-import { PublicPerson, RegistrationResponse, Team } from '../types';
+import { CheckPromoCodeResult, PublicPerson, RegistrationResponse, Team } from '../types';
 import gravatar from 'gravatar';
 
 const SCHOLARSHIP_REASON_DISPOSITION: Record<ScholarshipReason, boolean | string> = {
@@ -58,17 +58,6 @@ query GetPaymentInfoQuery($webname: String!) {
 export const MAJORITY_AGE = 18;
 export const MIN_AGE = 12;
 export const MAX_AGE = 25;
-
-interface CheckPromoCodeResult {
-    valid: boolean;
-    displayDiscountName: string | null | undefined;
-    displayDiscountAmount: string | null | undefined;
-    discountType: string | null | undefined;
-    discountAmount: number | null | undefined;
-    effectivePrice: number | null | undefined;
-    remainingUses: number | null | undefined;
-    metadata: Prisma.JsonValue | null | undefined;
-}
 
 @Resolver(of => Event)
 export class CustomEventResolver {
@@ -290,7 +279,7 @@ export class CustomEventResolver {
         return 0;
     }
 
-    @FieldResolver(type => GraphQLJSONObject)
+    @FieldResolver(type => CheckPromoCodeResult)
     async checkPromoCode(
         @Ctx() { prisma }: Context,
         @Root() event: Event,
