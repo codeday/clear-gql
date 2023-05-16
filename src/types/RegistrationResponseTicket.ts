@@ -16,4 +16,7 @@ export class RegistrationResponseTicket {
 
   @Field(() => Number, { nullable: true })
   age: number | null;
+
+  @Field(() => String)
+  anonymousId: string;
 }

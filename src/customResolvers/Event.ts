@@ -16,7 +16,7 @@ import fetch from 'node-fetch';
 import {prisma, Prisma, PrismaClient, Ticket, TicketType} from "@prisma/client";
 import dot from "dot-object";
 import {AuthRole, Context} from "../context";
-import { mergePdfs, roundDecimal, streamToBuffer } from '../utils';
+import { mergePdfs, roundDecimal, streamToBuffer, ticketAnonymousId } from '../utils';
 import {GraphQLJSONObject} from "graphql-scalars";
 import { postmark, twilio } from '../services';
 import {marked} from "marked";
@@ -476,7 +476,13 @@ export class CustomEventResolver {
 
         return {
           paymentIntent: intent?.clientData,
-          tickets: dbTickets,
+          tickets: await Promise.all(
+            dbTickets
+              .map(async (t) => ({
+                ...t,
+                anonymousId: await ticketAnonymousId(t, prisma),
+              }))
+          ),
         };
     }
 

@@ -5,6 +5,7 @@ loadEnv();
 [
     'DATABASE_URL',
     'AUTH_SECRET',
+    'ANON_SECRET',
     'AUTH_AUDIENCE',
     'POSTMARK_KEY',
     'TWILIO_SID',
@@ -28,6 +29,9 @@ const config = {
     auth: {
         secret: process.env.AUTH_SECRET!,
         audience: process.env.AUTH_AUDIENCE!,
+    },
+    anonymous: {
+        secret: process.env.ANON_SECRET!,
     },
     postmark: {
         serverToken: process.env.POSTMARK_KEY!,

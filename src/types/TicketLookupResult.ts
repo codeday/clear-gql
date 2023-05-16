@@ -58,4 +58,7 @@ export class TicketLookupResult {
 
   @Field(() => TicketLookupResultPromoCode, { nullable: true })
   promoCode: TicketLookupResultPromoCode | null;
+
+  @Field(() => String)
+  anonymousId: string;
 }
