@@ -4,6 +4,7 @@ import { prisma } from "../services";
 import { sendEventDigests } from "./sendEventDigests";
 import { sendEventGroupDigests } from "./sendEventGroupDigests";
 import { sendWebhook } from "./sendWebhook";
+import { eventConfigWatchdog } from "./eventConfigWatchdog";
 
 export async function automaticDigests(): Promise<void> {
     const rule = new schedule.RecurrenceRule();
@@ -14,6 +15,7 @@ export async function automaticDigests(): Promise<void> {
     schedule.scheduleJob(rule, () => {
       sendEventDigests();
       sendEventGroupDigests();
+      eventConfigWatchdog();
     });
 }
 

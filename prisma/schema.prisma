@@ -7,7 +7,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["filterJson"]
 }
 
@@ -57,39 +57,39 @@ model Event {
   metadata  Json?
 
   // Data
-  name               String
-  startDate          DateTime
-  endDate            DateTime
-  ticketPrice        Float
-  earlyBirdPrice     Float
-  earlyBirdCutoff    DateTime
-  groupPrice         Float?
-  registrationCutoff DateTime
-  managers           String[] // codeday account usernames
-  registrationsOpen  Boolean             @default(false)
-  contentfulWebname  String?
-  showcaseId         String?
-  minorWaiverId      String?
-  adultWaiverId      String?
-  eventRestrictions  EventRestriction[]
+  name                        String
+  startDate                   DateTime
+  endDate                     DateTime
+  ticketPrice                 Float
+  earlyBirdPrice              Float
+  earlyBirdCutoff             DateTime
+  groupPrice                  Float?
+  registrationCutoff          DateTime
+  managers                    String[] // codeday account usernames
+  registrationsOpen           Boolean             @default(false)
+  contentfulWebname           String?
+  showcaseId                  String?
+  minorWaiverId               String?
+  adultWaiverId               String?
+  eventRestrictions           EventRestriction[]
   contentfulEventRestrictions String[]
-  timezone           String?
-  majorityAge        Int                 @default(18)
-  overnightMinAge    Int?
-  minAge             Int?
-  maxAge             Int?
-  requiresPromoCode  Boolean             @default(false)
+  timezone                    String?
+  majorityAge                 Int                 @default(18)
+  overnightMinAge             Int?
+  minAge                      Int?
+  maxAge                      Int?
+  requiresPromoCode           Boolean             @default(false)
   // Relations
-  eventGroup         EventGroup          @relation(fields: [eventGroupId], references: [id])
-  eventGroupId       String
-  venue              Venue?              @relation(fields: [venueId], references: [id])
-  venueId            String?
-  sponsors           Sponsor[]
-  tickets            Ticket[]
-  schedule           ScheduleItem[]
-  promoCodes         PromoCode[]
-  interestedEmails   MailingListMember[]
-  webhooks           Webhook[]
+  eventGroup                  EventGroup          @relation(fields: [eventGroupId], references: [id])
+  eventGroupId                String
+  venue                       Venue?              @relation(fields: [venueId], references: [id])
+  venueId                     String?
+  sponsors                    Sponsor[]
+  tickets                     Ticket[]
+  schedule                    ScheduleItem[]
+  promoCodes                  PromoCode[]
+  interestedEmails            MailingListMember[]
+  webhooks                    Webhook[]
 }
 
 enum WebhookService {
@@ -100,6 +100,7 @@ enum WebhookService {
 enum WebhookType {
   ALL
   DIGEST
+  WATCHDOG
 }
 
 model Webhook {
@@ -190,7 +191,7 @@ model Person {
   age       Int?
   username  String?
   pronouns  String?
-  locale    String @default("en-US")
+  locale    String  @default("en-US")
 
   Ticket Ticket[]
 }
@@ -206,21 +207,21 @@ enum TicketType {
 
 model Ticket {
   // Metadata
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   /// @TypeGraphQL.omit(input: ["update", "where", "orderBy"])
-  metadata  Json?
+  metadata   Json?
   // Data
-  privateKey       String? @default(uuid())
-  firstName String
-  lastName  String
-  email     String?
-  phone     String?
-  whatsApp  String?
-  username  String?
-  locale    String @default("en-US")
-  age       Int?
+  privateKey String?  @default(uuid())
+  firstName  String
+  lastName   String
+  email      String?
+  phone      String?
+  whatsApp   String?
+  username   String?
+  locale     String   @default("en-US")
+  age        Int?
 
   waiverTrackingId String?
   waiverUrl        String?
@@ -230,7 +231,7 @@ model Ticket {
   checkedIn        DateTime?
   checkedOut       DateTime?
 
-  surveyResponses  Json?
+  surveyResponses Json?
 
   couponCode String?
   type       TicketType @default(STUDENT)
