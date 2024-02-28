@@ -171,6 +171,9 @@ export async function ProcessTemplate(template: EmailTemplate): Promise<void> {
     }
     const tickets = await prisma.ticket.findMany({
         where: {
+            event: {
+                registrationsOpen: true
+            },
             AND: [
                 {
                     type: template.sendTo,
