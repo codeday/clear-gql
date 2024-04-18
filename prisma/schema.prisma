@@ -90,6 +90,7 @@ model Event {
   promoCodes                  PromoCode[]
   interestedEmails            MailingListMember[]
   webhooks                    Webhook[]
+  announcements               Announcement[]
 }
 
 enum WebhookService {
@@ -298,6 +299,20 @@ model ScheduleItem {
   eventId      String?
   eventGroup   EventGroup? @relation(fields: [eventGroupId], references: [id])
   eventGroupId String?
+}
+
+model Announcement {
+  // Metadata
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content String
+  isSent  Boolean @default(false)
+
+  // Relations
+  event        Event?      @relation(fields: [eventId], references: [id])
+  eventId      String?
 }
 
 enum DiscountType {
