@@ -20,6 +20,8 @@ export const venueEnhanceConfig: ModelConfig<"Venue"> = {
         zipCode: [],
         country: [],
         countryAbbreviation: [],
-        stateAbbreviation: []
+        stateAbbreviation: [],
+        wifiSsid: [],
+        wifiPassword: [],
     }
 }

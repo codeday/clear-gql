@@ -146,6 +146,9 @@ model Venue {
   contactEmail        String?
   contactPhone        String?
 
+  wifiSsid            String?
+  wifiPassword        String?
+
   // Relations
   events Event[]
 }
