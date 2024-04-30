@@ -10,7 +10,7 @@ export const stripePaymentProvider: PaymentProvider = {
     const stripePaymentIntent = await stripe.paymentIntents?.create({
         amount: Math.round(itemPrice * 100) * quantity,
         currency: currency.toLowerCase(),
-        statement_descriptor: `CodeDay ${event.name}`,
+        statement_descriptor: `CodeDay`,
         metadata: { eventId: event.id, region: event.contentfulWebname },
     });
 
