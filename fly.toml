@@ -30,3 +30,14 @@ primary_region = "sea"
     timeout = "2s"
     grace_period = "1s"
     restart_limit = 0
+
+[env]
+  WAIVER_MINOR_ID = "JDLGt9Tecw1653399584"
+  UPLOADER_URL = "http://codeday-uploader.internal"
+  WAIVER_SIGNED_PORT = "8090"
+  LABS_URL = "http://codeday-labs-gql.internal:5000/graphql"
+  TWILIO_TEXT_NUMBER = "8882633230"
+  AUTH_AUDIENCE = "clear-gql"
+  WAIVER_ADULT_ID = "6GzvX127Xs1653399868"
+  PRIMARY_REGION = "sea"
+  GOTENBERG_BASE = "http://codeday-gotenberg.internal:3000"
