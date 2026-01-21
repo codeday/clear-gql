@@ -1,15 +1,16 @@
 import path from 'path';
-import {buildSchema} from 'type-graphql';
-import {GraphQLSchema} from 'graphql';
-import {Container} from 'typedi';
-import {applyModelsEnhanceMap, applyResolversEnhanceMap, resolvers} from './generated/typegraphql-prisma';
+import { buildSchema } from 'type-graphql';
+import { GraphQLSchema } from 'graphql';
+import { Container } from 'typedi';
+import { applyModelsEnhanceMap, applyResolversEnhanceMap, resolvers } from './generated/typegraphql-prisma';
 import customResolvers from './customResolvers'
-import {authChecker} from './context';
+import { authChecker } from './context';
 import customResolversEnhanceMap from "./customResolversEnhanceMap";
 import customModelsEnhanceMap from "./customModelsEnhanceMap";
 
-export async function createSchema() : Promise<GraphQLSchema> {
-    applyResolversEnhanceMap(customResolversEnhanceMap)
+export async function createSchema(): Promise<GraphQLSchema> {
+    // TODO: Fix resolver enhance map - method names don't match generated resolvers
+    // applyResolversEnhanceMap(customResolversEnhanceMap)
     applyModelsEnhanceMap(customModelsEnhanceMap)
     return buildSchema({
         resolvers: [
