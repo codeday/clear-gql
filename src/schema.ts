@@ -9,8 +9,7 @@ import customResolversEnhanceMap from "./customResolversEnhanceMap";
 import customModelsEnhanceMap from "./customModelsEnhanceMap";
 
 export async function createSchema(): Promise<GraphQLSchema> {
-    // TODO: Fix resolver enhance map - method names don't match generated resolvers
-    // applyResolversEnhanceMap(customResolversEnhanceMap)
+    applyResolversEnhanceMap(customResolversEnhanceMap)
     applyModelsEnhanceMap(customModelsEnhanceMap)
     return buildSchema({
         resolvers: [

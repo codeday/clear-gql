@@ -7,7 +7,7 @@ Object.getOwnPropertyNames(VenueCrudResolver.prototype).forEach((value: string) 
 
 export const venueEnhanceConfig: ResolverActionsConfig<"Venue"> = {
     ...defaultPerms,
-    createVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
-    updateVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
-    deleteVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
+    createOneVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
+    updateOneVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
+    deleteOneVenue: [Authorized(AuthRole.ADMIN, AuthRole.MANAGER)],
 }
