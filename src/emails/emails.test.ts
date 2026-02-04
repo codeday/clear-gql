@@ -1,6 +1,6 @@
-import emails, {IsAfterEvent, IsWorkHours, WouldSendLate} from "./emails";
-import {EmailTemplate, Event, Ticket} from "../generated/typegraphql-prisma";
-import {PrismaClient} from '@prisma/client';
+import emails, { IsAfterEvent, IsWorkHours, WouldSendLate } from "./emails";
+import { EmailTemplate, Event, Ticket } from "../generated/typegraphql-prisma";
+import { PrismaClient } from '@prisma/client';
 
 // importing these enums directly throws a compiler error
 enum TicketType {
@@ -24,7 +24,7 @@ const mockSendText = jest.fn()
 jest.mock('postmark', () => {
     return {
         ServerClient: jest.fn().mockImplementation(() => {
-            return {sendEmailBatch: (emails: Array<any>) => {mockSendEmailBatch([...emails])}}
+            return { sendEmailBatch: (emails: Array<any>) => { mockSendEmailBatch([...emails]) } }
         })
     }
 })
@@ -34,7 +34,7 @@ jest.mock('twilio', () => {
         Twilio: jest.fn().mockImplementation(() => {
             return {
                 messages: {
-                    create: (opts: {[key: string]: any}) => {mockSendText(opts)}
+                    create: (opts: { [key: string]: any }) => { mockSendText(opts) }
                 }
             }
         })
@@ -50,7 +50,7 @@ const prisma = new PrismaClient({
     }
 })
 
-const TEMPLATE_BASE:EmailTemplate = {
+const TEMPLATE_BASE: EmailTemplate = {
     automatic: true,
     createdAt: new Date(Date.UTC(2022, 0, 0, 0, 1).valueOf()),
     fromEmail: "fromemail@codeday.org",
@@ -83,7 +83,7 @@ const EVENT_BASE: Event = {
     majorityAge: 0,
     managers: [],
     name: "",
-    registrationCutoff: new Date(Date.UTC(2022, 0, 0, ).valueOf()),
+    registrationCutoff: new Date(Date.UTC(2022, 0, 0,).valueOf()),
     registrationsOpen: false,
     startDate: new Date(Date.UTC(2022, 0, 13, 0, 0).valueOf()),
     ticketPrice: 0,
@@ -146,13 +146,13 @@ describe("IsWorkHours", () => {
         expect(IsWorkHours('NOT A TIMEZONE')).toBe(false)
     })
     test("0 UTC invalid fallback tz", () => {
-        const ZERO_UTC = new Date(Date.UTC(0,0,0,0,0,0,0,))
+        const ZERO_UTC = new Date(Date.UTC(0, 0, 0, 0, 0, 0, 0,))
         expect(IsWorkHours('NOT A TIMEZONE', 'NOT A TIMEZONE EITHER')).toBe(true)
     })
 })
 
 describe("IsAfterEvent", () => {
-    const event:Event = {
+    const event: Event = {
         ...EVENT_BASE,
         endDate: new Date(Date.UTC(2022, 0, 14, 0, 0).valueOf())
     }
@@ -227,20 +227,20 @@ describe("Prisma Integration Tests", () => {
         events: CreateEventOpts[]
     }
     interface CreateEventOpts {
-        [key:string]: any
+        [key: string]: any
         tickets: CreateTicketOpts[]
     }
     interface CreateTicketOpts {
-        [key:string]: any
+        [key: string]: any
         guardian?: CreateGuardianOpts
         payment?: CreatePaymentOpts
     }
     interface CreatePaymentOpts {
-        [key:string]: any
+        [key: string]: any
         complete: boolean
     }
     interface CreateGuardianOpts {
-        [key:string]: any
+        [key: string]: any
     }
     const create_email_template = async (opts: {
         [key: string]: any
@@ -286,7 +286,8 @@ describe("Prisma Integration Tests", () => {
                     //@ts-ignore
                     create: opts.events.map((e) => make_create_event_args(e))
                 }
-            }})
+            }
+        })
     }
     const make_create_event_args = (opts: CreateEventOpts) => {
         return {
@@ -294,10 +295,11 @@ describe("Prisma Integration Tests", () => {
             name: opts.name || "Test Case Event",
             startDate: opts.startDate || new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
             endDate: opts.endDate || new Date(Date.UTC(2022, 1, 1, 0, 0).valueOf()),
-            ticketPrice: opts.ticketPrice ||20,
+            ticketPrice: opts.ticketPrice || 20,
             earlyBirdPrice: opts.earlyBirdPrice || 10,
             earlyBirdCutoff: opts.earlyBirdCutoff || new Date(Date.UTC(2022, 0, 20, 0, 0).valueOf()),
             registrationCutoff: opts.registrationCutoff || new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+            registrationsOpen: opts.registrationsOpen ?? true,
             timezone: opts.timezone || undefined,
             tickets: {
                 create: opts.tickets.map((t) => make_create_ticket_args(t))
@@ -313,10 +315,10 @@ describe("Prisma Integration Tests", () => {
             type: opts.type || "STUDENT",
             email: opts.email || "ticket@email",
             phone: opts.phone || undefined,
-            guardian: opts.guardian? {
+            guardian: opts.guardian ? {
                 create: make_create_guardian_args(opts.guardian)
             } : undefined,
-            payment: opts.payment? {
+            payment: opts.payment ? {
                 create: make_create_payment_args(opts.payment)
             } : undefined,
         }
@@ -358,7 +360,7 @@ describe("Prisma Integration Tests", () => {
     describe("Send to right group", () => {
         // @ts-ignore
         const TICKET_TYPES: TicketType[] = Object.keys(TicketType)
-        test.each(TICKET_TYPES)('%s',async (t: TicketType) => {
+        test.each(TICKET_TYPES)('%s', async (t: TicketType) => {
             await create_email_template({
                 sendTo: t,
                 when: "0m",
@@ -367,7 +369,7 @@ describe("Prisma Integration Tests", () => {
             await create_event_group({
                 events: [
                     {
-                        tickets: TICKET_TYPES.map((i) => { return { type: i, email: i === t? 'true' : 'false'}})
+                        tickets: TICKET_TYPES.map((i) => { return { type: i, email: i === t ? 'true' : 'false' } })
                     }
                 ]
             })
@@ -381,7 +383,7 @@ describe("Prisma Integration Tests", () => {
     })
     describe("Send at right time", () => {
         describe("WhenFrom REGISTER", () => {
-            test("When 0m",async () => {
+            test("When 0m", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "0m",
@@ -423,7 +425,7 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendEmailBatch.mock.calls[3][0].length).toBe(1)
                 expect(mockSendEmailBatch.mock.calls[3][0][0].To).toBe('second')
             })
-            test("When 7d",async () => {
+            test("When 7d", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "7d",
@@ -467,7 +469,7 @@ describe("Prisma Integration Tests", () => {
             })
         })
         describe("WhenFrom EVENTSTART", () => {
-            test("When 0m",async () => {
+            test("When 0m", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "0m",
@@ -518,7 +520,7 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendEmailBatch).toHaveBeenCalledTimes(3)
                 expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
             })
-            test("When -7d",async () => {
+            test("When -7d", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "-7d",
@@ -569,7 +571,7 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendEmailBatch).toHaveBeenCalledTimes(3)
                 expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
             })
-            test("When 7d",async () => {
+            test("When 7d", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "7d",
@@ -623,7 +625,7 @@ describe("Prisma Integration Tests", () => {
             })
         })
         describe("WhenFrom EVENTEND", () => {
-            test("When 0m",async () => {
+            test("When 0m", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "0m",
@@ -676,7 +678,7 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendEmailBatch).toHaveBeenCalledTimes(3)
                 expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
             })
-            test("When -7d",async () => {
+            test("When -7d", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "-7d",
@@ -728,7 +730,7 @@ describe("Prisma Integration Tests", () => {
                 expect(mockSendEmailBatch).toHaveBeenCalledTimes(3)
                 expect(mockSendEmailBatch).toHaveBeenLastCalledWith([])
             })
-            test("When 7d",async () => {
+            test("When 7d", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "7d",
@@ -797,7 +799,7 @@ describe("Prisma Integration Tests", () => {
                         {
                             tickets: [
                                 {
-                                    createdAt:  new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
+                                    createdAt: new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
                                     email: "true"
                                 },
                                 {
@@ -830,7 +832,7 @@ describe("Prisma Integration Tests", () => {
                         {
                             tickets: [
                                 {
-                                    createdAt:  new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
+                                    createdAt: new Date(Date.UTC(2022, 0, 7, 0, 0).valueOf()),
                                     email: "true"
                                 },
                                 {
@@ -943,7 +945,7 @@ describe("Prisma Integration Tests", () => {
                 await create_event_group({
                     events: [
                         {
-                            endDate:  new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+                            endDate: new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
                             tickets: [
                                 {
                                     email: "true"
@@ -951,7 +953,7 @@ describe("Prisma Integration Tests", () => {
                             ]
                         },
                         {
-                            endDate:  new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
+                            endDate: new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
                             tickets: [
                                 {
                                     email: "false"
@@ -976,7 +978,7 @@ describe("Prisma Integration Tests", () => {
                 await create_event_group({
                     events: [
                         {
-                            endsAt:  new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
+                            endsAt: new Date(Date.UTC(2022, 1, 0, 0, 0).valueOf()),
                             tickets: [
                                 {
                                     email: "true"
@@ -984,7 +986,7 @@ describe("Prisma Integration Tests", () => {
                             ]
                         },
                         {
-                            endsAt:  new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
+                            endsAt: new Date(Date.UTC(2022, 0, 15, 0, 0).valueOf()),
                             tickets: [
                                 {
                                     email: "true"
@@ -1125,7 +1127,7 @@ describe("Prisma Integration Tests", () => {
             })
         })
         describe("SendText + SendParent", () => {
-            test("All parents have numbers",async () => {
+            test("All parents have numbers", async () => {
                 await create_email_template({
                     sendTo: TicketType.STUDENT,
                     when: "0m",
