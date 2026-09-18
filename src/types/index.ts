@@ -7,3 +7,5 @@ export * from './TicketLookupResult';
 export * from './TicketLookupResultGuardian';
 export * from './TicketLookupResultPayment';
 export * from './TicketLookupResultPromoCode';
+export * from './StatOutcomes';
+export * from './YearStatOutcomes';

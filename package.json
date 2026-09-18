@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "prisma migrate deploy && node dist",
+    "start": "node dist",
     "clean": "rm -rf dist",
     "build": "npm -s run clean && npm -s run prisma && npx tsc && cpy '**/*' '!**/*.ts' ../dist/ --cwd=src/ --no-overwrite --parents",
     "prisma": "prisma format && prisma generate",
