@@ -3,6 +3,9 @@ import { Field, Int, ObjectType } from 'type-graphql';
 @ObjectType()
 export class StatOutcomes {
   @Field(() => Int)
+  eventCount: number;
+
+  @Field(() => Int)
   studentCount: number;
 
   @Field(() => Int)
